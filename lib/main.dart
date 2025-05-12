@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:spinovo_app/home_screen.dart';
+import 'package:spinovo_app/screen/home_screen.dart';
+import 'package:spinovo_app/screen/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,8 +13,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Spinovo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(),
-      home: const HomeScreen(),
+      home: const SplashScreen(),
     );
   }
 }
