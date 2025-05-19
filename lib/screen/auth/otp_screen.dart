@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spinovo_app/api/auth_api.dart';
 import 'package:spinovo_app/models/otp_model.dart';
 import 'package:spinovo_app/screen/auth/details_screen.dart';
 import 'package:spinovo_app/services/bottom_navigation.dart';
 import 'package:spinovo_app/utiles/color.dart';
+import 'package:spinovo_app/utiles/constants.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/button.dart';
 import 'package:spinovo_app/widget/otp_box.dart';
@@ -96,9 +98,14 @@ class _OtpScreenState extends State<OtpScreen> {
     } else {
       if (otpCode == enterOtp) {
         if (otpRequest == 'login') {
-            Navigator.push(context, MaterialPageRoute(builder: (context) =>const BottomNavigation() ));
+          login(mobileNo);
         } else {
-          Navigator.push(context, MaterialPageRoute(builder: (context) =>  DetailsScreen(otpResponse: widget.otpResponse,)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => DetailsScreen(
+                        otpResponse: widget.otpResponse,
+                      )));
         }
         // numberCheck();
         showToast("OTP verified successfully");
@@ -106,6 +113,31 @@ class _OtpScreenState extends State<OtpScreen> {
         showToast("Please enter valid OTP code");
       }
     }
+  }
+
+  Future<void> login(mobile) async {
+    setState(() {
+      isLoginLoading = true;
+    });
+    await authApi
+        .userLogin(
+      mobile,
+    )
+        .then((value) async {
+      if (value.status == true) {
+        String token = value.data!.user!.accessToken.toString();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString(AppConstants.TOKEN, token);
+        setState(() {
+          isLoginLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoginLoading = false;
+        });
+        showToast('Error, login fail');
+      }
+    });
   }
 
   @override
@@ -144,8 +176,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       overFlow: TextOverflow.visible,
                     ),
                     SmallText(
-                      text:
-                          'phone number +91 ${mobileNo}',
+                      text: 'phone number +91 ${mobileNo}',
                       size: 13,
                       fontweights: FontWeight.w400,
                       color: Colors.grey,
