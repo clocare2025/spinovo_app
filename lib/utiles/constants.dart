@@ -1,14 +1,25 @@
-import 'dart:ui';
 
-class AssetCont {
-  static String logo = "asset/images/logo.png";
-  static String wallet = "asset/icons/wallet.png";
-  static String walletV2 = "asset/icons/wallet_v2.png";
+
+
+
+
+class AppConstants {
+  static const String APP_NAME = "Spinovo";
+  static const int APP_VERSION = 1;
+
+  static String TOKEN = 'token';
+  static String RAZORPAY_KEY_ID = "rzp_live_c852nEyeoW0eJx";
+
+// API DETAILS
+  static const String BASE_URL = 
+  // "https://sub.theclo.care";
+   "http://192.168.29.178:300";
+   
+  // Authentication
+  static const String SEND_OTP_URL = "/api/v1/consumer/auth/send-otp";
+
+
+  
+
 }
 
-class ColorCont {
-  static Color primaryColor = const Color(0xFF57FF8F);
-  static Color bgColor = const Color(0xFFF5F6FB);
-  static Color appbarColor = const Color(0xFF33C362);
-  static Color textColor = const Color(0xFF10183F);
-}
