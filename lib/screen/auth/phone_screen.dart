@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:spinovo_app/api/auth_api.dart';
-import 'package:spinovo_app/screen/auth/otp_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:spinovo_app/providers/auth_provider.dart';
 import 'package:spinovo_app/utiles/color.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/button.dart';
@@ -18,52 +19,38 @@ class PhoneScreen extends StatefulWidget {
 
 class _PhoneScreenState extends State<PhoneScreen> {
   final _mobileNumberController = TextEditingController();
-  AuthApi authApi = AuthApi();
-  bool isLoading = false;
 
   @override
   void dispose() {
     _mobileNumberController.dispose();
-
     super.dispose();
   }
 
-  void continueBtn() async {
-    String userNumber = _mobileNumberController.text.trim();
+  void _continue() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final userNumber = _mobileNumberController.text.trim();
+
     if (userNumber.isEmpty) {
       showToast('Please enter your mobile number');
-    } else if (userNumber.length < 10) {
+      return;
+    }
+    if (userNumber.length < 10) {
       showToast('Please enter a valid mobile number');
+      return;
+    }
+
+    final response = await authProvider.sendOtp(userNumber);
+    if (response != null && response.status == true) {
+      context.go('/otp', extra: response.data!.otpResponse!);
     } else {
-    
-
-      setState(() {
-        isLoading = true;
-      });
-      await authApi.sendOtp(userNumber).then((response) {
-        setState(() {
-          isLoading = false;
-        });
-        if (response.status == true) {
-          var responseData = response.data!.otpResponse!;
-     
-
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) =>  OtpScreen(otpResponse: responseData,)));
-        } else {
-          showToast('Failed to send OTP');
-        }
-      }).catchError((error) {
-        setState(() {
-          isLoading = false;
-        });
-        showToast('Error: $error');
-      });
+      showToast(authProvider.errorMessage ?? 'Failed to send OTP');
     }
   }
 
   @override
-  Widget build(context) {
+  Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return Scaffold(
       backgroundColor: AppColor.backgroundColors,
       body: Padding(
@@ -85,7 +72,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
                   ),
                 ),
                 const Height(20),
-                CustomText(text: 'Enter your mobile number to continue',),
+                CustomText(text: 'Enter your mobile number to continue'),
                 const Height(10),
                 Row(
                   children: [
@@ -128,10 +115,8 @@ class _PhoneScreenState extends State<PhoneScreen> {
                 ContinueButton(
                   text: 'Continue',
                   isValid: true,
-                  isLoading: isLoading,
-                  onTap: () {
-                    continueBtn();
-                  },
+                  isLoading: authProvider.isLoading,
+                  onTap: _continue,
                 ),
               ],
             ),
@@ -166,7 +151,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
                   ],
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),

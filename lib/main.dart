@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'package:spinovo_app/screen/splash_screen.dart';
+import 'package:spinovo_app/providers/auth_provider.dart';
+
+import 'package:spinovo_app/router/router.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => AuthProvider()..initAuth(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -11,13 +19,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Spinovo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'SFPro',
       ),
-      home: const SplashScreen(),
+      routerConfig: router,
     );
   }
 }
