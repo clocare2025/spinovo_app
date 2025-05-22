@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:spinovo_app/models/address_model.dart';
 import 'package:spinovo_app/models/otp_model.dart';
 import 'package:spinovo_app/models/user_model.dart';
 import 'package:spinovo_app/utiles/constants.dart';
@@ -9,7 +10,7 @@ class AuthApi {
 
   Future<OtpModel> sendOtp(String number) async {
     final response = await http.post(
-      Uri.parse("http://85.215.117.192/api/v1/consumer/auth/send-otp"),
+      Uri.parse("$baseUrl/api/v1/consumer/auth/send-otp"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -30,7 +31,7 @@ class AuthApi {
   Future<UserModel> userSignup(
       String name, String mobileNo, String livingType) async {
     final response = await http.post(
-      Uri.parse("http://85.215.117.192/api/v1/consumer/auth/signup"),
+      Uri.parse("$baseUrl/api/v1/consumer/auth/signup"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -52,7 +53,7 @@ class AuthApi {
 
   Future<UserModel> userLogin(String mobileNo) async {
     final response = await http.post(
-      Uri.parse("http://85.215.117.192/api/v1/consumer/auth/login"),
+      Uri.parse("$baseUrl/api/v1/consumer/auth/login"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

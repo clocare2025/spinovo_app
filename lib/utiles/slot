@@ -1,0 +1,544 @@
+[
+  {
+      "day": "TODAY",
+      "date": "22/05/2025",
+      "slot":[
+        {
+         "slot_type": "AM",
+         "slot_time": [
+            {
+                "time": "9:00",
+                "charges": 0,
+                "isActive": false
+            },
+            {
+                "time": "9:30",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "10:00",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "10:30",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "11:00",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "11:30",
+                "charges": 0,   
+                "isActive": false
+            }
+       
+
+         ]
+
+      },
+        {
+         "slot_type": "PM",
+         "slot_time": [
+            {
+                "time": "12:00",
+                "charges": 0,
+                "isActive": false
+            },
+            {
+                 "time": "12:30",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "01:00",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "01:30",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "02:00",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "02:30",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "03:00",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "03:30",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "04:00",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "04:30",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "05:00",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "05:30",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "06:00",
+                "charges": 0,   
+                "isActive": false
+            },
+            {
+                "time": "06:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "07:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "07:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "08:00",
+                "charges": 0,   
+                "isActive": true
+            }
+
+         ]
+
+      }
+    ]
+    },
+    {
+      "day": "FRI",
+      "date": "23/05/2025",
+            "slot":[
+        {
+         "slot_type": "AM",
+         "slot_time": [
+            {
+                "time": "9:00",
+                "charges": 0,
+                "isActive": true
+            },
+            {
+                "time": "9:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "10:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "10:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "11:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "11:30",
+                "charges": 0,   
+                "isActive": true
+            }
+       
+
+         ]
+
+      },
+        {
+         "slot_type": "PM",
+         "slot_time": [
+            {
+                "time": "12:00",
+                "charges": 0,
+                "isActive": true
+            },
+            {
+                 "time": "12:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "01:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "01:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "02:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "02:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "03:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "03:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "04:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "04:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "05:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "05:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "06:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "06:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "07:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "07:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "08:00",
+                "charges": 0,   
+                "isActive": true
+            }
+
+         ]
+
+      }
+    ]
+    },
+    {
+      "day": "SAT",
+      "date": "24/05/2025",      "slot":[
+        {
+         "slot_type": "AM",
+         "slot_time": [
+            {
+                "time": "9:00",
+                "charges": 0,
+                "isActive": true
+            },
+            {
+                "time": "9:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "10:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "10:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "11:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "11:30",
+                "charges": 0,   
+                "isActive": true
+            }
+       
+
+         ]
+
+      },
+        {
+         "slot_type": "PM",
+         "slot_time": [
+            {
+                "time": "12:00",
+                "charges": 0,
+                "isActive": true
+            },
+            {
+                 "time": "12:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "01:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "01:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "02:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "02:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "03:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "03:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "04:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "04:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "05:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "05:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "06:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "06:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "07:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "07:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "08:00",
+                "charges": 0,   
+                "isActive": true
+            }
+
+         ]
+
+      }
+    ]
+    },
+    {
+      "day": "SUN",
+      "date": "25/05/2025",      "slot":[
+        {
+         "slot_type": "AM",
+         "slot_time": [
+            {
+                "time": "9:00",
+                "charges": 0,
+                "isActive": true
+            },
+            {
+                "time": "9:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "10:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "10:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "11:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "11:30",
+                "charges": 0,   
+                "isActive": true
+            }
+       
+
+         ]
+
+      },
+        {
+         "slot_type": "PM",
+         "slot_time": [
+            {
+                "time": "12:00",
+                "charges": 0,
+                "isActive": true
+            },
+            {
+                 "time": "12:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "01:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "01:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "02:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "02:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "03:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "03:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "04:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "04:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "05:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "05:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "06:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "06:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "07:00",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "07:30",
+                "charges": 0,   
+                "isActive": true
+            },
+            {
+                "time": "08:00",
+                "charges": 0,   
+                "isActive": true
+            }
+
+         ]
+
+      }
+    ]
+    }
+]

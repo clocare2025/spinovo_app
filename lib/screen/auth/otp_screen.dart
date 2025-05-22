@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -119,6 +118,10 @@ class _OtpScreenState extends State<OtpScreen> {
     return Scaffold(
       backgroundColor: AppColor.backgroundColors,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         iconTheme: IconThemeData(color: AppColor.textColor),
         backgroundColor: AppColor.backgroundColors,
       ),
@@ -175,7 +178,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   OtpBox(
                     controller: num2,
                     onChanged: (value) {
-                      if (value.length == 1) focusNode3.requestFocus();
+                      if (value.length == 1)
+                        focusNode3.requestFocus();
                       else if (value.isEmpty) focusNode1.requestFocus();
                     },
                     focusNode: focusNode2,
@@ -186,7 +190,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   OtpBox(
                     controller: num3,
                     onChanged: (value) {
-                      if (value.length == 1) focusNode4.requestFocus();
+                      if (value.length == 1)
+                        focusNode4.requestFocus();
                       else if (value.isEmpty) focusNode2.requestFocus();
                     },
                     focusNode: focusNode3,
@@ -228,9 +233,8 @@ class _OtpScreenState extends State<OtpScreen> {
                 onTap: _resendOtp,
                 child: SmallText(
                   text: 'Resend code',
-                  color: _canResend
-                      ? AppColor.textColor
-                      : const Color(0xFF5a5a60),
+                  color:
+                      _canResend ? AppColor.textColor : const Color(0xFF5a5a60),
                 ),
               ),
               const Height(40),
