@@ -55,6 +55,7 @@ class AuthProvider with ChangeNotifier {
       final response = await _authApi.userLogin(mobile);
       if (response.status == true) {
         _token = response.data!.user!.accessToken;
+        print('_token AuthProvider $_token');
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(AppConstants.TOKEN, _token!);
         return true;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:spinovo_app/models/otp_model.dart';
+import 'package:spinovo_app/screen/account/profile_screen.dart';
 import 'package:spinovo_app/screen/address/address_create_screen.dart';
 import 'package:spinovo_app/screen/auth/details_screen.dart';
 import 'package:spinovo_app/screen/auth/otp_screen.dart';
@@ -40,6 +41,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/address',
       builder: (context, state) => const AddressMapScreen(),
+    ),
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) => const ProfileScreen(),
     ),
   ],
 );

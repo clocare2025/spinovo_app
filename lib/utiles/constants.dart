@@ -13,7 +13,7 @@ class AppConstants {
 // API DETAILS
   static const String BASE_URL = 
   // "https://sub.theclo.care";
-   "http://85.215.117.192/";
+   "http://85.215.117.192";
   //  "http://192.168.29.178:300";
    
   // Authentication

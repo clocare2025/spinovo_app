@@ -41,6 +41,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
 
     final response = await authProvider.sendOtp(userNumber);
     if (response != null && response.status == true) {
+      // ignore: use_build_context_synchronously
       context.go('/otp', extra: response.data!.otpResponse!);
     } else {
       showToast(authProvider.errorMessage ?? 'Failed to send OTP');

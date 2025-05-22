@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:spinovo_app/component/appbar.dart';
+import 'package:spinovo_app/component/home_appbar.dart';
 import 'package:spinovo_app/component/msgSection.dart';
+import 'package:spinovo_app/screen/checkout/checkout_screen.dart';
 import 'package:spinovo_app/utiles/assets.dart';
 import 'package:spinovo_app/utiles/color.dart';
-import 'package:spinovo_app/utiles/constants.dart';
 import 'package:spinovo_app/widget/size_box.dart';
 import 'package:spinovo_app/widget/text_widget.dart';
 
@@ -55,11 +55,18 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-
 class ServiceSection extends StatelessWidget {
   const ServiceSection({
     super.key,
   });
+
+  void _serviceTap(int serviceId, context) {
+    print(serviceId);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) =>  CheckoutScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,43 +77,108 @@ class ServiceSection extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            HeadingText(
-              text: 'Our Services',
-            ),
-            SmallText(
-              text: 'All your laundry needs, just a tap away.',
-              size: 12,
-              letterSpacing: 0,
-            ),
-            const Height(10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(15),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.asset(AppAssets.ironing, height: 80),
-                Image.asset(AppAssets.drycleaning, height: 80),
+                HeadingText(
+                  text: 'Our Services',
+                ),
+                SmallText(
+                  text: 'All your laundry needs, just a tap away.',
+                  size: 12,
+                  letterSpacing: 0,
+                ),
               ],
             ),
-            const Height(15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.asset(AppAssets.wash, height: 80),
-                Image.asset(AppAssets.washIroning, height: 80),
-                Image.asset(AppAssets.shoesCleaning, height: 80),
-              ],
-            ),
-          ],
-        ),
+          ),
+          const Height(10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ServiceBox(
+                title: 'Ironing',
+                id: 1,
+                image: AppAssets.ironing,
+                onTap: () {
+                  _serviceTap(1, context);
+                },
+              ),
+              ServiceBox(
+                title: 'Dry Cleaning',
+                id: 4,
+                image: AppAssets.drycleaning,
+                onTap: () {
+                  _serviceTap(4, context);
+                },
+              ),
+            ],
+          ),
+          const Height(20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ServiceBox(
+                title: 'Wash',
+                id: 2,
+                image: AppAssets.wash,
+                onTap: () {
+                  _serviceTap(2, context);
+                },
+              ),
+              ServiceBox(
+                title: 'Wash + Ironing',
+                id: 3,
+                image: AppAssets.washIroning,
+                onTap: () {
+                  _serviceTap(3, context);
+                },
+              ),
+              ServiceBox(
+                title: 'Shoe Cleaning',
+                id: 5,
+                image: AppAssets.shoesCleaning,
+                onTap: () {
+                  _serviceTap(5, context);
+                },
+              ),
+            ],
+          ),
+          const Height(20),
+        ],
       ),
     );
+  }
+}
+
+class ServiceBox extends StatelessWidget {
+  final String title;
+  final int id;
+  final Function onTap;
+  final String image;
+  const ServiceBox({
+    super.key,
+    required this.title,
+    required this.id,
+    required this.onTap,
+    required this.image,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        onTap: () {
+          onTap();
+        },
+        child: Image.asset(image, height: 85));
   }
 }
 

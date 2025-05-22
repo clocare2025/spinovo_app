@@ -12,10 +12,11 @@ final List<TextInputFormatter>? inputFormatters;
   final TextAlign textAlign;
   final Function(String)? onChanged;
   final bool obscureText;
+  final String? prefixText;
   const customTextField({
     super.key,
      this.controller,
-    required this.hintText, this.width, this.height = 50, this.keyboardType, this.textAlign = TextAlign.start, this.onChanged, this.obscureText = false, this.inputFormatters,
+    required this.hintText, this.width, this.height = 50, this.keyboardType, this.textAlign = TextAlign.start, this.onChanged, this.obscureText = false, this.inputFormatters, this.prefixText,
   });
 
   @override
@@ -34,8 +35,10 @@ final List<TextInputFormatter>? inputFormatters;
          textAlign: textAlign,
         keyboardType: keyboardType,
         inputFormatters:  inputFormatters,
+        
         decoration: InputDecoration(
           hintText: hintText,
+           prefixText: prefixText,
           hintStyle:
               const TextStyle(color: Color(0xFFD8DADC), fontWeight: FontWeight.w400),
           border: OutlineInputBorder(

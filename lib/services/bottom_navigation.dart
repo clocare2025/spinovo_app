@@ -39,12 +39,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
     });
   }
 
-  void _logout() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    await authProvider.logout();
-    context.go('/phone');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,11 +63,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
             label: 'Account',
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _logout,
-        backgroundColor: AppColor.appbarColor,
-        child: const Icon(Icons.logout),
       ),
     );
   }

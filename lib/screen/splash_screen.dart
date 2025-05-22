@@ -18,6 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(const Duration(seconds: 3), () {
+    
       _checkLoggedIn();
     });
   }
@@ -26,8 +27,10 @@ class _SplashScreenState extends State<SplashScreen> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     if (authProvider.token != null && authProvider.token!.isNotEmpty) {
       context.go('/home');
+           print("home ${authProvider.token}");
     } else {
       context.go('/phone');
+        print("phone ${authProvider.token}");
     }
   }
 

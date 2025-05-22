@@ -9,7 +9,7 @@ class AuthApi {
 
   Future<OtpModel> sendOtp(String number) async {
     final response = await http.post(
-      Uri.parse("http://192.168.19.21:300/api/v1/consumer/auth/send-otp"),
+      Uri.parse("http://85.215.117.192/api/v1/consumer/auth/send-otp"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -30,7 +30,7 @@ class AuthApi {
   Future<UserModel> userSignup(
       String name, String mobileNo, String livingType) async {
     final response = await http.post(
-      Uri.parse("http://192.168.19.21:300/api/v1/consumer/auth/signup"),
+      Uri.parse("http://85.215.117.192/api/v1/consumer/auth/signup"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -52,7 +52,7 @@ class AuthApi {
 
   Future<UserModel> userLogin(String mobileNo) async {
     final response = await http.post(
-      Uri.parse("http://192.168.19.21:300/api/v1/consumer/auth/login"),
+      Uri.parse("http://85.215.117.192/api/v1/consumer/auth/login"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

@@ -51,7 +51,8 @@ class WalletSection extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(50))),
         child: Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
+          padding:
+              const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
