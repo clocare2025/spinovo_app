@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spinovo_app/screen/address/address_create_screen.dart';
+import 'package:spinovo_app/screen/address/address_screen.dart';
 import 'package:spinovo_app/screen/wallet/wallet_screen.dart';
 import 'package:spinovo_app/utiles/assets.dart';
 import 'package:spinovo_app/utiles/color.dart';
@@ -88,7 +89,7 @@ class AddressSection extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const AddressMapScreen(),
+            builder: (context) => const AddressScreen(),
           ),
         );
       },

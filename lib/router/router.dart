@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:spinovo_app/models/otp_model.dart';
 import 'package:spinovo_app/screen/account/profile_screen.dart';
 import 'package:spinovo_app/screen/address/address_create_screen.dart';
+import 'package:spinovo_app/screen/address/address_screen.dart';
 import 'package:spinovo_app/screen/auth/details_screen.dart';
 import 'package:spinovo_app/screen/auth/otp_screen.dart';
 import 'package:spinovo_app/screen/auth/phone_screen.dart';
@@ -39,7 +40,11 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const BottomNavigation(),
     ),
     GoRoute(
-      path: '/address',
+      path: '/addresse',
+      builder: (context, state) => const AddressScreen(),
+    ),
+    GoRoute(
+      path: '/address/create',
       builder: (context, state) => const AddressMapScreen(),
     ),
     GoRoute(

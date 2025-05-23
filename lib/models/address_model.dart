@@ -8,7 +8,9 @@ class AddressModel {
   AddressModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     msg = json['msg'];
-    data = json['data'] != null ? AddressData.fromJson(json['data']) : null;
+    data = json['data'] != null && json['data']['address'] != null
+        ? AddressData.fromJson(json['data']['address'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -52,8 +54,8 @@ class AddressData {
   });
 
   AddressData.fromJson(Map<String, dynamic> json) {
-    addressId = json['addressId'];
-    userId = json['userId'];
+    addressId = json['_id'];
+    userId = json['customer_id'];
     addressType = json['address_type'];
     addressLabel = json['address_label'];
     flatNo = json['flat_no'];
@@ -68,8 +70,8 @@ class AddressData {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['addressId'] = addressId;
-    data['userId'] = userId;
+    data['_id'] = addressId;
+    data['customer_id'] = userId;
     data['address_type'] = addressType;
     data['address_label'] = addressLabel;
     data['flat_no'] = flatNo;
