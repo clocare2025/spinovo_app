@@ -34,17 +34,20 @@ class _PhoneScreenState extends State<PhoneScreen> {
       showToast('Please enter your mobile number');
       return;
     }
-    if (userNumber.length < 10) {
-      showToast('Please enter a valid mobile number');
+    if (userNumber.length != 10) {
+      showToast('Please enter a valid 10-digit mobile number');
       return;
     }
 
-    final response = await authProvider.sendOtp(userNumber);
-    if (response != null && response.status == true) {
-      // ignore: use_build_context_synchronously
-      context.go('/otp', extra: response.data!.otpResponse!);
-    } else {
-      showToast(authProvider.errorMessage ?? 'Failed to send OTP');
+    try {
+      final response = await authProvider.sendOtp(userNumber);
+      if (response != null && response.status == true) {
+        context.go('/otp', extra: response.data!.otpResponse!);
+      } else {
+        showToast(authProvider.errorMessage ?? 'Failed to send OTP');
+      }
+    } catch (e) {
+      showToast('Error: $e');
     }
   }
 
@@ -104,6 +107,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
                         hintText: 'Enter mobile number',
                         keyboardType: TextInputType.number,
                         inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
                           LengthLimitingTextInputFormatter(10),
                         ],
                       ),

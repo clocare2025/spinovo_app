@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spinovo_app/providers/auth_provider.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
+import 'package:spinovo_app/providers/services_provider.dart';
+import 'package:spinovo_app/providers/timeslot_provider.dart';
 import 'package:spinovo_app/router/router.dart';
 
 void main() {
@@ -10,6 +12,8 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()..initAuth()),
         ChangeNotifierProvider(create: (context) => AddressProvider()),
+        ChangeNotifierProvider(create: (context) => TimeslotProvider()),
+        ChangeNotifierProvider(create: (context) => ServicesProvider()),
       ],
       child: const MyApp(),
     ),
@@ -26,6 +30,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'SFPro',
+        useMaterial3: true,
       ),
       routerConfig: router,
     );

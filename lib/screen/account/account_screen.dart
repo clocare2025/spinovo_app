@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spinovo_app/component/custom_appbar.dart';
 import 'package:spinovo_app/providers/auth_provider.dart';
+import 'package:spinovo_app/screen/address/address_screen.dart';
 import 'package:spinovo_app/utiles/color.dart';
+import 'package:spinovo_app/utiles/constants.dart';
 import 'package:spinovo_app/widget/size_box.dart';
 import 'package:spinovo_app/widget/text_widget.dart';
 
@@ -41,7 +44,7 @@ class _AccountScreenState extends State<AccountScreen> {
               title: 'PROFILE',
               subtitle: 'Update personal information',
               onTap: () {
-                    context.go('/profile');
+                context.go('/profile');
               },
             ),
             _buildListTile(
@@ -54,7 +57,13 @@ class _AccountScreenState extends State<AccountScreen> {
               icon: Icons.location_on_outlined,
               title: 'ADDRESSES',
               subtitle: 'Manage saved addresses',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AddressScreen()),
+                );
+              },
             ),
             _buildListTile(
               icon: Icons.description_outlined,
@@ -72,7 +81,12 @@ class _AccountScreenState extends State<AccountScreen> {
                 icon: Icons.delete_outline_outlined,
                 title: 'Delete Account',
                 subtitle: 'Deletes all your data.',
-                onTap: () {},
+                onTap: () async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  var _token = prefs.getString(AppConstants.TOKEN);
+                  print(_token);
+                },
                 isDivider: false),
             const Height(40),
             SizedBox(

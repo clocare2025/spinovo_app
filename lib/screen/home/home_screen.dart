@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:spinovo_app/component/home_appbar.dart';
 import 'package:spinovo_app/component/msgSection.dart';
 import 'package:spinovo_app/screen/checkout/checkout_screen.dart';
+import 'package:spinovo_app/screen/home/home_componebt.dart';
 import 'package:spinovo_app/utiles/assets.dart';
 import 'package:spinovo_app/utiles/color.dart';
+import 'package:spinovo_app/utiles/designe.dart';
 import 'package:spinovo_app/widget/size_box.dart';
 import 'package:spinovo_app/widget/text_widget.dart';
 
@@ -34,9 +36,13 @@ class HomeScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Image.asset('asset/images/van_banner.png'),
                   const Height(10),
+                  const SpinovoNowSection(),
+                  const Height(20),
                   const ServiceSection(),
                   const Height(20),
                   const BookingTrackingSection(),
@@ -64,7 +70,10 @@ class ServiceSection extends StatelessWidget {
     print(serviceId);
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) =>  CheckoutScreen()),
+      MaterialPageRoute(
+          builder: (context) => CheckoutScreen(
+                serviceId: '1',
+              )),
     );
   }
 
@@ -73,10 +82,7 @@ class ServiceSection extends StatelessWidget {
     return Container(
       // height: 300,
       width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-      ),
+      decoration: AppDesigne.homeScreenBoxDecoration,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,10 +198,7 @@ class BookingTrackingSection extends StatelessWidget {
     return Container(
       height: 200,
       width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-      ),
+      decoration: AppDesigne.homeScreenBoxDecoration,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(

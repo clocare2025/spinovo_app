@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:provider/provider.dart';
+import 'package:spinovo_app/providers/address_provider.dart';
+import 'package:spinovo_app/utiles/toast.dart';
 
 class AddressMapScreen extends StatefulWidget {
   const AddressMapScreen({super.key});
@@ -12,33 +16,28 @@ class AddressMapScreen extends StatefulWidget {
 
 class _AddressMapScreenState extends State<AddressMapScreen> {
   GoogleMapController? _mapController;
-  LatLng _initialPosition = const LatLng(23.0365, 72.5611); // Default to Navrangpura, Ahmedabad
+  LatLng _initialPosition = const LatLng(23.0365, 72.5611);
   String _currentAddress = "Fetching address...";
   bool _isLoadingLocation = false;
   bool _isServiceAvailable = false;
   bool _isMapReady = false;
+  Placemark? _currentPlacemark;
 
-  // List of serviceable pincodes in Ahmedabad
-  // Example pincodes for Navrangpura, Usmanpura, and Sardar Patel Colony
   final List<String> _serviceablePincodes = [
-    "380009", // Navrangpura
-    "380013", // Usmanpura
-    "380014", // Sardar Patel Colony
+    "380009",
+    "380013",
+    "380014",
   ];
 
-  // Optional: Mapping of pincodes to area names for display (can be expanded in a database)
   final Map<String, String> _pincodeToAreaName = {
     "380009": "Navrangpura",
     "380013": "Usmanpura",
     "380014": "Sardar Patel Colony",
   };
 
-  // For search functionality
   final TextEditingController _searchController = TextEditingController();
-  List<Map<String, dynamic>> _searchResults = [];
-
-  // For save address details popup
   final TextEditingController _houseNumberController = TextEditingController();
+  List<Map<String, dynamic>> _searchResults = [];
   String _saveAs = "Home";
   String _petsAtHome = "NO";
 
@@ -73,15 +72,11 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
         await Geolocator.openLocationSettings();
         serviceEnabled = await Geolocator.isLocationServiceEnabled();
         if (!serviceEnabled) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location services are required to proceed')),
-          );
+          showToast('Location services are required to proceed');
           return;
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Location services are required to proceed')),
-        );
+        showToast('Location services are required to proceed');
         return;
       }
     }
@@ -111,15 +106,11 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
         if (retry == true) {
           permission = await Geolocator.requestPermission();
           if (permission == LocationPermission.denied) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Location permissions are denied')),
-            );
+            showToast('Location permissions are denied');
             return;
           }
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are denied')),
-          );
+          showToast('Location permissions are denied');
           return;
         }
       }
@@ -148,15 +139,11 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
         await Geolocator.openAppSettings();
         permission = await Geolocator.checkPermission();
         if (permission == LocationPermission.deniedForever) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are permanently denied')),
-          );
+          showToast('Location permissions are permanently denied');
           return;
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Location permissions are permanently denied')),
-        );
+        showToast('Location permissions are permanently denied');
         return;
       }
     }
@@ -201,15 +188,10 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
         await _mapController!.animateCamera(
           CameraUpdate.newLatLngZoom(newPosition, 15),
         );
-      } else {
-        _initialPosition = newPosition;
       }
-
       await _updateAddress(newPosition);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error getting location: $e')),
-      );
+      showToast('Error getting location: $e');
       setState(() {
         _initialPosition = const LatLng(23.0365, 72.5611);
       });
@@ -234,21 +216,17 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
       );
       Placemark place = placemarks[0];
       setState(() {
+        _currentPlacemark = place;
         _currentAddress =
             "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
-      });
-
-      // Check if the location's pincode is in the serviceable list
-      String? postalCode = place.postalCode;
-      bool isInServiceablePincode = postalCode != null && _serviceablePincodes.contains(postalCode);
-      setState(() {
-        _isServiceAvailable = isInServiceablePincode;
+        _isServiceAvailable = place.postalCode != null && _serviceablePincodes.contains(place.postalCode);
       });
     } catch (e) {
       setState(() {
         _currentAddress = "Unable to fetch address";
         _isServiceAvailable = false;
       });
+      showToast('Error fetching address: $e');
     }
   }
 
@@ -257,7 +235,6 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
       _mapController = controller;
       _isMapReady = true;
     });
-
     if (_isMapReady) {
       _mapController?.animateCamera(
         CameraUpdate.newLatLngZoom(_initialPosition, 15),
@@ -300,9 +277,7 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
         _searchResults = results;
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error searching location: $e')),
-      );
+      showToast('Error searching location: $e');
       setState(() {
         _searchResults = [];
       });
@@ -591,14 +566,38 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-                          String finalAddress = "${_houseNumberController.text}, $_currentAddress";
-                          finalAddress += "\nSaved as: $_saveAs";
-                          finalAddress += "\nPets at home: $_petsAtHome";
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Address saved: $finalAddress')),
-                          );
+                        onPressed: () async {
+                          if (_currentPlacemark == null) {
+                            showToast('Please select a valid address');
+                            return;
+                          }
+                          if (_houseNumberController.text.trim().isEmpty) {
+                            showToast('Please enter house number');
+                            return;
+                          }
+
+                          final addressData = {
+                            'address_type': _saveAs.toLowerCase(),
+                            'address_label': _saveAs,
+                            'flat_no': _houseNumberController.text.trim(),
+                            'street': _currentPlacemark!.street ?? '',
+                            'landmark': _currentPlacemark!.subLocality ?? '',
+                            'city': _currentPlacemark!.locality ?? '',
+                            'state': _currentPlacemark!.administrativeArea ?? '',
+                            'pincode': _currentPlacemark!.postalCode ?? '',
+                            // 'format_address': _currentAddress,
+                            'isPrimary': true,
+                          };
+                          print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
+                          print(addressData);
+
+                          try {
+                            await Provider.of<AddressProvider>(context, listen: false).createAddress(addressData);
+                            showToast('Address saved successfully');
+                            context.go('/home');
+                          } catch (e) {
+                            showToast('Failed to save address: $e');
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
@@ -629,6 +628,8 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
   void _confirmLocation() {
     if (_isServiceAvailable) {
       _showSaveAddressBottomSheet();
+    } else {
+      showToast('Service is not available at this location');
     }
   }
 
@@ -653,9 +654,7 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
             left: 16,
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.black, size: 30),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => context.go('/details'),
             ),
           ),
           Center(
@@ -740,7 +739,7 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _isServiceAvailable ? _confirmLocation : null,
+                      onPressed: _confirmLocation,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _isServiceAvailable
                             ? Colors.blue

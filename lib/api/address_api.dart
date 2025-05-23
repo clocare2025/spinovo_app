@@ -1,56 +1,34 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spinovo_app/models/address_model.dart';
 import 'package:spinovo_app/utiles/constants.dart';
 
-
-class AddressApiService {
+class AddressApi {
   static const String baseUrl = AppConstants.BASE_URL;
 
-  Future<Address> createAddress(Map<String, dynamic> addressData, String token) async {
+  Future<AddressModel> createAddress(Map<String, dynamic> addressData) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(AppConstants.TOKEN);
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Authentication token is missing');
+    }
+
     final response = await http.post(
-      Uri.parse('$baseUrl/consumer/address/create'),
+      Uri.parse('$baseUrl/api/v1/consumer/address/create'),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
       body: jsonEncode(addressData),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
     );
-    final json = jsonDecode(response.body);
-    if (json['status'] == true) {
-      return Address.fromJson(json['data']['address']);
-    } else {
-      throw Exception(json['msg'] ?? 'Failed to create address');
-    }
-  }
 
-  Future<List<Address>> getAddressList(String token) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/consumer/address/list'),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
-    final json = jsonDecode(response.body);
-    if (json['status'] == true) {
-      return (json['data']['address'] as List)
-          .map((item) => Address.fromJson(item))
-          .toList();
+    if (response.statusCode == 200) {
+      return AddressModel.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception(json['msg'] ?? 'Failed to fetch address list');
-    }
-  }
-
-  Future<void> deleteAddress(String addressId, String token) async {
-    final response = await http.delete(
-      Uri.parse('$baseUrl/consumer/address/delete/$addressId'),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
-    final json = jsonDecode(response.body);
-    if (json['status'] != true) {
-      throw Exception(json['msg'] ?? 'Failed to delete address');
+      final error = jsonDecode(response.body);
+      throw Exception(error['msg'] ?? 'Failed to create address: ${response.statusCode}');
     }
   }
 }

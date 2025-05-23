@@ -36,5 +36,29 @@ class ServiceData {
         {"qty": 30},
       ]
     },
+    {
+      'service_id': 4,
+      "service": "Dry Cleaning",
+      "original": 120,
+      "discounted": 100,
+      "prices_by_qty": [
+        {"qty": 5},
+        {"qty": 10},
+        {"qty": 20},
+        {"qty": 30},
+      ]
+    },
+    {
+      'service_id': 5,
+      "service": "Shoes Cleaning",
+      "original": 40,
+      "discounted": 30,
+      "prices_by_qty": [
+        {"qty": 2},
+        {"qty": 3},
+        {"qty": 5},
+        {"qty": 6},
+      ]
+    },
   ];
 }

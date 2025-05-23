@@ -15,14 +15,12 @@ class AuthProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  // Initialize auth state from SharedPreferences
   Future<void> initAuth() async {
     final prefs = await SharedPreferences.getInstance();
     _token = prefs.getString(AppConstants.TOKEN);
     notifyListeners();
   }
 
-  // Send OTP
   Future<OtpModel?> sendOtp(String mobile) async {
     try {
       _isLoading = true;
@@ -33,7 +31,7 @@ class AuthProvider with ChangeNotifier {
       if (response.status == true) {
         return response;
       } else {
-        _errorMessage = 'Failed to send OTP';
+        _errorMessage = response.msg ?? 'Failed to send OTP';
         return null;
       }
     } catch (e) {
@@ -45,34 +43,33 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  // Login user
-  Future<bool> login(String mobile) async {
+  Future<UserModel?> login(String mobile) async {
     try {
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();
 
       final response = await _authApi.userLogin(mobile);
-      if (response.status == true) {
+      print('login provider ${response}');
+      if (response.status == true && response.data?.user?.accessToken != null) {
         _token = response.data!.user!.accessToken;
-        print('_token AuthProvider $_token');
         final prefs = await SharedPreferences.getInstance();
+      print('prefs ${_token}');
         await prefs.setString(AppConstants.TOKEN, _token!);
-        return true;
+        return response;
       } else {
-        _errorMessage = 'Login failed';
-        return false;
+        _errorMessage = response.msg ?? 'Login failed';
+        return null;
       }
     } catch (e) {
       _errorMessage = 'Error: $e';
-      return false;
+      return null;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  // Signup user
   Future<bool> signup(String name, String mobile, String livingType) async {
     try {
       _isLoading = true;
@@ -80,13 +77,13 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
 
       final response = await _authApi.userSignup(name, mobile, livingType);
-      if (response.status == true) {
+      if (response.status == true && response.data?.user?.accessToken != null) {
         _token = response.data!.user!.accessToken;
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(AppConstants.TOKEN, _token!);
         return true;
       } else {
-        _errorMessage = 'Signup failed';
+        _errorMessage = response.msg ?? 'Signup failed';
         return false;
       }
     } catch (e) {
@@ -98,7 +95,6 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  // Logout user
   Future<void> logout() async {
     _token = null;
     final prefs = await SharedPreferences.getInstance();

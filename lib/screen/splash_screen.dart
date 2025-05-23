@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-
-import 'package:spinovo_app/providers/auth_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:spinovo_app/utiles/constants.dart';
 import 'package:spinovo_app/widget/text_widget.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -17,20 +16,20 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3), () {
-    
-      _checkLoggedIn();
-    });
+    Timer(const Duration(seconds: 3), _checkLoggedIn);
   }
 
-  void _checkLoggedIn() {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    if (authProvider.token != null && authProvider.token!.isNotEmpty) {
+  Future<void> _checkLoggedIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(AppConstants.TOKEN);
+
+    print("authProvider.token ${token}");
+    if (token != null && token.isNotEmpty) {
+      // ignore: use_build_context_synchronously
       context.go('/home');
-           print("home ${authProvider.token}");
     } else {
+      // ignore: use_build_context_synchronously
       context.go('/phone');
-        print("phone ${authProvider.token}");
     }
   }
 
