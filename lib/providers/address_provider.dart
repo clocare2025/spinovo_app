@@ -74,17 +74,28 @@ class AddressProvider with ChangeNotifier {
   }
 
   // Set primary address
-  void setPrimaryAddress(String addressId) {
-    _addresses = _addresses.map((address) {
-      address.isPrimary = address.addressId == addressId;
-      return address;
-    }).toList();
-    notifyListeners();
+  Future<void> setPrimaryAddress(String addressId) async {
+    try {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+
+      // Call API to set default address
+      await _addressApi.setDefaultAddress(addressId);
+
+      // Update local state
+      _addresses = _addresses.map((address) {
+        address.isPrimary = address.addressId == addressId;
+        return address;
+      }).toList();
+    } catch (e) {
+      _errorMessage = 'Error: $e';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 }
-
-
-
 
 // import 'package:flutter/material.dart';
 // import 'package:spinovo_app/api/address_api.dart';

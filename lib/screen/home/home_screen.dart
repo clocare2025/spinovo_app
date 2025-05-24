@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:spinovo_app/component/home_appbar.dart';
 import 'package:spinovo_app/component/msgSection.dart';
+import 'package:spinovo_app/providers/address_provider.dart';
 import 'package:spinovo_app/screen/checkout/checkout_screen.dart';
 import 'package:spinovo_app/screen/home/home_componebt.dart';
 import 'package:spinovo_app/utiles/assets.dart';
@@ -12,8 +14,14 @@ import 'package:spinovo_app/widget/text_widget.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
+  
+
   @override
   Widget build(BuildContext context) {
+    // Fetch addresses when the screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AddressProvider>(context, listen: false).fetchAddresses();
+    });
     return Scaffold(
       backgroundColor: AppColor.bgColor,
       appBar: const PreferredSize(

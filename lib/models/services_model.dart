@@ -48,6 +48,7 @@ class Data {
 class Service {
   int? serviceId;
   String? service;
+  int? minQty;
   int? original;
   int? discounted;
   List<PricesByQty>? pricesByQty;
@@ -55,6 +56,7 @@ class Service {
   Service(
       {this.serviceId,
       this.service,
+      this.minQty,
       this.original,
       this.discounted,
       this.pricesByQty});
@@ -62,6 +64,7 @@ class Service {
   Service.fromJson(Map<String, dynamic> json) {
     serviceId = json['service_id'];
     service = json['service'];
+    minQty = json['min_qtq'];
     original = json['original'];
     discounted = json['discounted'];
     if (json['prices_by_qty'] != null) {

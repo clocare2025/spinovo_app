@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -7,9 +8,13 @@ import 'package:spinovo_app/models/services_model.dart';
 import 'package:spinovo_app/models/timeslot_model.dart';
 import 'package:spinovo_app/providers/services_provider.dart';
 import 'package:spinovo_app/providers/timeslot_provider.dart';
+import 'package:spinovo_app/screen/address/address_screen.dart';
+import 'package:spinovo_app/screen/checkout/checkout_appbar.dart';
+import 'package:spinovo_app/screen/checkout/payment_screen.dart';
 import 'package:spinovo_app/utiles/color.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/button.dart';
+import 'package:spinovo_app/widget/custom_textfield.dart';
 import 'package:spinovo_app/widget/size_box.dart';
 import 'package:spinovo_app/widget/text_widget.dart';
 
@@ -18,7 +23,6 @@ class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key, required this.serviceId});
 
   @override
-  // ignore: library_private_types_in_public_api
   _CheckoutScreenState createState() => _CheckoutScreenState();
 }
 
@@ -27,7 +31,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   TimeSlot? _selectedDate;
   String? _selectedTimeSlot;
   String _selectedPeriod = "AM";
+  String? _selectedServiceId;
   int? _selectedServiceQtyIndex;
+  final TextEditingController noOfClothe = TextEditingController();
+  String? _qtyError;
 
   @override
   void initState() {
@@ -43,7 +50,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       timeslotProvider.getTimeSlot().then((_) {
         if (mounted) {
           setState(() {
-            // Set default AM/PM based on current time (02:00 PM IST)
+            // Set default AM/PM based on current time (03:13 PM IST)
             final now = DateTime.now();
             _selectedPeriod = now.hour < 12 ? "AM" : "PM";
 
@@ -60,19 +67,29 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       servicesProvider.getServices().then((_) {
         if (mounted) {
           setState(() {
-            // Set default service quantity index to 0 if available
-            final services = servicesProvider.servicesList?.data?.service
-                ?.firstWhereOrNull((service) =>
-                    service.serviceId.toString() == widget.serviceId);
-            if (services != null &&
-                services.pricesByQty != null &&
-                services.pricesByQty!.isNotEmpty) {
-              _selectedServiceQtyIndex = 0;
+            // Set default service to the first one if available
+            final services = servicesProvider.servicesList?.data?.service;
+            if (services != null && services.isNotEmpty) {
+              _selectedServiceId = services.first.serviceId.toString();
+              if (services.first.pricesByQty != null &&
+                  services.first.pricesByQty!.isNotEmpty) {
+                _selectedServiceQtyIndex = 0;
+                noOfClothe.text =
+                    services.first.pricesByQty!.first.qty.toString();
+              } else {
+                noOfClothe.text = services.first.minQty?.toString() ?? '';
+              }
             }
           });
         }
       });
     });
+  }
+
+  @override
+  void dispose() {
+    noOfClothe.dispose();
+    super.dispose();
   }
 
   @override
@@ -88,29 +105,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         builder: (context, timeslotProvider, servicesProvider, child) {
           return Scaffold(
             backgroundColor: Colors.white,
-            appBar: AppBar(
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: AppColor.textColor),
-                onPressed: () => context.pop(),
-              ),
-              title: CustomText(
-                text: "Home | i-hub Gujrat",
-                size: 15,
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    // Placeholder for "Change" action (e.g., change address)
-                  },
-                  child: CustomText(
-                    text: "Change",
-                    size: 15,
-                    color: AppColor.appbarColor,
-                  ),
-                ),
-              ],
-              backgroundColor: Colors.white,
-              elevation: 0,
+            appBar: const PreferredSize(
+              preferredSize: Size.fromHeight(50),
+              child: AppBarCheckout(),
             ),
             body: timeslotProvider.isLoading || servicesProvider.isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -148,10 +145,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       TimeslotProvider timeslotProvider, ServicesProvider servicesProvider) {
     final timeSlots = timeslotProvider.timeSlot?.data?.timeSlot ?? [];
     final selectedDateSlots = _selectedDate?.slot ?? [];
-    final service = servicesProvider.servicesList?.data?.service
-        ?.firstWhereOrNull(
-            (service) => service.serviceId.toString() == widget.serviceId);
-    final pricesByQty = service?.pricesByQty ?? [];
+    final servicesList = servicesProvider.servicesList?.data?.service ?? [];
+    final selectedService = servicesList.firstWhereOrNull(
+        (service) => service.serviceId.toString() == _selectedServiceId);
+    final pricesByQty = selectedService?.pricesByQty ?? [];
 
     return SingleChildScrollView(
       child: Padding(
@@ -165,12 +162,148 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               fontweights: FontWeight.w500,
             ),
             const Height(15),
-            // Service Selection Section
+            // Service Section
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  servicesList.isEmpty
+                      ? Center(
+                          child: CustomText(
+                            text: "No services available",
+                            color: Colors.grey,
+                          ),
+                        )
+                      : SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: servicesList.asMap().entries.map((entry) {
+                              int index = entry.key;
+                              var service = entry.value;
+
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedServiceId =
+                                        service.serviceId.toString();
+                                    _selectedServiceQtyIndex =
+                                        service.pricesByQty != null &&
+                                                service.pricesByQty!.isNotEmpty
+                                            ? 0
+                                            : null;
+                                    noOfClothe.text = service.pricesByQty !=
+                                                null &&
+                                            service.pricesByQty!.isNotEmpty
+                                        ? service.pricesByQty!.first.qty
+                                            .toString()
+                                        : (service.minQty?.toString() ?? '');
+                                    _qtyError = null;
+                                  });
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(right: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 18),
+                                  decoration: BoxDecoration(
+                                    color: _selectedServiceId ==
+                                            service.serviceId.toString()
+                                        ? const Color(0xFFE9FFEB)
+                                        : Colors.white,
+                                    border: Border.all(
+                                      color: _selectedServiceId ==
+                                              service.serviceId.toString()
+                                          ? const Color(0xFF33C362)
+                                          : Colors.grey[300]!,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: CustomText(
+                                    text: service.service!,
+                                    fontweights: FontWeight.w500,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                ],
+              ),
+            ),
+            const Height(15),
+            // Service Clothes Section
             _buildSectionContainer(
               title: "Select number of Clothes",
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  customTextField(
+                    height: 45,
+                    controller: noOfClothe,
+                    hintText: 'Enter number clothes',
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(100),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        final qty = int.tryParse(value);
+                        if (qty == null ||
+                            qty < (selectedService?.minQty ?? 0)) {
+                          _qtyError =
+                              'Minimum quantity is ${selectedService?.minQty ?? 0}';
+                          _selectedServiceQtyIndex = null;
+                        } else {
+                          _qtyError = null;
+                          // Check if input matches a pricesByQty option
+                          _selectedServiceQtyIndex =
+                              pricesByQty.indexWhere((q) => q.qty == qty);
+                        }
+                      });
+                    },
+                  ),
+                  if (_qtyError != null) ...[
+                    const Height(5),
+                    CustomText(
+                      text: _qtyError!,
+                      color: Colors.red,
+                      size: 12,
+                    ),
+                  ],
+                  const Height(10),
+                  // Display total billing amount
+                  if (noOfClothe.text.isNotEmpty && _qtyError == null) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomText(
+                          text: "Total: ",
+                          size: 12,
+                          fontweights: FontWeight.w500,
+                        ),
+                        CustomText(
+                          text:
+                              "₹${(int.tryParse(noOfClothe.text) ?? 0) * (selectedService?.original ?? 0)} / ",
+                          decoration: TextDecoration.lineThrough,
+                          decorationColor: const Color(0xFFBFC3CF),
+                          size: 12,
+                          color: const Color(0xFFBFC3CF),
+                          fontweights: FontWeight.w500,
+                        ),
+                        CustomText(
+                          text:
+                              "₹${(int.tryParse(noOfClothe.text) ?? 0) * (selectedService?.discounted ?? 0)}",
+                          size: 12,
+                          fontweights: FontWeight.w500,
+                        ),
+                      ],
+                    ),
+                    const Height(10),
+                  ],
                   pricesByQty.isEmpty
                       ? Center(
                           child: CustomText(
@@ -181,25 +314,26 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       : SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: pricesByQty.asMap().entries.map((entry) {
                               int index = entry.key;
                               PricesByQty qty = entry.value;
-                              final qtyOriginalPrice =
-                                  (qty.qty ?? 0) * (service?.original ?? 0);
-                              final qtyDiscountedPrice =
-                                  (qty.qty ?? 0) * (service?.discounted ?? 0);
+                              final qtyOriginalPrice = (qty.qty ?? 0) *
+                                  (selectedService?.original ?? 0);
+                              final qtyDiscountedPrice = (qty.qty ?? 0) *
+                                  (selectedService?.discounted ?? 0);
 
                               return GestureDetector(
                                 onTap: () {
                                   setState(() {
                                     _selectedServiceQtyIndex = index;
+                                    noOfClothe.text = (qty.qty ?? 0).toString();
+                                    _qtyError = null;
                                   });
                                 },
                                 child: Container(
                                   margin: const EdgeInsets.only(right: 12),
-                                  padding: const EdgeInsets.only(
-                                      top: 12, bottom: 12, right: 20, left: 20),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5, horizontal: 20),
                                   decoration: BoxDecoration(
                                     color: _selectedServiceQtyIndex == index
                                         ? const Color(0xFFE9FFEB)
@@ -217,7 +351,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                         text: "${qty.qty ?? 0} Clothes",
                                         fontweights: FontWeight.w500,
                                       ),
-                                      const Height(5),
+                                      const Height(2),
                                       Row(
                                         children: [
                                           CustomText(
@@ -243,7 +377,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             }).toList(),
                           ),
                         ),
-                  const SizedBox(height: 8),
+                  const Height(10),
                 ],
               ),
             ),
@@ -435,18 +569,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildBottomSheet(ServicesProvider servicesProvider) {
-    final service = servicesProvider.servicesList?.data?.service
+    final selectedService = servicesProvider.servicesList?.data?.service
         ?.firstWhereOrNull(
-            (service) => service.serviceId.toString() == widget.serviceId);
-    final selectedQty = _selectedServiceQtyIndex != null && service != null
-        ? service.pricesByQty![_selectedServiceQtyIndex!]
-        : null;
-    final bottomOriginalPrice = selectedQty != null
-        ? (selectedQty.qty ?? 0) * (service?.original ?? 0)
-        : 123;
-    final bottomDiscountedPrice = selectedQty != null
-        ? (selectedQty.qty ?? 0) * (service?.discounted ?? 0)
-        : 150;
+            (service) => service.serviceId.toString() == _selectedServiceId);
+    final enteredQty = int.tryParse(noOfClothe.text);
+    final isValidQty =
+        enteredQty != null && enteredQty >= (selectedService?.minQty ?? 0);
+    final bottomOriginalPrice = isValidQty
+        ? enteredQty! * (selectedService?.original ?? 0)
+        : (selectedService?.minQty ?? 0) * (selectedService?.original ?? 0);
+    final bottomDiscountedPrice = isValidQty
+        ? enteredQty! * (selectedService?.discounted ?? 0)
+        : (selectedService?.minQty ?? 0) * (selectedService?.discounted ?? 0);
 
     return Container(
       width: double.infinity,
@@ -495,44 +629,36 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   void _confirmBooking(ServicesProvider servicesProvider) {
-    final service = servicesProvider.servicesList?.data?.service
+    final selectedService = servicesProvider.servicesList?.data?.service
         ?.firstWhereOrNull(
-            (service) => service.serviceId.toString() == widget.serviceId);
-    final selectedQty = _selectedServiceQtyIndex != null && service != null
-        ? service.pricesByQty![_selectedServiceQtyIndex!]
-        : null;
+            (service) => service.serviceId.toString() == _selectedServiceId);
+    final enteredQty = int.tryParse(noOfClothe.text);
+    final isValidQty =
+        enteredQty != null && enteredQty >= (selectedService?.minQty ?? 0);
 
     if (_selectedDate != null &&
         _selectedTimeSlot != null &&
-        selectedQty != null) {
-
-          
-      var checkoutData = {
+        selectedService != null &&
+        isValidQty) {
+      var extra = {
         'date': _selectedDate!.date,
         'day': _selectedDate!.day,
         'time': _selectedTimeSlot,
         'period': _selectedPeriod,
-        'service_id': widget.serviceId,
-        'service_name': service?.service,
-        'service_qty': selectedQty.qty,
-        'original_price': (selectedQty.qty ?? 0) * (service?.original ?? 0),
-        'discounted_price': (selectedQty.qty ?? 0) * (service?.discounted ?? 0),
+        'service_id': _selectedServiceId,
+        'service_name': selectedService.service,
+        'service_qty': enteredQty,
+        'original_price': enteredQty! * (selectedService.original ?? 0),
+        'discounted_price': enteredQty * (selectedService.discounted ?? 0),
       };
-
-      // context.go('/payment', extra: {
-      //   'date': _selectedDate!.date,
-      //   'day': _selectedDate!.day,
-      //   'time': _selectedTimeSlot,
-      //   'period': _selectedPeriod,
-      //   'service_id': widget.serviceId,
-      //   'service_name': service?.service,
-      //   'service_qty': selectedQty.qty,
-      //   'original_price': (selectedQty.qty ?? 0) * (service?.original ?? 0),
-      //   'discounted_price': (selectedQty.qty ?? 0) * (service?.discounted ?? 0),
-      // });
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const PaymentScreen()),
+      );
       showToast('Booking confirmed');
     } else {
-      showToast('Please select date, time slot, and service quantity');
+      showToast(
+          'Please select date, time slot, service, and a valid quantity (min ${selectedService?.minQty ?? 0})');
     }
   }
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
+import 'package:spinovo_app/services/bottom_navigation.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 
 class AddressMapScreen extends StatefulWidget {
@@ -625,8 +625,12 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
                                       await addressProvider
                                           .createAddress(addressData);
                                       showToast('Address saved successfully');
-                                     Navigator.pop(context);
-                                     Navigator.pop(context);
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => const BottomNavigation()),
+                                        (Route<dynamic> route) => false,
+                                      );
                                     } catch (e) {
                                       showToast('Failed to save address: $e');
                                     }
