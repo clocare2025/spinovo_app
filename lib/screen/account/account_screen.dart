@@ -9,6 +9,7 @@ import 'package:spinovo_app/utiles/color.dart';
 import 'package:spinovo_app/utiles/constants.dart';
 import 'package:spinovo_app/widget/size_box.dart';
 import 'package:spinovo_app/widget/text_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -24,6 +25,24 @@ class _AccountScreenState extends State<AccountScreen> {
     // ignore: use_build_context_synchronously
     context.go('/phone');
   }
+
+
+
+
+final Uri _url = Uri.parse(
+  'https://wa.me/918141116600?text=Hey%20I%20need%20help%20with%20my%20Booking.',
+);
+
+Future<void> _launchUrl() async {
+  if (!await launchUrl(_url, mode: LaunchMode.externalApplication)) {
+    throw Exception('Could not launch $_url');
+  }
+}
+
+
+
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +66,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 context.go('/profile');
               },
             ),
-            _buildListTile(
-              icon: Icons.block,
-              title: 'BLOCKED LIST',
-              subtitle: 'Manage your blocked list',
-              onTap: () {},
-            ),
+
             _buildListTile(
               icon: Icons.location_on_outlined,
               title: 'ADDRESSES',
@@ -75,7 +89,10 @@ class _AccountScreenState extends State<AccountScreen> {
               icon: Icons.help_outline,
               title: 'HELP & SUPPORT',
               subtitle: 'Reach out to us in case you have a question',
-              onTap: () {},
+              onTap: () {  
+                _launchUrl();
+                //whatsapp(context);
+                },
             ),
             _buildListTile(
                 icon: Icons.delete_outline_outlined,

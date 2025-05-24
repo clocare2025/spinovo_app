@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spinovo_app/providers/auth_provider.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
+import 'package:spinovo_app/providers/order_provider.dart';
 import 'package:spinovo_app/providers/services_provider.dart';
 import 'package:spinovo_app/providers/timeslot_provider.dart';
 import 'package:spinovo_app/router/router.dart';
 
 void main() {
+    WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MultiProvider(
       providers: [
@@ -14,6 +16,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => AddressProvider()),
         ChangeNotifierProvider(create: (context) => TimeslotProvider()),
         ChangeNotifierProvider(create: (context) => ServicesProvider()),
+        ChangeNotifierProvider(create:  (context) => OrderProvider()),
       ],
       child: const MyApp(),
     ),
