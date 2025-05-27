@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spinovo_app/providers/wallet_provider.dart';
 import 'package:spinovo_app/screen/address/address_create_screen.dart';
 import 'package:spinovo_app/screen/address/address_screen.dart';
 import 'package:spinovo_app/screen/wallet/wallet_screen.dart';
@@ -33,6 +34,7 @@ class AppbarComponent extends StatelessWidget {
   }
 }
 
+
 class WalletSection extends StatelessWidget {
   const WalletSection({super.key});
 
@@ -54,22 +56,68 @@ class WalletSection extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Image.asset(
-                AppAssets.walletV2,
-                color: AppColor.textColor,
-                height: 16,
-              ),
-              const Widths(6),
-              SmallText(
-                text: "₹500",
-                color: AppColor.textColor,
-                fontweights: FontWeight.w500,
-              ),
-            ],
+          child: Consumer<WalletProvider>(
+            builder: (context, walletProvider, child) {
+              if (walletProvider.isLoading) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    const Widths(6),
+                    SmallText(
+                      text: "Loading...",
+                      color: AppColor.textColor,
+                      fontweights: FontWeight.w500,
+                    ),
+                  ],
+                );
+              }
+
+              if (walletProvider.errorMessage != null) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      AppAssets.walletV2,
+                      color: AppColor.textColor,
+                      height: 16,
+                    ),
+                    const Widths(6),
+                    SmallText(
+                      text: "Error",
+                      color: Colors.red,
+                      fontweights: FontWeight.w500,
+                    ),
+                  ],
+                );
+              }
+
+              final balance = walletProvider.walletBalance?.data?.wallet?.totalBalance?.toInt() ?? 0;
+
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    AppAssets.walletV2,
+                    color: AppColor.textColor,
+                    height: 16,
+                  ),
+                  const Widths(6),
+                  SmallText(
+                    text: "₹$balance",
+                    color: AppColor.textColor,
+                    fontweights: FontWeight.w500,
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),

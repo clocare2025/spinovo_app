@@ -53,7 +53,7 @@ class HomeScreen extends StatelessWidget {
                   const Height(20),
                   const ServiceSection(),
                   const Height(20),
-                  const BookingTrackingSection(),
+                  // const BookingTrackingSection(),
                   const Height(30),
                   const Align(
                     alignment: Alignment.topLeft,
@@ -80,7 +80,7 @@ class ServiceSection extends StatelessWidget {
       context,
       MaterialPageRoute(
           builder: (context) => CheckoutScreen(
-                serviceId: '1',
+                serviceId: serviceId,
               )),
     );
   }
