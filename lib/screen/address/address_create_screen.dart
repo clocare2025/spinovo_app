@@ -11,6 +11,7 @@ class AddressMapScreen extends StatefulWidget {
   const AddressMapScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AddressMapScreenState createState() => _AddressMapScreenState();
 }
 
@@ -625,11 +626,13 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
                                       await addressProvider
                                           .createAddress(addressData);
                                       showToast('Address saved successfully');
-                                      Navigator.pushAndRemoveUntil(
+                                      print('address data save $addressData');
+                                      Navigator.pushReplacement(
+                                        // ignore: use_build_context_synchronously
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => const BottomNavigation()),
-                                        (Route<dynamic> route) => false,
+                                            builder: (context) =>
+                                                const BottomNavigation()),
                                       );
                                     } catch (e) {
                                       showToast('Failed to save address: $e');

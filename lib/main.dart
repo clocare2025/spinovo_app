@@ -5,6 +5,7 @@ import 'package:spinovo_app/providers/address_provider.dart';
 import 'package:spinovo_app/providers/order_provider.dart';
 import 'package:spinovo_app/providers/services_provider.dart';
 import 'package:spinovo_app/providers/timeslot_provider.dart';
+import 'package:spinovo_app/providers/wallet_provider.dart';
 import 'package:spinovo_app/router/router.dart';
 
 void main() {
@@ -17,6 +18,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => TimeslotProvider()),
         ChangeNotifierProvider(create: (context) => ServicesProvider()),
         ChangeNotifierProvider(create:  (context) => OrderProvider()),
+        ChangeNotifierProvider(create: (context) => WalletProvider()),
       ],
       child: const MyApp(),
     ),

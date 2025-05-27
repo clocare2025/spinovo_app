@@ -71,12 +71,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
               ),
             ),
-            Height(10),
+            const Height(8),
             Container(
               width: double.infinity,
               decoration: const BoxDecoration(color: Colors.white),
               child: Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.only(left: 20, right: 20, top: 8, bottom: 8),
                   child: ListTile(
                     dense: true,
                     contentPadding: const EdgeInsets.symmetric(
@@ -85,7 +85,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         const VisualDensity(horizontal: 0, vertical: 0),
                     leading: Image.asset(
                       AppAssets.offerIcon,
-                      color: AppColor.appbarColor,
                       height: 30,
                     ),
                     title: CustomText(
@@ -96,12 +95,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     trailing: const Icon(Icons.arrow_forward_ios_sharp),
                   )),
             ),
-            const Height(10),
+            const Height(8),
             Container(
               width: double.infinity,
               decoration: const BoxDecoration(color: Colors.white),
               child: Padding(
-                  padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.only(left: 20, right: 20, top: 8, bottom: 8),
                   child: ListTile(
                     dense: true,
                     contentPadding: const EdgeInsets.symmetric(
@@ -143,7 +142,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     ),
                   )),
             ),
-            const Height(10),
+            const Height(8),
             Container(
               width: double.infinity,
               decoration: const BoxDecoration(color: Colors.white),

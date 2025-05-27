@@ -45,7 +45,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
     try {
       final success = await authProvider.signup(name, mobileNo, livingType!);
       if (success) {
-        context.go('/address');
+        context.go('/address/create');
         showToast('Signup successful');
       } else {
         showToast(authProvider.errorMessage ?? 'Failed to signup');
@@ -68,16 +68,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
     return Scaffold(
       backgroundColor: AppColor.backgroundColors,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.go('/otp', extra: widget.otpResponse),
-        ),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back, color: Colors.white),
+        //   onPressed: () => context.go('/otp', extra: widget.otpResponse),
+        // ),
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          'Details',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: AppColor.appbarColor,
+
+        backgroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -86,6 +83,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SmallText(
+                text: 'Details',
+                size: 23,
+                fontweights: FontWeight.w500,
+                color: AppColor.textColor,
+              ),
+              const Height(20),
               const TextTitle(title: 'Your Full Name'),
               const Height(8),
               customTextField(
