@@ -617,7 +617,7 @@ void initState() {
         'booking_date': _selectedDate!.date,
         'booking_time': '$_selectedTimeSlot $_selectedPeriod',
         'address_id': defaultAddress.addressId,
-        'address': defaultAddress.formatAddress,
+        // 'address': defaultAddress.formatAddress,
       };
       Navigator.push(
         context,

@@ -8,6 +8,7 @@ import 'package:spinovo_app/providers/wallet_provider.dart';
 import 'package:spinovo_app/razorpay/payment_utils.dart';
 import 'package:spinovo_app/screen/address/address_screen.dart';
 import 'package:spinovo_app/screen/coupon/coupon_screen.dart';
+import 'package:spinovo_app/services/bottom_navigation.dart';
 import 'package:spinovo_app/utiles/assets.dart';
 import 'package:spinovo_app/utiles/color.dart';
 import 'package:spinovo_app/utiles/toast.dart';
@@ -505,7 +506,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
         addressId: addressId,
         onSuccess: () {
           _showToast('Payment successful');
-          Navigator.pushNamed(context, '/bookings');
+          Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const BottomNavigation()),
+            );
         },
         onError: (error) {
           String errorMessage;

@@ -14,24 +14,25 @@ class OrderApi {
     if (token == null || token.isEmpty) {
       throw Exception('Authentication token is missing');
     }
-try{
-    final response = await http.post(
-      Uri.parse('$baseUrl/api/v1/consumer/order/create'),
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(bookingDetails),
-    );
-
-    if (response.statusCode == 200) {
-      return OrderModel.fromJson(jsonDecode(response.body));
-    } else {
-      final error = jsonDecode(response.body);
-      throw Exception(error['msg'] ?? 'Failed to create booking: ${response.statusCode}');
-    }} catch (e){
-
-    throw Exception(e);
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/v1/consumer/order/create'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(bookingDetails),
+      );
+      print('wastik order api call ${response.body}');
+      if (response.statusCode == 200) {
+        return OrderModel.fromJson(jsonDecode(response.body));
+      } else {
+        final error = jsonDecode(response.body);
+        throw Exception(
+            error['msg'] ?? 'Failed to create booking: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception(e);
     }
   }
 
@@ -61,7 +62,8 @@ try{
       }
     } else {
       final error = jsonDecode(response.body);
-      throw Exception(error['msg'] ?? 'Failed to fetch order list: ${response.statusCode}');
+      throw Exception(
+          error['msg'] ?? 'Failed to fetch order list: ${response.statusCode}');
     }
   }
 
@@ -85,7 +87,8 @@ try{
       return OrderModel.fromJson(jsonDecode(response.body));
     } else {
       final error = jsonDecode(response.body);
-      throw Exception(error['msg'] ?? 'Failed to cancel booking: ${response.statusCode}');
+      throw Exception(
+          error['msg'] ?? 'Failed to cancel booking: ${response.statusCode}');
     }
   }
 }
