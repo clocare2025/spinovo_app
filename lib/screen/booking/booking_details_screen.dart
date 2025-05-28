@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:spinovo_app/component/custom_appbar.dart';
 import 'package:spinovo_app/models/order_model.dart';
 import 'package:spinovo_app/utiles/color.dart';
+import 'package:spinovo_app/widget/text_widget.dart';
 
 class BookingDetailsScreen extends StatelessWidget {
   final Order order;
@@ -21,8 +22,8 @@ class BookingDetailsScreen extends StatelessWidget {
     final formattedDate = DateFormat('h:mm a, d MMMM').format(bookingDate);
 
     return Scaffold(
-        backgroundColor: AppColor.bgColor,
-           appBar: const PreferredSize(
+      backgroundColor: AppColor.bgColor,
+      appBar: const PreferredSize(
         preferredSize: Size.fromHeight(60),
         child: CustomAppBar(
           title: "Booking Details",
@@ -68,10 +69,10 @@ class BookingDetailsScreen extends StatelessWidget {
                         height: 60,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.orange,
+                          color: Colors.green,
                         ),
                         child: const Icon(
-                          Icons.close,
+                          Icons.check,
                           color: Colors.white,
                           size: 40,
                         ),
@@ -79,14 +80,17 @@ class BookingDetailsScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'JOB CANCELLED',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  CustomText(
+                    text: "Thanks!",
+                    size: 24,
+                    fontweights: FontWeight.bold,
+                    color: Colors.white,
                   ),
+                  CustomText(
+                      text: "Your booking is confirmed",
+                      size: 24,
+                      fontweights: FontWeight.bold,
+                      color: Colors.white),
                 ],
               ),
             ),
@@ -161,7 +165,8 @@ class BookingDetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    order.transactionId!.toUpperCase(), // Assuming transactionId as payment mode placeholder
+                    order.transactionId!
+                        .toUpperCase(), // Assuming transactionId as payment mode placeholder
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,

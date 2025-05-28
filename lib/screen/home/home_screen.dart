@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:spinovo_app/component/home_appbar.dart';
 import 'package:spinovo_app/component/msgSection.dart';
@@ -13,8 +14,6 @@ import 'package:spinovo_app/widget/text_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +74,7 @@ class ServiceSection extends StatelessWidget {
   });
 
   void _serviceTap(int serviceId, context) {
-    print(serviceId);
+    // print(serviceId);
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -101,8 +100,29 @@ class ServiceSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                HeadingText(
-                  text: 'Our Services',
+                Row(
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    HeadingText(
+                      text: 'Our Services',
+                    ),
+                    Lottie.asset(
+                      'asset/icons/service_svg.json',
+                      height: 25,
+                      frameRate: FrameRate(1),
+                      delegates: LottieDelegates(
+                        values: [
+                          ValueDelegate.color(
+                            const [
+                              '**'
+                            ], // Wildcard to apply color to all elements
+                            value: const Color.fromARGB(255, 28, 155,
+                                71), // Replace with your desired color
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
                 ),
                 SmallText(
                   text: 'All your laundry needs, just a tap away.',

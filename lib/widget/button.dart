@@ -12,6 +12,7 @@ class ContinueButton extends StatelessWidget {
   final Color? textColor;
   final BoxBorder? border;
   final bool isLoading;
+  final double? textSize;
 
   const ContinueButton({
     super.key,
@@ -23,7 +24,7 @@ class ContinueButton extends StatelessWidget {
     this.textColor = Colors.white,
     this.isLoading = false,
     this.height = 48,
-    this.width = double.infinity,
+    this.width = double.infinity, this.textSize = 16,
   });
 
   @override
@@ -48,7 +49,8 @@ class ContinueButton extends StatelessWidget {
                   : SmallText(
                       text: text,
                       color: isValid ? textColor : const Color(0xFFBCBCCD),
-                      size: 16,
+                      size: textSize,
+                      fontweights: FontWeight.w400,
                     ))),
     );
   }

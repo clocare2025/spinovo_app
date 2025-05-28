@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spinovo_app/providers/wallet_provider.dart';
-import 'package:spinovo_app/screen/address/address_create_screen.dart';
 import 'package:spinovo_app/screen/address/address_screen.dart';
 import 'package:spinovo_app/screen/wallet/wallet_screen.dart';
 import 'package:spinovo_app/utiles/assets.dart';
@@ -34,7 +33,6 @@ class AppbarComponent extends StatelessWidget {
   }
 }
 
-
 class WalletSection extends StatelessWidget {
   const WalletSection({super.key});
 
@@ -55,7 +53,8 @@ class WalletSection extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(50)),
         ),
         child: Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
+          padding:
+              const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
           child: Consumer<WalletProvider>(
             builder: (context, walletProvider, child) {
               if (walletProvider.isLoading) {
@@ -98,7 +97,10 @@ class WalletSection extends StatelessWidget {
                 );
               }
 
-              final balance = walletProvider.walletBalance?.data?.wallet?.totalBalance?.toInt() ?? 0;
+              final balance = walletProvider
+                      .walletBalance?.data?.wallet?.totalBalance
+                      ?.toInt() ??
+                  0;
 
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -137,7 +139,8 @@ class AddressSection extends StatelessWidget {
         if (addressProvider.addresses.isNotEmpty) {
           primaryAddress = addressProvider.addresses.firstWhere(
             (address) => address.isPrimary == true,
-            orElse: () => addressProvider.addresses.first, // Fallback to first address if no primary
+            orElse: () => addressProvider
+                .addresses.first, // Fallback to first address if no primary
           );
         }
 
@@ -177,7 +180,8 @@ class AddressSection extends StatelessWidget {
                       SizedBox(
                         width: 150,
                         child: SmallText(
-                          text: primaryAddress?.formatAddress ?? 'No address selected',
+                          text: primaryAddress?.formatAddress ??
+                              'No address selected',
                           color: Colors.white,
                         ),
                       ),

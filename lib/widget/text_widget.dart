@@ -10,7 +10,7 @@ class SmallText extends StatelessWidget {
   final double? letterSpacing;
   final double? height;
   final TextAlign? textAlign;
-  double size;
+  final double? size;
   TextOverflow overFlow;
   SmallText({
     super.key,
