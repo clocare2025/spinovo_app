@@ -4,13 +4,14 @@ import 'package:spinovo_app/providers/auth_provider.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
 import 'package:spinovo_app/providers/order_provider.dart';
 import 'package:spinovo_app/providers/package_provider.dart';
+import 'package:spinovo_app/providers/profile_provider.dart';
 import 'package:spinovo_app/providers/services_provider.dart';
 import 'package:spinovo_app/providers/timeslot_provider.dart';
 import 'package:spinovo_app/providers/wallet_provider.dart';
 import 'package:spinovo_app/router/router.dart';
 
 void main() {
-    WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MultiProvider(
       providers: [
@@ -18,9 +19,11 @@ void main() {
         ChangeNotifierProvider(create: (context) => AddressProvider()),
         ChangeNotifierProvider(create: (context) => TimeslotProvider()),
         ChangeNotifierProvider(create: (context) => ServicesProvider()),
-        ChangeNotifierProvider(create:  (context) => OrderProvider()),
+        ChangeNotifierProvider(create: (context) => OrderProvider()),
         ChangeNotifierProvider(create: (context) => WalletProvider()),
         ChangeNotifierProvider(create: (context) => PackageProvider()),
+        ChangeNotifierProvider(
+            create: (context) => ProfileProvider()), // Add this provider
       ],
       child: const MyApp(),
     ),

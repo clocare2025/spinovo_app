@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:spinovo_app/models/package_model.dart';
 import 'package:spinovo_app/providers/package_provider.dart';
+import 'package:spinovo_app/screen/checkout/package/package_checkout_screen.dart';
 import 'package:spinovo_app/utiles/designe.dart';
 import 'package:spinovo_app/widget/button.dart';
 import 'package:spinovo_app/widget/size_box.dart';
@@ -395,7 +396,13 @@ class SpinovoNowSection extends StatelessWidget {
                           isValid: true,
                           isLoading: false,
                           onTap: () {
-                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                       PackageCheckoutScreen(package: package, )),
+                            );
+                            // Navigator.pop(context);
                           },
                         ),
                       ),
@@ -413,7 +420,13 @@ class SpinovoNowSection extends StatelessWidget {
                           isValid: true,
                           isLoading: false,
                           onTap: () {
-                            Navigator.pop(context);
+                              Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                       PackageCheckoutScreen(package: package, )),
+                            );
+                            // Navigator.pop(context);
                           },
                         ),
                       ),

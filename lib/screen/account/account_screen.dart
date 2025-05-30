@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spinovo_app/component/custom_appbar.dart';
 import 'package:spinovo_app/providers/auth_provider.dart';
+import 'package:spinovo_app/screen/account/profile_screen.dart';
 import 'package:spinovo_app/screen/address/address_screen.dart';
 import 'package:spinovo_app/utiles/color.dart';
 import 'package:spinovo_app/utiles/constants.dart';
@@ -26,23 +27,15 @@ class _AccountScreenState extends State<AccountScreen> {
     context.go('/phone');
   }
 
+  final Uri _url = Uri.parse(
+    'https://wa.me/918141116600?text=Hey%20I%20need%20help%20with%20my%20Booking.',
+  );
 
-
-
-final Uri _url = Uri.parse(
-  'https://wa.me/918141116600?text=Hey%20I%20need%20help%20with%20my%20Booking.',
-);
-
-Future<void> _launchUrl() async {
-  if (!await launchUrl(_url, mode: LaunchMode.externalApplication)) {
-    throw Exception('Could not launch $_url');
+  Future<void> _launchUrl() async {
+    if (!await launchUrl(_url, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch $_url');
+    }
   }
-}
-
-
-
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -63,10 +56,12 @@ Future<void> _launchUrl() async {
               title: 'PROFILE',
               subtitle: 'Update personal information',
               onTap: () {
-                context.go('/profile');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfileScreen()),
+                );
               },
             ),
-
             _buildListTile(
               icon: Icons.location_on_outlined,
               title: 'ADDRESSES',
@@ -83,16 +78,22 @@ Future<void> _launchUrl() async {
               icon: Icons.description_outlined,
               title: 'POLICIES',
               subtitle: 'Terms of Use, Privacy Policy and others',
-              onTap: () {},
+              onTap: () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //       builder: (context) =>  ServiceBookingScreen()),
+                // );
+              },
             ),
             _buildListTile(
               icon: Icons.help_outline,
               title: 'HELP & SUPPORT',
               subtitle: 'Reach out to us in case you have a question',
-              onTap: () {  
+              onTap: () {
                 _launchUrl();
                 //whatsapp(context);
-                },
+              },
             ),
             _buildListTile(
                 icon: Icons.delete_outline_outlined,

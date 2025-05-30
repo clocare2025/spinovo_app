@@ -1,3 +1,5 @@
+import 'package:easy_stepper/easy_stepper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -224,7 +226,7 @@ class BookingTrackingSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
+      // height: 200,
       width: double.infinity,
       decoration: AppDesigne.homeScreenBoxDecoration,
       child: Padding(
@@ -233,8 +235,17 @@ class BookingTrackingSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            HeadingText(
-              text: 'Ongoing Booking',
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                HeadingText(
+                  text: 'Ongoing Booking',
+                ),
+                Lottie.asset(
+                  'asset/icons/tracking_v3.json',
+                  height: 30,
+                )
+              ],
             ),
             SmallText(
               text: 'Pickup in 10 minutes',
@@ -242,7 +253,165 @@ class BookingTrackingSection extends StatelessWidget {
               color: Colors.redAccent,
               letterSpacing: 0,
             ),
+            const Height(20),
+            EasyStepper(
+              fitWidth: true,
+              direction: Axis.horizontal,
+              activeStep: 0,
+              lineStyle: LineStyle(
+                unreachedLineColor: AppColor.textColor,
+                activeLineColor: AppColor.appbarColor,
+                lineLength: 80,
+                lineThickness: 1,
+                lineSpace: 5,
+              ),
+              stepRadius: 15,
+              unreachedStepIconColor: AppColor.textColor,
+              unreachedStepBorderColor: AppColor.textColor,
+              unreachedStepTextColor: AppColor.textColor,
+              activeStepBackgroundColor: AppColor.appbarColor,
+              activeStepBorderColor: AppColor.appbarColor,
+              activeStepTextColor: AppColor.appbarColor,
+              activeStepIconColor: AppColor.bgColor,
+              finishedStepTextColor: AppColor.appbarColor,
+              finishedStepBackgroundColor: AppColor.appbarColor,
+              showLoadingAnimation: false,
+              showTitle: true,
+              enableStepTapping: false,
+              steppingEnabled: true,
+              steps: const [
+                EasyStep(
+                  icon: Icon(
+                    Icons.local_shipping_outlined,
+                  ),
+                ),
+                EasyStep(
+                  icon: Icon(Icons.wifi_protected_setup_sharp),
+                ),
+                EasyStep(
+                  icon: Icon(CupertinoIcons.arrow_up_bin_fill),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          SmallText(
+                            text: 'Status: ',
+                            fontweights: FontWeight.w500,
+                          ),
+                          SmallText(
+                            text: 'Out of Pickup',
+                            color: Colors.green,
+                            fontweights: FontWeight.w500,
+                          ),
+                        ],
+                      ),
+                      const Height(10),
+                      SmallText(
+                        text: 'When',
+                        color: Colors.grey,
+                        fontweights: FontWeight.w500,
+                      ),
+                      SmallText(
+                        text: 'Today, 10:00 AM',
+                        color: AppColor.textColor,
+                        fontweights: FontWeight.w500,
+                      ),
+                    ],
+                  ),
+                ),
+                const Widths(20),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          SmallText(
+                            text: 'Order id: ',
+                            fontweights: FontWeight.w500,
+                          ),
+                          SmallText(
+                            text: 'ORD123',
+                            color: Colors.black,
+                            fontweights: FontWeight.w500,
+                          ),
+                        ],
+                      ),
+                      const Height(10),
+                      SmallText(
+                        text: 'Where',
+                        color: Colors.grey,
+                        fontweights: FontWeight.w500,
+                      ),
+                      SmallText(
+                        text: '123, 2nd floor, ihub, gujrat',
+                        color: AppColor.textColor,
+                        overFlow: TextOverflow.visible,
+                        fontweights: FontWeight.w500,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
             const Height(10),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     SizedBox(
+            //       width: 120,
+            //       child: Column(
+            //         mainAxisAlignment: MainAxisAlignment.start,
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: [
+            //           SmallText(
+            //             text: 'When',
+            //             color: Colors.grey,
+            //             fontweights: FontWeight.w500,
+            //           ),
+            //           SmallText(
+            //             text: 'Today, 10:00 AM',
+            //             color: AppColor.textColor,
+            //             fontweights: FontWeight.w500,
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //     SizedBox(
+            //       width: 120,
+            //       child: Column(
+            //         mainAxisAlignment: MainAxisAlignment.start,
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: [
+            //           SmallText(
+            //             text: 'Where',
+            //             color: Colors.grey,
+            //             fontweights: FontWeight.w500,
+            //           ),
+            //           SmallText(
+            //             text: '123, 2nd floor, ihub, gujrat',
+            //             color: AppColor.textColor,
+            //             overFlow: TextOverflow.visible,
+            //             fontweights: FontWeight.w500,
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            // const Height(10),
           ],
         ),
       ),
