@@ -22,8 +22,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => OrderProvider()),
         ChangeNotifierProvider(create: (context) => WalletProvider()),
         ChangeNotifierProvider(create: (context) => PackageProvider()),
-        ChangeNotifierProvider(
-            create: (context) => ProfileProvider()), // Add this provider
+        ChangeNotifierProvider(create: (context) => ProfileProvider()), // Add this provider
       ],
       child: const MyApp(),
     ),
