@@ -30,6 +30,7 @@ class PackagePaymentScreen extends StatefulWidget {
 
 class _PackagePaymentScreenState extends State<PackagePaymentScreen> {
   int _selectedTip = 0;
+  int handlingCharge = 6;
   late PaymentUtils _paymentUtils;
   bool _useWallet = false;
   bool _isNavigating = false; // Prevent multiple navigations
@@ -85,9 +86,11 @@ class _PackagePaymentScreenState extends State<PackagePaymentScreen> {
                     addressId: null, formatAddress: 'No address available'),
           );
           final charges = {
-            'service_charge':  widget.bookingDetails['service_charges'] as int? ?? 0,
+            'service_charge':
+                widget.bookingDetails['service_charges'] as int? ?? 0,
             'slot_charge': widget.bookingDetails['slot_charges'] as int? ?? 0,
             'tips': _selectedTip,
+            'handling_charge': handlingCharge,
           };
           final totalPayable = charges.values.reduce((a, b) => a + b);
           final payableAfterWallet = _useWallet
@@ -427,7 +430,7 @@ class _PackagePaymentScreenState extends State<PackagePaymentScreen> {
               _buildChargeRow("Discount", -discount, color: Colors.green),
             ],
             const Height(10),
-            _buildChargeRow("Service Charge", charges['service_charge']!),
+            _buildChargeRow("Handling charge", charges['handling_charge']!),
             const Height(10),
             _buildChargeRow("Slot Charge", charges['slot_charge']!),
             if (charges['tips']! > 0) ...[
