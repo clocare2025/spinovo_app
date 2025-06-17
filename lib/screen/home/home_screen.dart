@@ -8,6 +8,90 @@ import 'package:spinovo_app/component/msgSection.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
 import 'package:spinovo_app/screen/checkout/checkout_screen.dart';
 import 'package:spinovo_app/screen/home/home_componebt.dart';
+import 'package:spinovo_app/screen/home/home_without_address.dart';
+import 'package:spinovo_app/utiles/assets.dart';
+import 'package:spinovo_app/utiles/color.dart';
+import 'package:spinovo_app/utiles/designe.dart';
+import 'package:spinovo_app/widget/size_box.dart';
+import 'package:spinovo_app/widget/text_widget.dart';
+
+// class HomeScreen extends StatelessWidget {
+//   const HomeScreen({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // Fetch addresses when the screen loads
+//     WidgetsBinding.instance.addPostFrameCallback((_) {
+//       Provider.of<AddressProvider>(context, listen: false).fetchAddresses();
+//     });
+//     return Scaffold(
+//       backgroundColor: AppColor.bgColor,
+//       appBar: const PreferredSize(
+//         preferredSize: Size.fromHeight(100),
+//         child: AppbarComponent(),
+//       ),
+//       body: SingleChildScrollView(
+//         child: Column(
+//           children: [
+//             Container(
+//               height: 20,
+//               width: double.infinity,
+//               decoration: BoxDecoration(
+//                   color: AppColor.appbarColor,
+//                   borderRadius: const BorderRadius.only(
+//                     bottomRight: Radius.circular(20),
+//                     bottomLeft: Radius.circular(20),
+//                   )),
+//             ),
+//             Padding(
+//               padding: const EdgeInsets.all(12),
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.start,
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   InkWell(
+//                       onTap: () {
+//                         Navigator.push(
+//                           context,
+//                           MaterialPageRoute(
+//                               builder: (context) => const CheckoutScreen(
+//                                     serviceId: 1,
+//                                   )),
+//                         );
+//                       },
+//                       child: Image.asset('asset/images/van_banner.png')),
+//                   const Height(10),
+//                   const SpinovoNowSection(),
+//                   const Height(20),
+//                   const ServiceSection(),
+//                   const Height(20),
+//                   // const BookingTrackingSection(),
+//                   const Height(30),
+//                   const Align(
+//                     alignment: Alignment.topLeft,
+//                     child: HomeMsgSextion(),
+//                   ),
+//                 ],
+//               ),
+//             )
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+import 'package:easy_stepper/easy_stepper.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
+import 'package:spinovo_app/component/home_appbar.dart';
+import 'package:spinovo_app/component/msgSection.dart';
+import 'package:spinovo_app/providers/address_provider.dart';
+import 'package:spinovo_app/screen/checkout/checkout_screen.dart';
+import 'package:spinovo_app/screen/home/home_componebt.dart';
 import 'package:spinovo_app/utiles/assets.dart';
 import 'package:spinovo_app/utiles/color.dart';
 import 'package:spinovo_app/utiles/designe.dart';
@@ -23,48 +107,75 @@ class HomeScreen extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<AddressProvider>(context, listen: false).fetchAddresses();
     });
+
     return Scaffold(
       backgroundColor: AppColor.bgColor,
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(100),
         child: AppbarComponent(),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: 20,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  color: AppColor.appbarColor,
-                  borderRadius: const BorderRadius.only(
-                    bottomRight: Radius.circular(20),
-                    bottomLeft: Radius.circular(20),
-                  )),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
+      body: Consumer<AddressProvider>(
+        builder: (context, addressProvider, child) {
+          if (addressProvider.isLoading) {
+            // Show loading indicator while fetching addresses
+            return const Center(child: CircularProgressIndicator());
+          } else if (addressProvider.addresses.isEmpty) {
+            // Show WithoutAddressSection if no addresses are available
+            return const WithoutAddressSection();
+          } else {
+            // Show the main content if addresses are available
+            return SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.asset('asset/images/van_banner.png'),
-                  const Height(10),
-                  const SpinovoNowSection(),
-                  const Height(20),
-                  const ServiceSection(),
-                  const Height(20),
-                  // const BookingTrackingSection(),
-                  const Height(30),
-                  const Align(
-                    alignment: Alignment.topLeft,
-                    child: HomeMsgSextion(),
+                  Container(
+                    height: 20,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: AppColor.appbarColor,
+                      borderRadius: const BorderRadius.only(
+                        bottomRight: Radius.circular(20),
+                        bottomLeft: Radius.circular(20),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CheckoutScreen(
+                                  serviceId: 1,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Image.asset('asset/images/van_banner.png'),
+                        ),
+                        const Height(10),
+                        const SpinovoNowSection(),
+                        const Height(20),
+                        const ServiceSection(),
+                        const Height(20),
+                        // const BookingTrackingSection(),
+                        const Height(30),
+                        const Align(
+                          alignment: Alignment.topLeft,
+                          child: HomeMsgSextion(),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            )
-          ],
-        ),
+            );
+          }
+        },
       ),
     );
   }

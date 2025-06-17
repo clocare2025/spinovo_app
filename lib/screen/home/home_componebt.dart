@@ -311,10 +311,24 @@ class SpinovoNowSection extends StatelessWidget {
                             color: const Color(0xFF525870),
                             size: 14,
                           ),
+                          // CustomText(
+                          //   text: '₹${service.discountPrice}',
+                          //   size: 14,
+                          // ),
+                            Row(
+                        children: [
                           CustomText(
                             text: '₹${service.discountPrice}',
-                            size: 14,
+                         //   fontweights: FontWeight.bold,
                           ),
+                          const Widths(8),
+                          CustomText(
+                            text: '₹${service.originalPrice}',
+                            color: Colors.grey,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ],
+                      )
                         ],
                       ),
                     );

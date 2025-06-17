@@ -426,8 +426,8 @@ class _PackagePaymentScreenState extends State<PackagePaymentScreen> {
               const Height(10),
               _buildChargeRow("Discount", -discount, color: Colors.green),
             ],
-            // const Height(10),
-            // _buildChargeRow("Service Charge", charges['service_charge']!),
+            const Height(10),
+            _buildChargeRow("Service Charge", charges['service_charge']!),
             const Height(10),
             _buildChargeRow("Slot Charge", charges['slot_charge']!),
             if (charges['tips']! > 0) ...[

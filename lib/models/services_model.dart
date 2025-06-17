@@ -8,11 +8,11 @@ class ServicesModel {
   ServicesModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     msg = json['msg'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ?  Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['status'] = this.status;
     data['msg'] = this.msg;
     if (this.data != null) {
@@ -31,13 +31,13 @@ class Data {
     if (json['service'] != null) {
       service = <Service>[];
       json['service'].forEach((v) {
-        service!.add(new Service.fromJson(v));
+        service!.add( Service.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (this.service != null) {
       data['service'] = this.service!.map((v) => v.toJson()).toList();
     }
@@ -48,6 +48,7 @@ class Data {
 class Service {
   int? serviceId;
   String? service;
+  String? label;
   int? minQty;
   int? original;
   int? discounted;
@@ -56,6 +57,7 @@ class Service {
   Service(
       {this.serviceId,
       this.service,
+      this.label,
       this.minQty,
       this.original,
       this.discounted,
@@ -64,21 +66,22 @@ class Service {
   Service.fromJson(Map<String, dynamic> json) {
     serviceId = json['service_id'];
     service = json['service'];
+    label = json['label'];
     minQty = json['min_qtq'];
     original = json['original'];
     discounted = json['discounted'];
     if (json['prices_by_qty'] != null) {
       pricesByQty = <PricesByQty>[];
       json['prices_by_qty'].forEach((v) {
-        pricesByQty!.add(new PricesByQty.fromJson(v));
+        pricesByQty!.add(PricesByQty.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['service_id'] = this.serviceId;
-    data['service'] = this.service;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['service_id'] = serviceId;
+    data['service'] = service;
     data['original'] = this.original;
     data['discounted'] = this.discounted;
     if (this.pricesByQty != null) {

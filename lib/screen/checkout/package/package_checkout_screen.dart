@@ -430,7 +430,7 @@ class _PackageCheckoutScreenState extends State<PackageCheckoutScreen> {
         'service_charges': widget.package.discountPrices,
         'slot_charges': slotCharges,
         'booking_date': _selectedDate!.date,
-        'booking_time': '$_selectedTimeSlot $_selectedPeriod',
+        'booking_time': '$_selectedTimeSlot',
         'address_id': defaultAddress.addressId,
       };
       Navigator.push(

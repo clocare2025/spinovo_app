@@ -358,7 +358,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   child: Column(
                                     children: [
                                       CustomText(
-                                        text: "${qty.qty ?? 0} Clothes",
+                                        text: "${qty.qty ?? 0} ${selectedService!.label}",
                                         fontweights: FontWeight.w500,
                                       ),
                                       const Height(2),
@@ -648,7 +648,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
               const Widths(5),
               CustomText(
-                text: "₹${discountedPrice  + slotCharges}",
+                text: "₹${discountedPrice + slotCharges}",
                 fontweights: FontWeight.w500,
                 size: 18,
               ),
@@ -701,15 +701,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'service_id': _selectedServiceId,
         'service_name': selectedService.service,
         'garment_qty': enteredQty,
-        'garment_original_amount': enteredQty! * (selectedService.original ?? 0),
-        'garment_discount_amount':  enteredQty * (selectedService.discounted ?? 0),
+        'garment_original_amount':
+            enteredQty! * (selectedService.original ?? 0),
+        'garment_discount_amount':
+            enteredQty * (selectedService.discounted ?? 0),
         'order_amount': enteredQty * (selectedService.discounted ?? 0) + 10,
         'service_charges': enteredQty * (selectedService.discounted ?? 0),
         'slot_charges': slotCharges,
         'booking_date': _selectedDate!.date,
-        'booking_time': '$_selectedTimeSlot $_selectedPeriod',
+        'booking_time':
+            '$_selectedTimeSlot', //'$_selectedTimeSlot $_selectedPeriod',
         'address_id': defaultAddress.addressId,
       };
+
       Navigator.push(
         context,
         MaterialPageRoute(

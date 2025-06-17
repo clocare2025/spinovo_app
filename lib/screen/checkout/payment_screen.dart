@@ -147,8 +147,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color:
-                        const Color.fromARGB(255, 81, 81, 81).withOpacity(0.1),
+                    color:const Color.fromARGB(255, 81, 81, 81).withOpacity(0.1),
                     blurRadius: 4,
                     spreadRadius: 2,
                     offset: const Offset(0, -2),
@@ -424,8 +423,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               const Height(10),
               _buildChargeRow("Discount", -discount, color: Colors.green),
             ],
-            // const Height(10),
-            // _buildChargeRow("Service Charge", charges['service_charge']!),
+            const Height(10),
+            _buildChargeRow("Handling charge", 6),
             const Height(10),
             _buildChargeRow("Slot Charge", charges['slot_charge']!),
             if (charges['tips']! > 0) ...[

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:spinovo_app/component/custom_appbar.dart';
-import 'package:spinovo_app/models/address_model.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
 import 'package:spinovo_app/utiles/color.dart';
 import 'package:spinovo_app/utiles/toast.dart';
@@ -14,6 +13,7 @@ class AddressScreen extends StatefulWidget {
   const AddressScreen({super.key, this.selectedAddressId});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AddressScreenState createState() => _AddressScreenState();
 }
 
