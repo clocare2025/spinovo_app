@@ -53,7 +53,12 @@ class Order {
   int? garmentDiscountAmount;
   int? serviceCharges;
   int? slotCharges;
+  int? handlingCharges;
+  int? tipAmount;
   int? orderAmount;
+  int? totalBilling;
+  String? paymentMode;
+  String? paymentStatus;
   String? transactionId;
   String? bookingDate;
   String? bookingTime;
@@ -76,7 +81,12 @@ class Order {
       this.garmentDiscountAmount,
       this.serviceCharges,
       this.slotCharges,
+      this.handlingCharges,
+      this.tipAmount,
       this.orderAmount,
+      this.totalBilling,
+      this.paymentMode,
+      this.paymentStatus,
       this.transactionId,
       this.bookingDate,
       this.bookingTime,
@@ -99,7 +109,12 @@ class Order {
     garmentDiscountAmount = json['garment_discount_amount'];
     serviceCharges = json['service_charges'];
     slotCharges = json['slot_charges'];
+    handlingCharges = json['handling_charges'];
+    tipAmount = json['tip_amount'];
     orderAmount = json['order_amount'];
+    totalBilling = json['total_billing'];
+    paymentMode = json['payment_mode'];
+    paymentStatus = json['payment_status'];
     transactionId = json['transaction_id'];
     bookingDate = json['booking_date'];
     bookingTime = json['booking_time'];
@@ -111,7 +126,7 @@ class Order {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['customer_id'] = this.customerId;
     data['order_no'] = this.orderNo;
     data['order_display_no'] = this.orderDisplayNo;
@@ -124,7 +139,12 @@ class Order {
     data['garment_discount_amount'] = this.garmentDiscountAmount;
     data['service_charges'] = this.serviceCharges;
     data['slot_charges'] = this.slotCharges;
+    data['handling_charges'] = this.handlingCharges;
+    data['tip_amount'] = this.tipAmount;
     data['order_amount'] = this.orderAmount;
+    data['total_billing'] = this.totalBilling;
+    data['payment_mode'] = this.paymentMode;
+    data['payment_status'] = this.paymentStatus;
     data['transaction_id'] = this.transactionId;
     data['booking_date'] = this.bookingDate;
     data['booking_time'] = this.bookingTime;
