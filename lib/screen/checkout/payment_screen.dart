@@ -79,22 +79,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
             (address) => address.isPrimary == true,
             orElse: () => addressProvider.addresses.isNotEmpty
                 ? addressProvider.addresses.first
-                : AddressData(
-                    addressId: null, formatAddress: 'No address available'),
+                : AddressData( addressId: null, formatAddress: 'No address available'),
           );
           final charges = {
-            'service_charge':
-                widget.bookingDetails['service_charges'] as int? ?? 0,
+            'service_charge': widget.bookingDetails['service_charges'] as int? ?? 0,
             'slot_charge': widget.bookingDetails['slot_charges'] as int? ?? 0,
             'tips': _selectedTip,
             'handling_charge': handlingCharge,
           };
           final totalPayable = charges.values.reduce((a, b) => a + b);
-          final payableAfterWallet = _useWallet
-              ? (totalPayable > walletBalance
-                  ? totalPayable - walletBalance
-                  : 0)
-              : totalPayable;
+          final payableAfterWallet = _useWallet ? (totalPayable > walletBalance  ? totalPayable - walletBalance : 0)  : totalPayable;
+          widget.bookingDetails['tip_amount'] = _selectedTip;
+          widget.bookingDetails['total_billing'] = totalPayable;
 
           return Scaffold(
             backgroundColor: AppColor.bgColor,
@@ -179,6 +175,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     ).then((_) => _isNavigating = false);
                     return;
                   }
+                  print(widget.bookingDetails['tip_amount']);
+                   print(widget.bookingDetails['total_billing']);
+                   print(widget.bookingDetails);
                   _processPayment(
                       walletBalance, totalPayable, defaultAddress.addressId!);
                 },

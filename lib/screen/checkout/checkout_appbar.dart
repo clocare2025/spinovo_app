@@ -51,7 +51,7 @@ class AppBarCheckout extends StatelessWidget {
                 );
               },
               child: CustomText(
-                text: "Change",
+                text: displayAddress == 'Select Address' ? "Select" : "Change",
                 size: 15,
                 color: AppColor.appbarColor,
                 // fontweights: FontWeight.w600,

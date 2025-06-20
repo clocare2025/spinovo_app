@@ -12,6 +12,7 @@ import 'package:spinovo_app/providers/timeslot_provider.dart';
 import 'package:spinovo_app/screen/address/address_screen.dart';
 import 'package:spinovo_app/screen/checkout/checkout_appbar.dart';
 import 'package:spinovo_app/screen/checkout/payment_screen.dart';
+import 'package:spinovo_app/utiles/constants.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/button.dart';
 import 'package:spinovo_app/widget/custom_textfield.dart';
@@ -702,16 +703,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'service_id': _selectedServiceId,
         'service_name': selectedService.service,
         'garment_qty': enteredQty,
-        'garment_original_amount':
-            enteredQty! * (selectedService.original ?? 0),
-        'garment_discount_amount':
-            enteredQty * (selectedService.discounted ?? 0),
-        'order_amount': enteredQty * (selectedService.discounted ?? 0) + 10,
+        'garment_original_amount':   enteredQty * (selectedService.original ?? 0),
+        'garment_discount_amount':  enteredQty * (selectedService.discounted ?? 0),
         'service_charges': enteredQty * (selectedService.discounted ?? 0),
         'slot_charges': slotCharges,
+        'handling_charges': AppConstants.handlingCharges,
+        'tip_amount': 0,
+        'order_amount': enteredQty * (selectedService.discounted ?? 0),
+        'total_billing': enteredQty * (selectedService.discounted ?? 0) + AppConstants.handlingCharges,
+        'payment_mode': "Online",
+        'payment_status': "Paid",
         'booking_date': _selectedDate!.date,
-        'booking_time':
-            '$_selectedTimeSlot', //'$_selectedTimeSlot $_selectedPeriod',
+        'booking_time': '$_selectedTimeSlot', //'$_selectedTimeSlot $_selectedPeriod',
         'address_id': defaultAddress.addressId,
       };
 

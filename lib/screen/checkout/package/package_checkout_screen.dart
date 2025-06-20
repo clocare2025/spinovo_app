@@ -14,6 +14,7 @@ import 'package:spinovo_app/screen/address/address_screen.dart';
 import 'package:spinovo_app/screen/checkout/checkout_appbar.dart';
 import 'package:spinovo_app/screen/checkout/package/package_payment_screen.dart';
 import 'package:spinovo_app/screen/checkout/payment_screen.dart';
+import 'package:spinovo_app/utiles/constants.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/button.dart';
 import 'package:spinovo_app/widget/size_box.dart';
@@ -426,9 +427,14 @@ class _PackageCheckoutScreenState extends State<PackageCheckoutScreen> {
         'garment_qty': widget.package.noOfClothes,
         'garment_original_amount':  widget.package.originalPrices,
         'garment_discount_amount':   widget.package.discountPrices,
-        'order_amount': widget.package.discountPrices,
         'service_charges': widget.package.discountPrices,
         'slot_charges': slotCharges,
+        'handling_charges': AppConstants.handlingCharges,
+        'tip_amount': 0,
+        'order_amount': widget.package.discountPrices,
+        'total_billing': widget.package.discountPrices,
+        'payment_mode': "Online",
+        'payment_status': "Paid",
         'booking_date': _selectedDate!.date,
         'booking_time': '$_selectedTimeSlot',
         'address_id': defaultAddress.addressId,

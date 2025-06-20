@@ -38,16 +38,16 @@ class PaymentUtils {
 
     try {
       // Handle tips if any
-      if (tipsAmount > 0) {
-        await walletProvider.credit(
-          amount: tipsAmount,
-          transactionId: 'TIP_${DateTime.now().millisecondsSinceEpoch}',
-          gatewayResponse: 'success',
-          reason: 'tip for service',
-          message: 'Tip of ₹$tipsAmount added',
-        );
-        showToast('Tip of ₹$tipsAmount added to wallet');
-      }
+      // if (tipsAmount > 0) {
+      //   await walletProvider.credit(
+      //     amount: tipsAmount,
+      //     transactionId: 'TIP_${DateTime.now().millisecondsSinceEpoch}',
+      //     gatewayResponse: 'success',
+      //     reason: 'tip for service',
+      //     message: 'Tip of ₹$tipsAmount added',
+      //   );
+      //   showToast('Tip of ₹$tipsAmount added to wallet');
+      // }
 
       // Calculate payment split
       int remainingAmount = totalPayable;

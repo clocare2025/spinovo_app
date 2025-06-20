@@ -36,6 +36,7 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
     "380013",
     "380014",
     "390035",
+    "380058",
   ];
 
   final TextEditingController _searchController = TextEditingController();
@@ -71,7 +72,7 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
     final addressData = {
       'address_type': _saveAs.toLowerCase(),
       'address_label': _saveAs,
-      'flat_no': houseNo,
+      'flat_no': houseNo + flat,
       'street': _currentPlacemark!.street ?? '',
       'landmark': _currentPlacemark!.subLocality ?? '',
       'city': _currentPlacemark!.locality ?? '',

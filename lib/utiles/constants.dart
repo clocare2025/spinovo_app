@@ -7,6 +7,8 @@ class AppConstants {
   static const String APP_NAME = "Spinovo";
   static const int APP_VERSION = 1;
 
+  static const int handlingCharges = 6;
+
   static String TOKEN = 'token';
   static String RAZORPAY_KEY_ID = "rzp_live_c852nEyeoW0eJx";
 

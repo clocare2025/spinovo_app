@@ -5,6 +5,8 @@ import 'package:spinovo_app/component/custom_appbar.dart';
 import 'package:spinovo_app/providers/order_provider.dart';
 import 'package:spinovo_app/screen/booking/booking_details_screen.dart';
 import 'package:spinovo_app/utiles/color.dart';
+import 'package:spinovo_app/widget/size_box.dart';
+import 'package:spinovo_app/widget/text_widget.dart';
 // import 'package:spinovo_app/screens/booking_details_screen.dart'; // Import the details screen
 
 class BookingScreen extends StatefulWidget {
@@ -30,8 +32,8 @@ class _BookingScreenState extends State<BookingScreen> {
     final currentDateTime = DateTime(2025, 5, 24, 23, 29);
 
     return Scaffold(
-        backgroundColor: AppColor.bgColor,
-         appBar: const PreferredSize(
+      backgroundColor: AppColor.bgColor,
+      appBar: const PreferredSize(
         preferredSize: Size.fromHeight(60),
         child: CustomAppBar(
           title: "Your bookings",
@@ -67,7 +69,8 @@ class _BookingScreenState extends State<BookingScreen> {
           }
 
           // Sort orders by date, showing upcoming first
-          final sortedOrders = orderProvider.orders..sort((a, b) {
+          final sortedOrders = orderProvider.orders
+            ..sort((a, b) {
               DateTime dateA;
               DateTime dateB;
               try {
@@ -94,10 +97,13 @@ class _BookingScreenState extends State<BookingScreen> {
               } catch (e) {
                 bookingDate = DateTime.now(); // Fallback to current date
               }
-              final formattedDate = DateFormat('EEEE, d MMMM yyyy').format(bookingDate);
+              final formattedDate =
+                  DateFormat('EEEE, d MMMM yyyy').format(bookingDate);
               final formattedTime = DateFormat('h:mm a').format(bookingDate);
-              final formattedDay = DateFormat('d').format(bookingDate).toUpperCase();
-              final formattedMonth = DateFormat('MMM').format(bookingDate).toUpperCase();
+              final formattedDay =
+                  DateFormat('d').format(bookingDate).toUpperCase();
+              final formattedMonth =
+                  DateFormat('MMM').format(bookingDate).toUpperCase();
 
               return GestureDetector(
                 onTap: () {
@@ -132,19 +138,16 @@ class _BookingScreenState extends State<BookingScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                formattedDay,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              SmallText(
+                                text: order.orderDisplayNo!,
+                                fontweights: FontWeight.bold,
+                                color: Colors.black,
+                                size: 14,
                               ),
-                              Text(
-                                formattedMonth,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
+                              SmallText(
+                                text: "$formattedDay$formattedMonth",
+                                color: Colors.grey,
+                                size: 12,
                               ),
                             ],
                           ),
@@ -155,21 +158,20 @@ class _BookingScreenState extends State<BookingScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                formattedDate,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: isPastBooking ? Colors.grey.shade600 : Colors.black,
-                                ),
+                              SmallText(
+                                text: formattedDate,
+                                fontweights: FontWeight.bold,
+                                overFlow: TextOverflow.visible,
+                                size: 16,
+                                color: isPastBooking
+                                    ? Colors.grey.shade600
+                                    : Colors.black,
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '$formattedTime • 60 mins', // Duration hardcoded as per UI
-                                style: TextStyle(
-                                  color: Colors.grey.shade600,
-                                  fontSize: 14,
-                                ),
+                              const Height(4),
+                              SmallText(
+                                text:
+                                    '${order.bookingDate} • ${order.bookingTime}',
+                                color: Colors.grey.shade600,
                               ),
                             ],
                           ),

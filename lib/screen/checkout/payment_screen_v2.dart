@@ -3,8 +3,8 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:spinovo_app/component/custom_appbar.dart';
 import 'package:spinovo_app/models/address_model.dart';
-import 'package:spinovo_app/models/package_model.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
+import 'package:spinovo_app/providers/paymentMode_provider.dart';
 import 'package:spinovo_app/providers/wallet_provider.dart';
 import 'package:spinovo_app/razorpay/payment_utils.dart';
 import 'package:spinovo_app/screen/address/address_screen.dart';
@@ -18,17 +18,15 @@ import 'package:spinovo_app/widget/dot_point_widget.dart';
 import 'package:spinovo_app/widget/size_box.dart';
 import 'package:spinovo_app/widget/text_widget.dart';
 
-class PackagePaymentScreen extends StatefulWidget {
+class PaymentScreenV2 extends StatefulWidget {
   final Map<String, dynamic> bookingDetails;
-  final Package package;
-  const PackagePaymentScreen(
-      {super.key, required this.bookingDetails, required this.package});
+  const PaymentScreenV2({super.key, required this.bookingDetails});
 
   @override
-  State<PackagePaymentScreen> createState() => _PackagePaymentScreenState();
+  State<PaymentScreenV2> createState() => _PaymentScreenV2State();
 }
 
-class _PackagePaymentScreenState extends State<PackagePaymentScreen> {
+class _PaymentScreenV2State extends State<PaymentScreenV2> {
   int _selectedTip = 0;
   int handlingCharge = 6;
   late PaymentUtils _paymentUtils;
@@ -36,6 +34,8 @@ class _PackagePaymentScreenState extends State<PackagePaymentScreen> {
   bool _isNavigating = false; // Prevent multiple navigations
   DateTime? _lastToastTime; // Debounce toast
   bool _isProcessing = false; // Prevent multiple payment attempts
+  String? _selectedPaymentMode;
+  bool isbillingDetails = false;
 
   @override
   void initState() {
@@ -71,9 +71,21 @@ class _PackagePaymentScreenState extends State<PackagePaymentScreen> {
             value: Provider.of<WalletProvider>(context)),
         ChangeNotifierProvider.value(
             value: Provider.of<AddressProvider>(context)),
+        ChangeNotifierProvider.value(
+            value: Provider.of<PaymentModeProvider>(context)),
       ],
-      child: Consumer2<WalletProvider, AddressProvider>(
-        builder: (context, walletProvider, addressProvider, child) {
+      child: Consumer3<WalletProvider, AddressProvider, PaymentModeProvider>(
+        builder: (context, walletProvider, addressProvider, paymentModeProvider,
+            child) {
+          if (paymentModeProvider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (paymentModeProvider.errorMessage != null) {
+            return Center(
+                child: CustomText(
+                    text: paymentModeProvider.errorMessage!,
+                    color: Colors.red));
+          }
           final walletBalance = walletProvider
                   .walletBalance?.data?.wallet?.totalBalance
                   ?.toInt() ??
@@ -98,9 +110,6 @@ class _PackagePaymentScreenState extends State<PackagePaymentScreen> {
                   ? totalPayable - walletBalance
                   : 0)
               : totalPayable;
-
-          widget.bookingDetails['tip_amount'] = _selectedTip;
-          widget.bookingDetails['total_billing'] = totalPayable;
 
           return Scaffold(
             backgroundColor: AppColor.bgColor,
@@ -139,12 +148,14 @@ class _PackagePaymentScreenState extends State<PackagePaymentScreen> {
                             const Height(8),
                             _buildCouponsSection(),
                             const Height(8),
-                            _buildWalletSection(walletBalance),
-                            const Height(8),
                             _buildTipsSection(),
                             const Height(8),
+                            _buildWalletSection(walletBalance),
+                            const Height(8),
                             _buildPaymentDetails(charges, totalPayable),
-                            const Height(200),
+                            const Height(8),
+                            _buildPaymentMethodSection(paymentModeProvider),
+                            const Height(100),
                           ],
                         ),
                       ),
@@ -421,27 +432,53 @@ class _PackagePaymentScreenState extends State<PackagePaymentScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomText(
-              text: "Billing Details",
-              size: 16,
-              fontweights: FontWeight.w500,
+            InkWell(
+              onTap: () {
+                setState(() {
+                  // print(isbillingDetails);
+                  isbillingDetails = !isbillingDetails;
+                });
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CustomText(
+                    text: "Billing Details",
+                    size: 16,
+                    fontweights: FontWeight.w500,
+                  ),
+                  Icon(
+                      isbillingDetails
+                          ? Icons.keyboard_arrow_down
+                          : Icons.arrow_forward_ios_sharp,
+                      size: 16,
+                      color: Colors.grey),
+                ],
+              ),
             ),
-            const Height(10),
-            _buildChargeRow("Original Amount", originalAmount),
-            if (discount > 0) ...[
-              const Height(10),
-              _buildChargeRow("Discount", -discount, color: Colors.green),
-            ],
-            const Height(10),
-            _buildChargeRow("Handling charge", charges['handling_charge']!),
-            const Height(10),
-            _buildChargeRow("Slot Charge", charges['slot_charge']!),
-            if (charges['tips']! > 0) ...[
-              const Height(10),
-              _buildChargeRow("Tip", charges['tips']!),
-            ],
-            const Height(10),
-            const dotPointWidget(),
+            if (isbillingDetails)
+              Column(
+                children: [
+                  const Height(10),
+                  _buildChargeRow("Original Amount", originalAmount),
+                  if (discount > 0) ...[
+                    const Height(10),
+                    _buildChargeRow("Discount", -discount, color: Colors.green),
+                  ],
+                  const Height(10),
+                  _buildChargeRow(
+                      "Handling charge", charges['handling_charge']!),
+                  const Height(10),
+                  _buildChargeRow("Slot Charge", charges['slot_charge']!),
+                  if (charges['tips']! > 0) ...[
+                    const Height(10),
+                    _buildChargeRow("Tip", charges['tips']!),
+                  ],
+                  const Height(10),
+                  const dotPointWidget(),
+                ],
+              ),
             const Height(10),
             _buildChargeRow("Total Payable", totalPayable, isTotal: true),
             const Height(10),
@@ -540,5 +577,126 @@ class _PackagePaymentScreenState extends State<PackagePaymentScreen> {
         _isProcessing = false;
       });
     }
+  }
+
+  Widget _buildPaymentMethodSection(PaymentModeProvider paymentModeProvider) {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(color: Colors.white),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: GestureDetector(
+          onTap: () => _showPaymentMethodBottomSheet(paymentModeProvider),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: Colors.grey[300]!)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Image.asset(AppAssets.wallet,
+                        height: 24, color: Colors.grey),
+                    const SizedBox(width: 8),
+                    CustomText(
+                        text: "Payment method",
+                        size: 16,
+                        fontweights: FontWeight.w500),
+                    const SizedBox(width: 8),
+                    CustomText(
+                        text: _selectedPaymentMode ?? "Select",
+                        size: 14,
+                        color: Colors.grey),
+                  ],
+                ),
+                const Icon(Icons.arrow_forward_ios_sharp,
+                    size: 16, color: Colors.grey),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showPaymentMethodBottomSheet(PaymentModeProvider paymentModeProvider) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return DraggableScrollableSheet(
+              initialChildSize: 0.5,
+              minChildSize: 0.3,
+              maxChildSize: 0.9,
+              expand: false,
+              builder: (context, scrollController) {
+                return Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Payment methods',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        controller: scrollController,
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        itemCount:
+                            paymentModeProvider.availablePaymentModes.length,
+                        itemBuilder: (context, index) {
+                          final mode =
+                              paymentModeProvider.availablePaymentModes[index];
+                          return RadioListTile<String>(
+                            title: Text(mode),
+                            value: mode,
+                            groupValue: _selectedPaymentMode,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedPaymentMode = value;
+                              });
+                            },
+                            secondary: mode == 'Online'
+                                ? const Icon(Icons.payment, color: Colors.grey)
+                                : null,
+                          );
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ContinueButton(
+                        text: 'Confirm',
+                        isValid: _selectedPaymentMode != null,
+                        onTap: () {
+                          Navigator.pop(context);
+                          setState(() {}); // Update the parent screen
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        );
+      },
+    );
   }
 }
