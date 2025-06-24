@@ -8,13 +8,13 @@ class UserModel {
   UserModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     msg = json['msg'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['msg'] = this.msg;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['msg'] = msg;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
@@ -28,13 +28,13 @@ class Data {
   Data({this.user});
 
   Data.fromJson(Map<String, dynamic> json) {
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    user = json['profile'] != null ? User.fromJson(json['profile']) : null; // Changed 'user' to 'profile'
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.user != null) {
-      data['user'] = this.user!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (user != null) {
+      data['profile'] = user!.toJson(); // Changed 'user' to 'profile'
     }
     return data;
   }
@@ -60,27 +60,30 @@ class User {
   String? lastActive;
   String? createdAt;
   String? updatedAt;
+  bool? isDeleted;
 
-  User(
-      {this.name,
-      this.mobile,
-      this.email,
-      this.walletBalance,
-      this.spinovoBonus,
-      this.famillyMember,
-      this.livingType,
-      this.gender,
-      this.dob,
-      this.profilePic,
-      this.accessToken,
-      this.fcmToken,
-      this.cityId,
-      this.isActive,
-      this.soures,
-      this.sId,
-      this.lastActive,
-      this.createdAt,
-      this.updatedAt});
+  User({
+    this.name,
+    this.mobile,
+    this.email,
+    this.walletBalance,
+    this.spinovoBonus,
+    this.famillyMember,
+    this.livingType,
+    this.gender,
+    this.dob,
+    this.profilePic,
+    this.accessToken,
+    this.fcmToken,
+    this.cityId,
+    this.isActive,
+    this.isDeleted,
+    this.soures,
+    this.sId,
+    this.lastActive,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   User.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -97,34 +100,36 @@ class User {
     fcmToken = json['fcmToken'];
     cityId = json['city_id'];
     isActive = json['isActive'];
-    soures = json['soures'];
+    isDeleted = json['isDeleted'];
+    soures = json['sources'];
     sId = json['_id'];
     lastActive = json['lastActive'];
     createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
+    updatedAt = json['updated_at']; // Changed 'updatedAt' to 'updated_at'
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['name'] = this.name;
-    data['mobile'] = this.mobile;
-    data['email'] = this.email;
-    data['wallet_balance'] = this.walletBalance;
-    data['spinovo_bonus'] = this.spinovoBonus;
-    data['familly_member'] = this.famillyMember;
-    data['living_type'] = this.livingType;
-    data['gender'] = this.gender;
-    data['dob'] = this.dob;
-    data['profile_pic'] = this.profilePic;
-    data['access_token'] = this.accessToken;
-    data['fcmToken'] = this.fcmToken;
-    data['city_id'] = this.cityId;
-    data['isActive'] = this.isActive;
-    data['soures'] = this.soures;
-    data['_id'] = this.sId;
-    data['lastActive'] = this.lastActive;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name;
+    data['mobile'] = mobile;
+    data['email'] = email;
+    data['wallet_balance'] = walletBalance;
+    data['spinovo_bonus'] = spinovoBonus;
+    data['familly_member'] = famillyMember;
+    data['living_type'] = livingType;
+    data['gender'] = gender;
+    data['dob'] = dob;
+    data['profile_pic'] = profilePic;
+    data['access_token'] = accessToken;
+    data['fcmToken'] = fcmToken;
+    data['city_id'] = cityId;
+    data['isActive'] = isActive;
+    data['isDeleted'] = isDeleted;
+    data['soures'] = soures;
+    data['_id'] = sId;
+    data['lastActive'] = lastActive;
+    data['createdAt'] = createdAt;
+    data['updated_at'] = updatedAt; // Changed 'updatedAt' to 'updated_at'
     return data;
   }
 }

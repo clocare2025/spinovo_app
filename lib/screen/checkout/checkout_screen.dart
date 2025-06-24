@@ -12,6 +12,7 @@ import 'package:spinovo_app/providers/timeslot_provider.dart';
 import 'package:spinovo_app/screen/address/address_screen.dart';
 import 'package:spinovo_app/screen/checkout/checkout_appbar.dart';
 import 'package:spinovo_app/screen/checkout/payment_screen.dart';
+import 'package:spinovo_app/screen/checkout/payment_screen_v2.dart';
 import 'package:spinovo_app/utiles/constants.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/button.dart';
@@ -31,7 +32,7 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   TimeSlot? _selectedDate;
   String? _selectedTimeSlot;
-  String _selectedPeriod = "AM";
+    String _selectedPeriod = "AM";
   int? _selectedServiceId;
   int? _selectedServiceQtyIndex;
   final TextEditingController noOfClothe = TextEditingController();
@@ -721,7 +722,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PaymentScreen(bookingDetails: bookingDetails),
+          builder: (context) => PaymentScreenV2(bookingDetails: bookingDetails),
         ),
       );
       showToast('Proceeding to payment');

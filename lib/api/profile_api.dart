@@ -8,8 +8,9 @@ class ProfileApi {
   static const String baseUrl = AppConstants.BASE_URL;
 
   Future<UserModel> getUserProfile() async {
-        final prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString(AppConstants.TOKEN);
+    print("Token: $token"); // Debug token
     final response = await http.get(
       Uri.parse("$baseUrl/api/v1/consumer/profile"),
       headers: {
@@ -18,6 +19,8 @@ class ProfileApi {
       },
     );
 
+    print("API Response: ${response.body}"); // Debug API response
+
     if (response.statusCode == 200) {
       return UserModel.fromJson(jsonDecode(response.body));
     } else {
@@ -25,9 +28,10 @@ class ProfileApi {
     }
   }
 
-  Future<UserModel> updateUserProfile( String name, String email, String livingType) async {
-        final prefs = await SharedPreferences.getInstance();
+  Future<UserModel> updateUserProfile(String name, String email, String livingType) async {
+    final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString(AppConstants.TOKEN);
+    print("Token: $token"); // Debug token
     final response = await http.post(
       Uri.parse("$baseUrl/api/v1/consumer/profile/update"),
       headers: {
@@ -40,6 +44,8 @@ class ProfileApi {
         'livingType': livingType,
       }),
     );
+
+    print("Update API Response: ${response.body}"); // Debug API response
 
     if (response.statusCode == 200) {
       return UserModel.fromJson(jsonDecode(response.body));

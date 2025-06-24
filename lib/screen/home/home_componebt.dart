@@ -334,70 +334,94 @@ class SpinovoNowSection extends StatelessWidget {
                     );
                   }).toList(),
                   const Height(5),
-                  CustomText(
-                    text: 'What we have provided for you:',
-                    size: 15,
-                    fontweights: FontWeight.bold,
-                  ),
-                  const Height(4),
-                  CustomText(
-                    text:
-                        'Expert care, eco-friendly cleaning, and doorstep service—fast and professional.',
-                    overFlow: TextOverflow.visible,
-                    size: 12,
-                    color: const Color(0xFF525870),
-                  ),
-                  const Height(10),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Column(
-                        children: [
-                          const Icon(Icons.cleaning_services_outlined,
-                              color: const Color(0xFF525870), size: 25),
-                          const Height(5),
-                          CustomText(
-                            text: 'Cleaning',
-                            color: const Color(0xFF525870),
-                            size: 12,
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                      CustomText(
+                        text: 'Quick : ',
+                        size: 15,
+                        fontweights: FontWeight.bold,
                       ),
-                      Column(
-                        children: [
-                          const Icon(
-                            Icons.iron_outlined,
-                            size: 25,
-                            color: Color(0xFF525870),
-                          ),
-                          const Height(5),
-                          CustomText(
-                            text: 'Ironing',
-                            color: const Color(0xFF525870),
-                            size: 12,
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          const Icon(
-                            Icons.dry_cleaning_outlined,
-                            size: 25,
-                            color: Color(0xFF525870),
-                          ),
-                          const Height(5),
-                          CustomText(
-                            text: 'Packaging',
-                            color: const Color(0xFF525870),
-                            size: 12,
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                      CustomText(
+                        text: 'Service within 2 hours',
+                        size: 15,
+                      
                       ),
                     ],
                   ),
+                  Row(
+                    children: [
+                      CustomText(
+                        text: 'Schedule : ',
+                        size: 15,
+                        fontweights: FontWeight.bold,
+                      ),
+                      CustomText(
+                        text: 'Service within 24 hours',
+                        size: 15,
+                      
+                      ),
+                    ],
+                  ),
+                  // const Height(4),
+                  // CustomText(
+                  //   text:
+                  //       'Expert care, eco-friendly cleaning, and doorstep service—fast and professional.',
+                  //   overFlow: TextOverflow.visible,
+                  //   size: 12,
+                  //   color: const Color(0xFF525870),
+                  // ),
+                  // const Height(10),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  //   children: [
+                  //     // Column(
+                  //     //   children: [
+                  //     //     const Icon(Icons.cleaning_services_outlined,
+                  //     //         color: const Color(0xFF525870), size: 25),
+                  //     //     const Height(5),
+                  //     //     CustomText(
+                  //     //       text: 'Cleaning',
+                  //     //       color: const Color(0xFF525870),
+                  //     //       size: 12,
+                  //     //       textAlign: TextAlign.center,
+                  //     //     ),
+                  //     //   ],
+                  //     // ),
+                  //     Column(
+                  //       children: [
+                  //         const Icon(
+                  //           Icons.iron_outlined,
+                  //           size: 25,
+                  //           color: Color(0xFF525870),
+                  //         ),
+                  //         const Height(5),
+                  //         CustomText(
+                  //           text: 'Ironing',
+                  //           color: const Color(0xFF525870),
+                  //           size: 12,
+                  //           textAlign: TextAlign.center,
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     Column(
+                  //       children: [
+                  //         const Icon(
+                  //           Icons.dry_cleaning_outlined,
+                  //           size: 25,
+                  //           color: Color(0xFF525870),
+                  //         ),
+                  //         const Height(5),
+                  //         CustomText(
+                  //           text: 'Packaging',
+                  //           color: const Color(0xFF525870),
+                  //           size: 12,
+                  //           textAlign: TextAlign.center,
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ],
+                  // ),
+                 
                   const Height(20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -405,7 +429,7 @@ class SpinovoNowSection extends StatelessWidget {
                       Expanded(
                         child: ContinueButton(
                           height: 44,
-                          text: 'Book now',
+                          text: 'Quick',
                           textSize: 14,
                           isValid: true,
                           isLoading: false,
@@ -424,7 +448,7 @@ class SpinovoNowSection extends StatelessWidget {
                       Expanded(
                         child: ContinueButton(
                           height: 44,
-                          text: 'Schedule for Later',
+                          text: 'Schedule',
                           textSize: 14,
                           textColor: const Color.fromARGB(255, 38, 136, 70),
                           bgColor: Colors.white,

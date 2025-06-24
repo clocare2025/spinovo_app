@@ -81,7 +81,6 @@ import 'package:spinovo_app/widget/text_widget.dart';
 //   }
 // }
 
-
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

@@ -32,7 +32,7 @@ class ProfileProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateUserProfile( String name, String email, String livingType) async {
+  Future<bool> updateUserProfile(String name, String email, String livingType) async {
     try {
       _isLoading = true;
       _errorMessage = null;
