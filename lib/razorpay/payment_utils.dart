@@ -31,7 +31,8 @@ class PaymentUtils {
     required int walletBalance,
     required int tipsAmount,
     required String addressId,
-    required VoidCallback onSuccess, required Null Function(dynamic error) onError,
+    required VoidCallback onSuccess,
+    required Null Function(dynamic error) onError,
   }) async {
     final walletProvider = Provider.of<WalletProvider>(context, listen: false);
     final orderProvider = Provider.of<OrderProvider>(context, listen: false);
@@ -54,7 +55,8 @@ class PaymentUtils {
       bool useWallet = walletBalance > 0 && remainingAmount > 0;
 
       if (useWallet) {
-        int walletDeduction = walletBalance >= remainingAmount ? remainingAmount : walletBalance;
+        int walletDeduction =
+            walletBalance >= remainingAmount ? remainingAmount : walletBalance;
         if (walletDeduction > 0) {
           await walletProvider.debit(
             amount: walletDeduction.toInt(),
@@ -72,17 +74,14 @@ class PaymentUtils {
       bookingDetails['transaction_id'] =
           'TXN_${DateTime.now().millisecondsSinceEpoch}';
 
-      // Create booking
-      OrderModel orderResponse = await _orderApi.booking(bookingDetails);
-      orderProvider.fetchOrders(); // Refresh order list
-
       if (remainingAmount > 0) {
         // Initiate Razorpay payment for remaining amount
         var options = {
           'key': AppConstants.RAZORPAY_KEY_ID,
           'amount': (remainingAmount * 100).toInt(), // Convert to paise
           'name': 'CLOCARE',
-          'description': 'Booking Payment for ${bookingDetails['order_display_no'] ?? 'Order'}',
+          'description':
+              'Booking Payment for ${bookingDetails['order_display_no'] ?? 'Order'}',
           'retry': {'enabled': true, 'max_count': 1},
           'send_sms_hash': true,
           'prefill': {
@@ -97,14 +96,22 @@ class PaymentUtils {
 
         _razorpay.open(options);
         // Store context and success callback for async handling
-        _paymentSuccessCallback = () {
+        _paymentSuccessCallback = () async {
           onSuccess();
-          showToast('Booking successful: ${orderResponse.data?.order?.orderDisplayNo}');
+          // Create booking
+          OrderModel orderResponse = await _orderApi.booking(bookingDetails);
+          orderProvider.fetchOrders(); // Refresh order list
+          showToast(
+              'Booking successful: ${orderResponse.data?.order?.orderDisplayNo}');
         };
       } else {
         // No Razorpay needed, booking complete
         onSuccess();
-        showToast('Booking successful: ${orderResponse.data?.order?.orderDisplayNo}');
+        // Create booking
+        OrderModel orderResponse = await _orderApi.booking(bookingDetails);
+        orderProvider.fetchOrders(); // Refresh order list
+        showToast(
+            'Booking successful: ${orderResponse.data?.order?.orderDisplayNo}');
       }
     } catch (e) {
       showToast('Payment failed: $e');
