@@ -50,11 +50,11 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
 
       final response = await _authApi.userLogin(mobile);
-      print('login provider ${response}');
-      if (response.status == true && response.data?.user?.accessToken != null) {
-        _token = response.data!.user!.accessToken;
+      print('login provider ddddd ${response.status} ${response.data}');
+      if (response.status == true && response.data?.profile?.accessToken != null) {
+        _token = response.data!.profile!.accessToken;
         final prefs = await SharedPreferences.getInstance();
-      print('prefs ${_token}');
+        print('prefs ${_token}');
         await prefs.setString(AppConstants.TOKEN, _token!);
         return response;
       } else {
@@ -77,8 +77,8 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
 
       final response = await _authApi.userSignup(name, mobile, livingType);
-      if (response.status == true && response.data?.user?.accessToken != null) {
-        _token = response.data!.user!.accessToken;
+      if (response.status == true && response.data?.profile?.accessToken != null) {
+        _token = response.data!.profile!.accessToken;
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(AppConstants.TOKEN, _token!);
         return true;

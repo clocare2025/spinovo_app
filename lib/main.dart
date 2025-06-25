@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spinovo_app/providers/auth_provider.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
+import 'package:spinovo_app/providers/location_provider.dart';
 import 'package:spinovo_app/providers/order_provider.dart';
 import 'package:spinovo_app/providers/package_provider.dart';
 import 'package:spinovo_app/providers/paymentMode_provider.dart';
@@ -25,6 +26,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => PackageProvider()),
         ChangeNotifierProvider(create: (context) => ProfileProvider()), // Add this provider
         ChangeNotifierProvider(create: (context) => PaymentModeProvider()),
+        ChangeNotifierProvider(create: (context) => LocationProvider()),
       ],
       child: const MyApp(),
     ),

@@ -23,24 +23,24 @@ class UserModel {
 }
 
 class Data {
-  User? user;
+  Profile? profile;
 
-  Data({this.user});
+  Data({this.profile});
 
   Data.fromJson(Map<String, dynamic> json) {
-    user = json['profile'] != null ? User.fromJson(json['profile']) : null; // Changed 'user' to 'profile'
+    profile = json['profile'] != null ? Profile.fromJson(json['profile']) : null; // Changed 'user' to 'profile'
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    if (user != null) {
-      data['profile'] = user!.toJson(); // Changed 'user' to 'profile'
+    if (profile != null) {
+      data['profile'] = profile!.toJson(); // Changed 'user' to 'profile'
     }
     return data;
   }
 }
 
-class User {
+class Profile {
   String? name;
   String? mobile;
   String? email;
@@ -62,7 +62,7 @@ class User {
   String? updatedAt;
   bool? isDeleted;
 
-  User({
+  Profile({
     this.name,
     this.mobile,
     this.email,
@@ -85,7 +85,7 @@ class User {
     this.updatedAt,
   });
 
-  User.fromJson(Map<String, dynamic> json) {
+  Profile.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     mobile = json['mobile'];
     email = json['email'];

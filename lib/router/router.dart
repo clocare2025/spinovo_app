@@ -40,7 +40,7 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const BottomNavigation(),
     ),
     GoRoute(
-      path: '/addresse',
+      path: '/address',
       builder: (context, state) => const AddressScreen(),
     ),
     GoRoute(

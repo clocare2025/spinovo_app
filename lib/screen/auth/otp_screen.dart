@@ -101,7 +101,9 @@ class _OtpScreenState extends State<OtpScreen> {
     if (enteredOtp == widget.otpResponse.otpCode) {
       if (widget.otpResponse.otpRequest == 'login') {
         final response = await authProvider.login(widget.otpResponse.mobileNo!);
-        if (response!.status ==true) {
+        print('login response ${response}');
+        print('login response ${response!.status}');
+        if (response!.status == true) {
           context.go('/home');
           showToast('Login successful');
         } else {
@@ -244,7 +246,8 @@ class _OtpScreenState extends State<OtpScreen> {
                 onTap: _resendOtp,
                 child: SmallText(
                   text: 'Resend code',
-                  color: _canResend ? AppColor.textColor : const Color(0xFF5a5a60),
+                  color:
+                      _canResend ? AppColor.textColor : const Color(0xFF5a5a60),
                 ),
               ),
               const Height(40),

@@ -4,9 +4,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
+import 'package:spinovo_app/component/custom_appbar.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
 import 'package:spinovo_app/screen/auth/details_screen.dart';
 import 'package:spinovo_app/services/bottom_navigation.dart';
+import 'package:spinovo_app/utiles/color.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/roundedChoiceChip.dart';
 import 'package:spinovo_app/widget/button.dart';
@@ -243,7 +245,12 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
       }
       await _updateAddress(newPosition);
     } catch (e) {
-      showToast('Error getting location: $e');
+      // showToast('Error getting location: $e');
+      print('Error getting location: $e');
+      // Fallback to a default location if current location cannot be fetched
+      // This is useful for testing or if the user has location services disabled.  
+      
+    
       setState(() {
         _initialPosition = const LatLng(23.0365, 72.5611);
       });
@@ -341,39 +348,38 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
   // }
 
   Future<void> _searchLocations(String query) async {
-  if (query.isEmpty) return;
+    if (query.isEmpty) return;
 
-  try {
-    List<Location> locations = await locationFromAddress(query);
-    List<Map<String, dynamic>> results = [];
+    try {
+      List<Location> locations = await locationFromAddress(query);
+      List<Map<String, dynamic>> results = [];
 
-    for (var location in locations) {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        location.latitude,
-        location.longitude,
-      );
-      if (placemarks.isEmpty) continue;
+      for (var location in locations) {
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          location.latitude,
+          location.longitude,
+        );
+        if (placemarks.isEmpty) continue;
 
-      Placemark place = placemarks[0];
-      String address = "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.thoroughfare ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}, ${place.postalCode ?? ''}";
+        Placemark place = placemarks[0];
+        String address =
+            "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.thoroughfare ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}, ${place.postalCode ?? ''}";
 
-      results.add({
-        'address': address,
-        'latLng': LatLng(location.latitude, location.longitude),
+        results.add({
+          'address': address,
+          'latLng': LatLng(location.latitude, location.longitude),
+        });
+      }
+
+      setState(() {
+        _searchResults.addAll(results); // ✅ Append results instead of replacing
       });
+    } catch (e) {
+      // Optionally handle error
+      print('Error: $e');
     }
-
-    setState(() {
-      _searchResults.addAll(results); // ✅ Append results instead of replacing
-    });
-  } catch (e) {
-    // Optionally handle error
-    print('Error: $e');
   }
-}
-  
-  
-  
+
   void _showSearchBottomSheet() {
     _searchController.clear();
     setState(() {
@@ -435,7 +441,8 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
                           icon: const Icon(Icons.my_location),
                           label: const Text("Current Location"),
                           onPressed: () {
-                            print('Current Location pressed list $_searchResults');
+                            print(
+                                'Current Location pressed list $_searchResults');
                             // Navigator.pop(context);
                             // _getCurrentLocation();
                           },

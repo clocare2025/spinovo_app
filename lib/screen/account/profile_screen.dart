@@ -1,6 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:spinovo_app/component/custom_appbar.dart';
 import 'package:spinovo_app/providers/auth_provider.dart';
 import 'package:spinovo_app/providers/profile_provider.dart';
@@ -23,7 +25,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final nameController = TextEditingController();
   final mailController = TextEditingController();
   final phoneController = TextEditingController();
-
   String? livingType;
   bool _isInitialized = false;
 
@@ -36,13 +37,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    if (authProvider.token != null) {
-      Provider.of<ProfileProvider>(context, listen: false).fetchUserProfile();
-    } else {
-      print("Token is null, cannot fetch profile"); // Debug line
-      showToast("Please log in to view your profile");
-    }
+    // Defer profile fetching to avoid setState during build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      if (authProvider.token != null) {
+        Provider.of<ProfileProvider>(context, listen: false).fetchUserProfile();
+      } else {
+        showToast("Please log in to view your profile");
+        context.go('/phone');
+      }
+    });
   }
 
   void _save() async {
@@ -53,8 +57,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       showToast('Please enter your full name');
       return;
     }
-    if (email.isEmpty) {
-      showToast('Please enter your email id');
+    if (email.isEmpty ||
+        !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+      showToast('Please enter a valid email id');
       return;
     }
     if (livingType == null || livingType!.isEmpty) {
@@ -62,8 +67,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     }
 
-    final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-    final success = await profileProvider.updateUserProfile(name, email, livingType!);
+    final profileProvider =
+        Provider.of<ProfileProvider>(context, listen: false);
+    final success =
+        await profileProvider.updateUserProfile(name, email, livingType!);
 
     if (success) {
       showToast('Profile updated successfully');
@@ -95,18 +102,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return Center(child: Text(profileProvider.errorMessage!));
           }
 
-          final user = profileProvider.userProfile?.data?.user;
-
-          // Debug user data
-          print("User data: ${user?.toJson()}");
+          final user = profileProvider.userProfile?.data?.profile;
 
           // Populate controllers only if not initialized and user data is available
           if (!_isInitialized && user != null) {
             nameController.text = user.name ?? '';
             mailController.text = user.email ?? '';
             phoneController.text = user.mobile ?? '';
-            // Set livingType only if it's valid
-            livingType = householdTypes.contains(user.livingType) ? user.livingType : householdTypes[0];
+            livingType = householdTypes.contains(user.livingType)
+                ? user.livingType
+                : householdTypes[0];
             _isInitialized = true;
           }
 
@@ -122,14 +127,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   controller: nameController,
                   hintText: 'Enter full name',
                   keyboardType: TextInputType.text,
+                  onChanged: (_) =>
+                      setState(() {}), // Update state for button validation
                 ),
                 const Height(20),
-                const TextTitle(title: 'Email id', optionalText: ''),
+                const TextTitle(title: 'Email id', optionalText: '*'),
                 const Height(8),
                 customTextField(
                   controller: mailController,
                   hintText: 'Enter email id',
                   keyboardType: TextInputType.emailAddress,
+                  onChanged: (_) =>
+                      setState(() {}), // Update state for button validation
                 ),
                 const Height(25),
                 const TextTitle(title: 'Select Living Type', optionalText: '*'),
@@ -157,28 +166,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const Height(8),
                 Row(
                   children: [
-                    Expanded(
-                      child: Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: const Color(0xFFD8DADC),
-                            width: 1,
-                          ),
+                    Container(
+                      height: 50,
+                      width: 60,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: const Color(0xFFD8DADC),
+                          width: 1,
                         ),
-                        child: Center(
-                          child: CustomText(
-                            text: '+91',
-                            color: AppColor.textColor,
-                            size: 16,
-                          ),
+                      ),
+                      child: Center(
+                        child: CustomText(
+                          text: '+91',
+                          color: AppColor.textColor,
+                          size: 16,
                         ),
                       ),
                     ),
                     const Widths(10),
                     Expanded(
-                      flex: 4,
                       child: customTextField(
                         controller: phoneController,
                         hintText: 'Enter mobile number',
@@ -192,10 +199,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ],
                 ),
-                const Height(200),
+                const Height(40),
                 ContinueButton(
                   text: 'Save',
-                  isValid: true,
+                  isValid: nameController.text.isNotEmpty &&
+                      mailController.text.isNotEmpty &&
+                      livingType != null,
                   isLoading: profileProvider.isLoading,
                   onTap: _save,
                 ),
