@@ -302,41 +302,78 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
     _updateAddress(position.target);
   }
 
+  // Future<void> _searchLocations(String query) async {
+  //   if (query.isEmpty) {
+  //     setState(() {
+  //       _searchResults = [];
+  //     });
+  //     return;
+  //   }
+
+  //   try {
+  //     List<Location> locations = await locationFromAddress(query);
+  //     List<Map<String, dynamic>> results = [];
+  //     for (var location in locations) {
+  //       List<Placemark> placemarks = await placemarkFromCoordinates(
+  //         location.latitude,
+  //         location.longitude,
+  //       );
+  //       Placemark place = placemarks[0];
+  //       print('Place placeplaceplaceplace: $placemarks');
+  //       print('Place placeplaceplaceplace: ${placemarks.length}s');
+  //       String address = "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.thoroughfare ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}, ${place.postalCode ?? ''}";
+  //       print('Place red: $address');
+  //       //  address = '${value.street}, ${value.subLocality}, ${value.thoroughfare}, ${value.locality}, ${value.administrativeArea}, ${value.country}, ${value.postalCode}';
+  //       results.add({
+  //         'address': address,
+  //         'latLng': LatLng(location.latitude, location.longitude),
+  //       });
+  //     }
+  //     setState(() {
+  //       _searchResults = results;
+  //     });
+  //   } catch (e) {
+  //     // showToast('Error searching location: $e');
+  //     setState(() {
+  //       _searchResults = [];
+  //     });
+  //   }
+  // }
+
   Future<void> _searchLocations(String query) async {
-    if (query.isEmpty) {
-      setState(() {
-        _searchResults = [];
+  if (query.isEmpty) return;
+
+  try {
+    List<Location> locations = await locationFromAddress(query);
+    List<Map<String, dynamic>> results = [];
+
+    for (var location in locations) {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        location.latitude,
+        location.longitude,
+      );
+      if (placemarks.isEmpty) continue;
+
+      Placemark place = placemarks[0];
+      String address = "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.thoroughfare ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}, ${place.postalCode ?? ''}";
+
+      results.add({
+        'address': address,
+        'latLng': LatLng(location.latitude, location.longitude),
       });
-      return;
     }
 
-    try {
-      List<Location> locations = await locationFromAddress(query);
-      List<Map<String, dynamic>> results = [];
-      for (var location in locations) {
-        List<Placemark> placemarks = await placemarkFromCoordinates(
-          location.latitude,
-          location.longitude,
-        );
-        Placemark place = placemarks[0];
-        String address =
-            "${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
-        results.add({
-          'address': address,
-          'latLng': LatLng(location.latitude, location.longitude),
-        });
-      }
-      setState(() {
-        _searchResults = results;
-      });
-    } catch (e) {
-      showToast('Error searching location: $e');
-      setState(() {
-        _searchResults = [];
-      });
-    }
+    setState(() {
+      _searchResults.addAll(results); // ✅ Append results instead of replacing
+    });
+  } catch (e) {
+    // Optionally handle error
+    print('Error: $e');
   }
-
+}
+  
+  
+  
   void _showSearchBottomSheet() {
     _searchController.clear();
     setState(() {
@@ -398,8 +435,9 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
                           icon: const Icon(Icons.my_location),
                           label: const Text("Current Location"),
                           onPressed: () {
-                            Navigator.pop(context);
-                            _getCurrentLocation();
+                            print('Current Location pressed list $_searchResults');
+                            // Navigator.pop(context);
+                            // _getCurrentLocation();
                           },
                         ),
                         TextButton.icon(
@@ -414,30 +452,32 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
                     const Divider(),
                     SizedBox(
                       height: 200,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: _searchResults.length,
-                        itemBuilder: (context, index) {
-                          var result = _searchResults[index];
-                          return ListTile(
-                            leading: const Icon(Icons.location_pin,
-                                color: Colors.grey),
-                            title: Text(result['address']),
-                            onTap: () async {
-                              setState(() {
-                                _initialPosition = result['latLng'];
-                              });
-                              if (_mapController != null && _isMapReady) {
-                                await _mapController!.animateCamera(
-                                  CameraUpdate.newLatLngZoom(
-                                      _initialPosition, 15),
-                                );
-                              }
-                              await _updateAddress(_initialPosition);
-                              Navigator.pop(context);
-                            },
-                          );
-                        },
+                      child: Expanded(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: _searchResults.length,
+                          itemBuilder: (context, index) {
+                            var result = _searchResults[index];
+                            return ListTile(
+                              leading: const Icon(Icons.location_pin,
+                                  color: Colors.grey),
+                              title: Text(result['address']),
+                              onTap: () async {
+                                setState(() {
+                                  _initialPosition = result['latLng'];
+                                });
+                                if (_mapController != null && _isMapReady) {
+                                  await _mapController!.animateCamera(
+                                    CameraUpdate.newLatLngZoom(
+                                        _initialPosition, 15),
+                                  );
+                                }
+                                await _updateAddress(_initialPosition);
+                                Navigator.pop(context);
+                              },
+                            );
+                          },
+                        ),
                       ),
                     ),
                     const Height(20),
