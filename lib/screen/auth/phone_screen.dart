@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:spinovo_app/providers/auth_provider.dart';
+import 'package:spinovo_app/screen/account/privacy_policy_screen.dart';
+import 'package:spinovo_app/screen/account/terms_conditions_screen.dart';
 import 'package:spinovo_app/utiles/color.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/button.dart';
@@ -136,22 +138,42 @@ class _PhoneScreenState extends State<PhoneScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CustomText(
-                      text: "Terms of Use",
-                      letterSpacing: -0.26,
-                      decoration: TextDecoration.underline,
-                      color: const Color(0xFF525871),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const TermConditionsScreen()),
+                        );
+                      },
+                      child: CustomText(
+                        text: "Terms of Use",
+                        letterSpacing: -0.26,
+                        decoration: TextDecoration.underline,
+                        color: const Color(0xFF525871),
+                      ),
                     ),
                     CustomText(
                       text: "  &  ",
                       letterSpacing: -0.26,
                       color: const Color(0xFF525871),
                     ),
-                    CustomText(
-                      text: "Privacy Policy",
-                      letterSpacing: -0.26,
-                      decoration: TextDecoration.underline,
-                      color: const Color(0xFF525871),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const PrivacyPolicyScreen()),
+                        );
+                      },
+                      child: CustomText(
+                        text: "Privacy Policy",
+                        letterSpacing: -0.26,
+                        decoration: TextDecoration.underline,
+                        color: const Color(0xFF525871),
+                      ),
                     ),
                   ],
                 ),

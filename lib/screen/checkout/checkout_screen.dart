@@ -250,6 +250,53 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             }).toList(),
                           ),
                         ),
+                  const Height(15),
+                  if (selectedService != null) ...[
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey[300]!),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomText(
+                            text: selectedService.description ?? '',
+                            size: 12,
+                            color: Colors.black87,
+                          ),
+                          const Height(6),
+                          CustomText(
+                              text:
+                                  "Service duration: ${selectedService.duration}",
+                              size: 12,
+                              color: const Color(0xFF33C362)),
+                          const Height(6),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomText(
+                                text:
+                                    "Original Price: ₹${selectedService.original}",
+                                size: 12,
+                                color: Colors.black87,
+                                decoration: TextDecoration.lineThrough,
+                                decorationColor: Colors.black87,
+                              ),
+                              CustomText(
+                                  text:
+                                      "Discounted Price: ₹${selectedService.discounted}",
+                                  size: 12,
+                                  color: const Color(0xFF33C362)),
+                            ],
+                          ),
+                       
+                        ],
+                      ),
+                    )
+                  ],
                 ],
               ),
             ),
@@ -732,7 +779,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
       showToast('Proceeding to payment');
     } else {
-      showToast('Please select date, time slot, service, and a valid quantity (min ${selectedService! ?? 0})');
+      showToast(
+          'Please select date, time slot, service, and a valid quantity (min ${selectedService! ?? 0})');
     }
   }
 
