@@ -138,7 +138,7 @@ class HomeScreen extends StatelessWidget {
                               ),
                             );
                           },
-                          child: Image.asset('asset/images/van_banner.png'),
+                          child: Image.asset('asset/images/banner_v2.png'),
                         ),
                         const Height(10),
                         const SpinovoNowSection(),

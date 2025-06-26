@@ -53,8 +53,7 @@ class WalletSection extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(50)),
         ),
         child: Padding(
-          padding:
-              const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
+          padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
           child: Consumer<WalletProvider>(
             builder: (context, walletProvider, child) {
               if (walletProvider.isLoading) {
@@ -97,10 +96,7 @@ class WalletSection extends StatelessWidget {
                 );
               }
 
-              final balance = walletProvider
-                      .walletBalance?.data?.wallet?.totalBalance
-                      ?.toInt() ??
-                  0;
+              final balance = walletProvider.walletBalance?.data?.wallet?.totalBalance ?.toInt() ??  0;
 
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -139,8 +135,7 @@ class AddressSection extends StatelessWidget {
         if (addressProvider.addresses.isNotEmpty) {
           primaryAddress = addressProvider.addresses.firstWhere(
             (address) => address.isPrimary == true,
-            orElse: () => addressProvider
-                .addresses.first, // Fallback to first address if no primary
+            orElse: () => addressProvider.addresses.first, // Fallback to first address if no primary
           );
         }
 

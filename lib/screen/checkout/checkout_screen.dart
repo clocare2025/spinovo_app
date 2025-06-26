@@ -292,7 +292,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   color: const Color(0xFF33C362)),
                             ],
                           ),
-                       
                         ],
                       ),
                     )

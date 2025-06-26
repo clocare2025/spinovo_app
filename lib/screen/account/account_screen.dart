@@ -144,7 +144,7 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
               const Height(20),
               CustomText(
-                text: 'App version 1.0.0',
+                text: 'App version 1.0.4',
                 color: AppColor.textColor,
                 size: 14,
               ),
