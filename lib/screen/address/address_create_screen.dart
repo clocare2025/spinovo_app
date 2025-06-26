@@ -248,9 +248,8 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
       // showToast('Error getting location: $e');
       print('Error getting location: $e');
       // Fallback to a default location if current location cannot be fetched
-      // This is useful for testing or if the user has location services disabled.  
-      
-    
+      // This is useful for testing or if the user has location services disabled.
+
       setState(() {
         _initialPosition = const LatLng(23.0365, 72.5611);
       });
@@ -459,32 +458,30 @@ class _AddressMapScreenState extends State<AddressMapScreen> {
                     const Divider(),
                     SizedBox(
                       height: 200,
-                      child: Expanded(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: _searchResults.length,
-                          itemBuilder: (context, index) {
-                            var result = _searchResults[index];
-                            return ListTile(
-                              leading: const Icon(Icons.location_pin,
-                                  color: Colors.grey),
-                              title: Text(result['address']),
-                              onTap: () async {
-                                setState(() {
-                                  _initialPosition = result['latLng'];
-                                });
-                                if (_mapController != null && _isMapReady) {
-                                  await _mapController!.animateCamera(
-                                    CameraUpdate.newLatLngZoom(
-                                        _initialPosition, 15),
-                                  );
-                                }
-                                await _updateAddress(_initialPosition);
-                                Navigator.pop(context);
-                              },
-                            );
-                          },
-                        ),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: _searchResults.length,
+                        itemBuilder: (context, index) {
+                          var result = _searchResults[index];
+                          return ListTile(
+                            leading: const Icon(Icons.location_pin,
+                                color: Colors.grey),
+                            title: Text(result['address']),
+                            onTap: () async {
+                              setState(() {
+                                _initialPosition = result['latLng'];
+                              });
+                              if (_mapController != null && _isMapReady) {
+                                await _mapController!.animateCamera(
+                                  CameraUpdate.newLatLngZoom(
+                                      _initialPosition, 15),
+                                );
+                              }
+                              await _updateAddress(_initialPosition);
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
                       ),
                     ),
                     const Height(20),

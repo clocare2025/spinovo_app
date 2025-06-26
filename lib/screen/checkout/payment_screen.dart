@@ -206,7 +206,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CustomText(
-              text: widget.bookingDetails['service_name'] ?? 'Service',
+              text:  "${widget.bookingDetails['service_name']} (${widget.bookingDetails['order_type'] ?? 'Service'})",
               size: 18,
               fontweights: FontWeight.w400,
             ),

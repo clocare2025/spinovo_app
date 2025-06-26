@@ -81,22 +81,6 @@ import 'package:spinovo_app/widget/text_widget.dart';
 //   }
 // }
 
-import 'package:easy_stepper/easy_stepper.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
-import 'package:spinovo_app/component/home_appbar.dart';
-import 'package:spinovo_app/component/msgSection.dart';
-import 'package:spinovo_app/providers/address_provider.dart';
-import 'package:spinovo_app/screen/checkout/checkout_screen.dart';
-import 'package:spinovo_app/screen/home/home_componebt.dart';
-import 'package:spinovo_app/utiles/assets.dart';
-import 'package:spinovo_app/utiles/color.dart';
-import 'package:spinovo_app/utiles/designe.dart';
-import 'package:spinovo_app/widget/size_box.dart';
-import 'package:spinovo_app/widget/text_widget.dart';
-
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -216,7 +200,8 @@ class ServiceSection extends StatelessWidget {
                   // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     HeadingText(
-                      text: 'Our Services',
+                      text: 'Regular Services',
+                      size: 20,
                     ),
                     Lottie.asset(
                       'asset/icons/service_svg.json',

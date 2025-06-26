@@ -700,7 +700,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         return;
       }
       final bookingDetails = {
-        'order_type': 'single',
+        'order_type': 'regular',
         'service_id': _selectedServiceId,
         'service_name': selectedService.service,
         'garment_qty': enteredQty,
@@ -725,13 +725,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PaymentScreenV2(bookingDetails: bookingDetails),
+          builder: (context) =>
+              //  PaymentScreenV2(bookingDetails: bookingDetails),
+              PaymentScreen(bookingDetails: bookingDetails),
         ),
       );
       showToast('Proceeding to payment');
     } else {
-      showToast(
-          'Please select date, time slot, service, and a valid quantity (min ${selectedService! ?? 0})');
+      showToast('Please select date, time slot, service, and a valid quantity (min ${selectedService! ?? 0})');
     }
   }
 

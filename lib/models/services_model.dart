@@ -52,6 +52,8 @@ class Service {
   int? minQty;
   int? original;
   int? discounted;
+  String? duration;
+  String? description;
   List<PricesByQty>? pricesByQty;
 
   Service(
@@ -61,6 +63,8 @@ class Service {
       this.minQty,
       this.original,
       this.discounted,
+      this.duration,
+      this.description,
       this.pricesByQty});
 
   Service.fromJson(Map<String, dynamic> json) {
@@ -70,6 +74,8 @@ class Service {
     minQty = json['min_qtq'];
     original = json['original'];
     discounted = json['discounted'];
+    duration = json['duration'];
+    description = json['description'];
     if (json['prices_by_qty'] != null) {
       pricesByQty = <PricesByQty>[];
       json['prices_by_qty'].forEach((v) {
@@ -84,6 +90,10 @@ class Service {
     data['service'] = service;
     data['original'] = this.original;
     data['discounted'] = this.discounted;
+    data['label'] = label;
+    data['min_qtq'] = this.minQty;
+    data['duration'] = this.duration;
+    data['description'] = this.description;
     if (this.pricesByQty != null) {
       data['prices_by_qty'] = this.pricesByQty!.map((v) => v.toJson()).toList();
     }

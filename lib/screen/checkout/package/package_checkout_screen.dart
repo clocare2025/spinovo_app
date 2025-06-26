@@ -421,7 +421,7 @@ class _PackageCheckoutScreenState extends State<PackageCheckoutScreen> {
       }
       String serviceList = widget.package.services.map((element) => element.serviceName).join(' + ');      
       final bookingDetails = {
-        'order_type': 'package',
+        'order_type': 'quick',
         'service_id':  widget.package.packageId,
         'service_name': serviceList,
         'garment_qty': widget.package.noOfClothes,
