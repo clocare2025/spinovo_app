@@ -50,10 +50,10 @@ class SpinovoNowSection extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                       HeadingText(
-                      text: 'Spinovo Quick',
-                      size: 20,
-                    ),
+                      HeadingText(
+                        text: 'Spinovo Quick',
+                        size: 20,
+                      ),
                       // CustomText(
                       //   text: 'Spinovo Express',
                       //   size: 24,
@@ -87,7 +87,7 @@ class SpinovoNowSection extends StatelessWidget {
                   SmallText(
                     text: 'Delivered to your doorstep within ',
                     size: 12,
-                  letterSpacing: 0,
+                    letterSpacing: 0,
                   ),
                   const Icon(
                     Icons.bolt,
@@ -98,8 +98,8 @@ class SpinovoNowSection extends StatelessWidget {
                     text: '120 mins',
                     color: Colors.pink,
                     fontweights: FontWeight.bold,
-                       size: 12,
-                  letterSpacing: 0,
+                    size: 12,
+                    letterSpacing: 0,
                   ),
                 ],
               ),
@@ -323,20 +323,20 @@ class SpinovoNowSection extends StatelessWidget {
                           //   text: '₹${service.discountPrice}',
                           //   size: 14,
                           // ),
-                            Row(
-                        children: [
-                          CustomText(
-                            text: '₹${service.discountPrice}',
-                         //   fontweights: FontWeight.bold,
-                          ),
-                          const Widths(8),
-                          CustomText(
-                            text: '₹${service.originalPrice}',
-                            color: Colors.grey,
-                            decoration: TextDecoration.lineThrough,
-                          ),
-                        ],
-                      )
+                          Row(
+                            children: [
+                              CustomText(
+                                text: '₹${service.discountPrice}',
+                                //   fontweights: FontWeight.bold,
+                              ),
+                              const Widths(8),
+                              CustomText(
+                                text: '₹${service.originalPrice}',
+                                color: Colors.grey,
+                                decoration: TextDecoration.lineThrough,
+                              ),
+                            ],
+                          )
                         ],
                       ),
                     );
@@ -352,7 +352,7 @@ class SpinovoNowSection extends StatelessWidget {
                   //     CustomText(
                   //       text: 'Service within 2 hours',
                   //       size: 15,
-                      
+
                   //     ),
                   //   ],
                   // ),
@@ -366,7 +366,7 @@ class SpinovoNowSection extends StatelessWidget {
                   //     CustomText(
                   //       text: 'Service within 24 hours',
                   //       size: 15,
-                      
+
                   //     ),
                   //   ],
                   // ),
@@ -427,25 +427,25 @@ class SpinovoNowSection extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Column(
-                        children: [
-                          const Icon(
-                            Icons.boy,
-                            size: 25,
-                            color: Color(0xFF525870),
-                          ),
-                          const Height(5),
-                          CustomText(
-                            text: 'Delivery',
-                            color: const Color(0xFF525870),
-                            size: 12,
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
+                      // Column(
+                      //   children: [
+                      //     const Icon(
+                      //       Icons.home,
+                      //       size: 25,
+                      //       color: Color(0xFF525870),
+                      //     ),
+                      //     const Height(5),
+                      //     CustomText(
+                      //       text: 'Delivery',
+                      //       color: const Color(0xFF525870),
+                      //       size: 12,
+                      //       textAlign: TextAlign.center,
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   ),
-                 
+
                   const Height(20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -461,8 +461,9 @@ class SpinovoNowSection extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                       PackageCheckoutScreen(package: package, )),
+                                  builder: (context) => PackageCheckoutScreen(
+                                        package: package,
+                                      )),
                             );
                             // Navigator.pop(context);
                           },

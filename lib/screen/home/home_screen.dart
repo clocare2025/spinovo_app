@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:spinovo_app/component/home_appbar.dart';
 import 'package:spinovo_app/component/msgSection.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
+import 'package:spinovo_app/providers/wallet_provider.dart';
 import 'package:spinovo_app/screen/checkout/checkout_screen.dart';
 import 'package:spinovo_app/screen/home/home_componebt.dart';
 import 'package:spinovo_app/screen/home/home_without_address.dart';
@@ -89,6 +90,7 @@ class HomeScreen extends StatelessWidget {
     // Fetch addresses when the screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<AddressProvider>(context, listen: false).fetchAddresses();
+      Provider.of<WalletProvider>(context, listen: false).fetchBalance();
     });
 
     return Scaffold(

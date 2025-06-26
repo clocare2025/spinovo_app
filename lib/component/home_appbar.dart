@@ -53,71 +53,47 @@ class WalletSection extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(50)),
         ),
         child: Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
-          child: Consumer<WalletProvider>(
-            builder: (context, walletProvider, child) {
-              if (walletProvider.isLoading) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                    const Widths(6),
-                    SmallText(
-                      text: "Loading...",
+            padding:
+                const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  AppAssets.walletV2,
+                  color: AppColor.textColor,
+                  height: 16,
+                ),
+                const Widths(6),
+                Consumer<WalletProvider>(
+                    builder: (context, walletProvider, child) {
+                  if (walletProvider.isLoading) {
+                    return SmallText(
+                      text: "₹0",
                       color: AppColor.textColor,
                       fontweights: FontWeight.w500,
-                    ),
-                  ],
-                );
-              }
+                    );
+                  }
 
-              if (walletProvider.errorMessage != null) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      AppAssets.walletV2,
+                  if (walletProvider.errorMessage != null) {
+                    return SmallText(
+                      text: "₹0",
                       color: AppColor.textColor,
-                      height: 16,
-                    ),
-                    const Widths(6),
-                    SmallText(
-                      text: "Error",
-                      color: Colors.red,
                       fontweights: FontWeight.w500,
-                    ),
-                  ],
-                );
-              }
+                    );
+                  }
 
-              final balance = walletProvider.walletBalance?.data?.wallet?.totalBalance ?.toInt() ??  0;
+                  final balance = walletProvider.walletBalance?.data?.wallet?.totalBalance  ?.toInt() ?? 0;
+                  print("Wallet Balance: $balance");
 
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    AppAssets.walletV2,
-                    color: AppColor.textColor,
-                    height: 16,
-                  ),
-                  const Widths(6),
-                  SmallText(
+                  return SmallText(
                     text: "₹$balance",
                     color: AppColor.textColor,
                     fontweights: FontWeight.w500,
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
+                  );
+                })
+              ],
+            )),
       ),
     );
   }
@@ -135,7 +111,8 @@ class AddressSection extends StatelessWidget {
         if (addressProvider.addresses.isNotEmpty) {
           primaryAddress = addressProvider.addresses.firstWhere(
             (address) => address.isPrimary == true,
-            orElse: () => addressProvider.addresses.first, // Fallback to first address if no primary
+            orElse: () => addressProvider
+                .addresses.first, // Fallback to first address if no primary
           );
         }
 
