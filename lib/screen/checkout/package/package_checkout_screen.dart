@@ -143,7 +143,7 @@ class _PackageCheckoutScreenState extends State<PackageCheckoutScreen> {
           children: [
             const Height(15),
             _buildSectionContainer(
-              title: "Select date of service",
+              title: "Select date of Pickup",
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: timeSlots.map((timeSlot) {
@@ -190,7 +190,7 @@ class _PackageCheckoutScreenState extends State<PackageCheckoutScreen> {
             ),
             const Height(15),
             _buildSectionContainer(
-              title: "Select time slot of service",
+              title: "Select time slot of Pickup",
               widget: Container(
                 width: 110,
                 height: 40,

@@ -32,13 +32,13 @@ class ProfileProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateUserProfile(String name, String email, String livingType) async {
+  Future<bool> updateUserProfile(String name, String email, String livingType, alternateNumber) async {
     try {
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();
 
-      final response = await _profileApi.updateUserProfile(name, email, livingType);
+      final response = await _profileApi.updateUserProfile(name, email, livingType, alternateNumber);
       if (response.status == true) {
         _userProfile = response;
         return true;

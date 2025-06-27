@@ -268,8 +268,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           ),
                           const Height(6),
                           CustomText(
-                              text:
-                                  "Service duration: ${selectedService.duration}",
+                              text: "Service duration: ${selectedService.duration}",
                               size: 12,
                               color: const Color(0xFF33C362)),
                           const Height(6),
@@ -278,16 +277,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CustomText(
-                                text:
-                                    "Original Price: ₹${selectedService.original}",
+                                text: "Original Price: ₹${selectedService.original}",
                                 size: 12,
                                 color: Colors.black87,
                                 decoration: TextDecoration.lineThrough,
                                 decorationColor: Colors.black87,
                               ),
                               CustomText(
-                                  text:
-                                      "Discounted Price: ₹${selectedService.discounted}",
+                                  text: "Discounted Price: ₹${selectedService.discounted}",
                                   size: 12,
                                   color: const Color(0xFF33C362)),
                             ],
@@ -301,7 +298,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
             const Height(15),
             _buildSectionContainer(
-              title: "Select & Enter number",
+              title: "Select package & Enter No Clothes",
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -442,7 +439,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
             const Height(15),
             _buildSectionContainer(
-              title: "Select date of service",
+              title: "Select date of Pickup",
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: timeSlots.map((timeSlot) {
@@ -489,7 +486,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
             const Height(15),
             _buildSectionContainer(
-              title: "Select time slot of service",
+              title: "Select time slot of Pickup",
               widget: Container(
                 width: 110,
                 height: 40,

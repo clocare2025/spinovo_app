@@ -75,7 +75,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ProfileScreen()),
+                    MaterialPageRoute(builder: (context) => const ProfileScreen()),
                   );
                 },
               ),
@@ -144,7 +144,7 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
               const Height(20),
               CustomText(
-                text: 'App version 1.0.4',
+                text: 'App version 1.0.5',
                 color: AppColor.textColor,
                 size: 14,
               ),

@@ -312,7 +312,7 @@ class TotalWalletSection extends StatelessWidget {
             const Divider(color: Color(0xFFCCD1CB)),
             const Height(8),
             const Text(
-              'Spinovo Cash is fully redeemable for bookings and extensions, and has no expiration date',
+              'Your wallet balance is fully redeemable for bookings and extensions, and has no expiration date',
               style: TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ],

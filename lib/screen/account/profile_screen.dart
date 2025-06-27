@@ -1,13 +1,14 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spinovo_app/component/custom_appbar.dart';
 import 'package:spinovo_app/providers/auth_provider.dart';
 import 'package:spinovo_app/providers/profile_provider.dart';
 import 'package:spinovo_app/screen/auth/details_screen.dart';
 import 'package:spinovo_app/utiles/color.dart';
+import 'package:spinovo_app/utiles/constants.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/button.dart';
 import 'package:spinovo_app/widget/custom_textfield.dart';
@@ -25,6 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final nameController = TextEditingController();
   final mailController = TextEditingController();
   final phoneController = TextEditingController();
+  final alternatephoneController = TextEditingController();
   String? livingType;
   bool _isInitialized = false;
 
@@ -38,9 +40,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     // Defer profile fetching to avoid setState during build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      if (authProvider.token != null) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString(AppConstants.TOKEN);
+      if (token != null) {
         Provider.of<ProfileProvider>(context, listen: false).fetchUserProfile();
       } else {
         showToast("Please log in to view your profile");
@@ -52,6 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _save() async {
     final name = nameController.text.trim();
     final email = mailController.text.trim();
+    final alternateNumber = alternatephoneController.text.trim();
 
     if (name.isEmpty) {
       showToast('Please enter your full name');
@@ -66,11 +70,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       showToast('Please select living type');
       return;
     }
+    if (alternateNumber.isEmpty) {
+      showToast('Please enter your alternate number');
+      return;
+    }
+        if (alternateNumber.length != 10) {
+      showToast('Please enter a valid 10-digit alternate mobile number');
+      return;
+    }
 
     final profileProvider =
         Provider.of<ProfileProvider>(context, listen: false);
-    final success =
-        await profileProvider.updateUserProfile(name, email, livingType!);
+    final success = await profileProvider.updateUserProfile(
+        name, email, livingType!, alternateNumber);
 
     if (success) {
       showToast('Profile updated successfully');
@@ -109,6 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             nameController.text = user.name ?? '';
             mailController.text = user.email ?? '';
             phoneController.text = user.mobile ?? '';
+            alternatephoneController.text = user.alternateNumber ?? '';
             livingType = householdTypes.contains(user.livingType)
                 ? user.livingType
                 : householdTypes[0];
@@ -120,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Height(20),
+                const Height(4),
                 const TextTitle(title: 'Full Name', optionalText: '*'),
                 const Height(8),
                 customTextField(
@@ -140,7 +153,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onChanged: (_) =>
                       setState(() {}), // Update state for button validation
                 ),
-                const Height(25),
+                const Height(20),
+                const TextTitle(title: 'Alternate Number', optionalText: '*'),
+                const Height(8),
+                customTextField(
+                  controller: alternatephoneController,
+                  hintText: 'Enter alternate number',
+                  keyboardType: TextInputType.emailAddress,
+                  onChanged: (_) =>
+                      setState(() {}), // Update state for button validation
+                ),
+                const Height(20),
                 const TextTitle(title: 'Select Living Type', optionalText: '*'),
                 const Height(8),
                 Row(
@@ -208,7 +231,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   isLoading: profileProvider.isLoading,
                   onTap: _save,
                 ),
-                const Height(20),
               ],
             ),
           );

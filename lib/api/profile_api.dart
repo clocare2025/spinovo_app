@@ -28,7 +28,7 @@ class ProfileApi {
     }
   }
 
-  Future<UserModel> updateUserProfile(String name, String email, String livingType) async {
+  Future<UserModel> updateUserProfile(String name, String email, String livingType, alternateNumber) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString(AppConstants.TOKEN);
     print("Token: $token"); // Debug token
@@ -42,6 +42,7 @@ class ProfileApi {
         'name': name,
         'email': email,
         'livingType': livingType,
+        'alternateNumber': alternateNumber,
       }),
     );
 

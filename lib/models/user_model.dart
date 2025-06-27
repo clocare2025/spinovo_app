@@ -43,6 +43,7 @@ class Data {
 class Profile {
   String? name;
   String? mobile;
+  String? alternateNumber;
   String? email;
   int? walletBalance;
   int? spinovoBonus;
@@ -65,6 +66,7 @@ class Profile {
   Profile({
     this.name,
     this.mobile,
+    this.alternateNumber,
     this.email,
     this.walletBalance,
     this.spinovoBonus,
@@ -88,6 +90,7 @@ class Profile {
   Profile.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     mobile = json['mobile'];
+    alternateNumber = json['alternateNumber'];
     email = json['email'];
     walletBalance = json['wallet_balance'];
     spinovoBonus = json['spinovo_bonus'];
@@ -112,6 +115,7 @@ class Profile {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['name'] = name;
     data['mobile'] = mobile;
+    data['alternateNumber'] = alternateNumber;
     data['email'] = email;
     data['wallet_balance'] = walletBalance;
     data['spinovo_bonus'] = spinovoBonus;

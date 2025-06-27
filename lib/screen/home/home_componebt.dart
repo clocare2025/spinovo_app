@@ -95,7 +95,7 @@ class SpinovoNowSection extends StatelessWidget {
                     size: 16,
                   ),
                   SmallText(
-                    text: '120 mins',
+                    text: '2 hours',
                     color: Colors.pink,
                     fontweights: FontWeight.bold,
                     size: 12,
