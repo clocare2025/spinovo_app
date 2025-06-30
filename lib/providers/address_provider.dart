@@ -14,6 +14,7 @@ class AddressProvider with ChangeNotifier {
 
   // Create a new address
   Future<void> createAddress(Map<String, dynamic> addressData) async {
+    print('Creating address with data1: $addressData');
     try {
       _isLoading = true;
       _errorMessage = null;
@@ -95,44 +96,26 @@ class AddressProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  // Create a new address
+  Future<void> updateAddress(
+      Map<String, dynamic> addressData, String addressId) async {
+    try {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+
+      final response = await _addressApi.updateAddress(addressData, addressId);
+      if (response.status == true && response.data != null) {
+        _addresses.add(response.data!);
+      } else {
+        _errorMessage = response.msg ?? 'Failed to update address';
+      }
+    } catch (e) {
+      _errorMessage = 'Error: $e';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }
-
-// import 'package:flutter/material.dart';
-// import 'package:spinovo_app/api/address_api.dart';
-// import 'package:spinovo_app/models/address_model.dart';
-
-// class AddressProvider with ChangeNotifier {
-//   final AddressApi _addressApi = AddressApi();
-//   bool _isLoading = false;
-//   String? _errorMessage;
-//   AddressModel? _address;
-
-//   bool get isLoading => _isLoading;
-//   String? get errorMessage => _errorMessage;
-//   AddressModel? get address => _address;
-
-//   Future<void> createAddress(Map<String, dynamic> addressData) async {
-//     try {
-//       _isLoading = true;
-//       _errorMessage = null;
-//       notifyListeners();
-
-//       final response = await _addressApi.createAddress(addressData);
-//       if (response.status == true) {
-//         _address = response;
-//       } else {
-//         _errorMessage = response.msg ?? 'Failed to create address';
-//       }
-//     } catch (e) {
-//       _errorMessage = 'Error: $e';
-//     } finally {
-//       _isLoading = false;
-//       notifyListeners();
-//     }
-//   }
-
-//   void clearError() {
-//     _errorMessage = null;
-//     notifyListeners();
-//   }
-// }

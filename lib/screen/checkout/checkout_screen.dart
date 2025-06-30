@@ -12,7 +12,6 @@ import 'package:spinovo_app/providers/timeslot_provider.dart';
 import 'package:spinovo_app/screen/address/address_screen.dart';
 import 'package:spinovo_app/screen/checkout/checkout_appbar.dart';
 import 'package:spinovo_app/screen/checkout/payment_screen.dart';
-import 'package:spinovo_app/screen/checkout/payment_screen_v2.dart';
 import 'package:spinovo_app/utiles/constants.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/button.dart';

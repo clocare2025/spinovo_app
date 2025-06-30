@@ -140,7 +140,7 @@ class AddressSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SmallText(
-                    text: primaryAddress?.addressLabel ?? 'Set Address',
+                    text: primaryAddress?.addressType ?? 'Set Address',
                     size: 16,
                     fontweights: FontWeight.w500,
                     color: Colors.white,

@@ -9,6 +9,7 @@ class AddressApi {
 
   // Create a new address
   Future<AddressModel> createAddress(Map<String, dynamic> addressData) async {
+      print('Creating address with data2: $addressData');
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString(AppConstants.TOKEN);
 
@@ -24,7 +25,7 @@ class AddressApi {
       },
       body: jsonEncode(addressData),
     );
-
+  print(' data2 ${response.body}');
     if (response.statusCode == 200) {
       return AddressModel.fromJson(jsonDecode(response.body));
     } else {
@@ -114,6 +115,33 @@ class AddressApi {
     } else {
       final error = jsonDecode(response.body);
       throw Exception(error['msg'] ?? 'Failed to set default address: ${response.statusCode}');
+    }
+  }
+
+
+    // update address
+  Future<AddressModel> updateAddress(Map<String, dynamic> addressData, String addressId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(AppConstants.TOKEN);
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Authentication token is missing');
+    }
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/v1/consumer/address/update/$addressId'),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(addressData),
+    );
+
+    if (response.statusCode == 200) {
+      return AddressModel.fromJson(jsonDecode(response.body));
+    } else {
+      final error = jsonDecode(response.body);
+      throw Exception(error['msg'] ?? 'Failed to update address: ${response.statusCode}');
     }
   }
 

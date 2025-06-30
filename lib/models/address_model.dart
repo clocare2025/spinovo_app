@@ -30,6 +30,7 @@ class AddressData {
   String? addressType;
   String? addressLabel;
   String? flatNo;
+  String? building;
   String? street;
   String? landmark;
   String? city;
@@ -37,6 +38,11 @@ class AddressData {
   String? pincode;
   String? formatAddress;
   bool? isPrimary;
+  String? petsAtHome;
+  String? latitude;
+  String? longitude;
+
+
 
   AddressData({
     this.addressId,
@@ -44,6 +50,7 @@ class AddressData {
     this.addressType,
     this.addressLabel,
     this.flatNo,
+    this.building,
     this.street,
     this.landmark,
     this.city,
@@ -51,6 +58,9 @@ class AddressData {
     this.pincode,
     this.formatAddress,
     this.isPrimary,
+    this.petsAtHome,
+    this.latitude,  
+    this.longitude,
   });
 
   AddressData.fromJson(Map<String, dynamic> json) {
@@ -59,6 +69,7 @@ class AddressData {
     addressType = json['address_type'];
     addressLabel = json['address_label'];
     flatNo = json['flat_no'];
+    building = json['building'];
     street = json['street'];
     landmark = json['landmark'];
     city = json['city'];
@@ -66,6 +77,9 @@ class AddressData {
     pincode = json['pincode'];
     formatAddress = json['format_address'];
     isPrimary = json['isPrimary'];
+    petsAtHome = json['petsAtHome'];
+    latitude = json['latitude'];
+    longitude = json['longitude'];
   }
 
   Map<String, dynamic> toJson() {
@@ -75,6 +89,7 @@ class AddressData {
     data['address_type'] = addressType;
     data['address_label'] = addressLabel;
     data['flat_no'] = flatNo;
+    data['building'] = building;
     data['street'] = street;
     data['landmark'] = landmark;
     data['city'] = city;
@@ -82,6 +97,9 @@ class AddressData {
     data['pincode'] = pincode;
     data['format_address'] = formatAddress;
     data['isPrimary'] = isPrimary;
+    data['petsAtHome'] = petsAtHome;
+    data['latitude'] = latitude;
+    data['longitude'] = longitude;
     return data;
   }
 }

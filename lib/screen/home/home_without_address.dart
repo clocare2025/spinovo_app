@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spinovo_app/screen/address/address_create_edite_screen.dart';
 import 'package:spinovo_app/screen/address/address_create_screen.dart';
 import 'package:spinovo_app/widget/button.dart';
 import 'package:spinovo_app/widget/size_box.dart';
@@ -38,7 +39,7 @@ class _WithoutAddressSectionState extends State<WithoutAddressSection> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AddressMapScreen(),
+                    builder: (context) => const AddressCreateEditScreen(),
                   ),
                 );
               },
