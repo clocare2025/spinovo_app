@@ -10,9 +10,9 @@ import 'package:spinovo_app/providers/address_provider.dart';
 import 'package:spinovo_app/providers/services_provider.dart';
 import 'package:spinovo_app/providers/timeslot_provider.dart';
 import 'package:spinovo_app/screen/address/address_screen.dart';
-import 'package:spinovo_app/screen/checkout/checkout_appbar.dart';
+import 'package:spinovo_app/screen/checkout/widgets/checkout_appbar.dart';
 import 'package:spinovo_app/screen/checkout/payment_screen.dart';
-import 'package:spinovo_app/screen/checkout/payment_screen_v2.dart';
+import 'package:spinovo_app/screen/checkout/widgets/slot_picker.dart';
 import 'package:spinovo_app/utiles/constants.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/button.dart';
@@ -56,11 +56,32 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       if (mounted) {
         setState(() {
           final now = DateTime.now();
-          _selectedPeriod = now.hour < 12 ? "AM" : "PM";
           final today = DateFormat('dd/MM/yyyy').format(now);
           final timeSlots = timeslotProvider.timeSlot?.data?.timeSlot ?? [];
-          _selectedDate =
+
+          // Check if current date has active slots
+          final currentDateSlot =
               timeSlots.firstWhereOrNull((slot) => slot.date == today);
+          bool hasActiveSlots = false;
+          if (currentDateSlot != null && currentDateSlot.slot != null) {
+            hasActiveSlots = currentDateSlot.slot!.any((slot) =>
+                slot.slotTime?.any((slotTime) => slotTime.isActive == true) ??
+                false);
+          }
+
+          // Select current date if it has active slots, otherwise select the next available date
+          if (hasActiveSlots) {
+            _selectedDate = currentDateSlot;
+            _selectedPeriod = now.hour < 12 ? "AM" : "PM";
+          } else {
+            _selectedDate = timeSlots.firstWhereOrNull((slot) =>
+                slot.date != today &&
+                (slot.slot?.any((s) =>
+                        s.slotTime?.any((st) => st.isActive == true) ??
+                        false) ??
+                    false));
+            _selectedPeriod = "AM"; // Default to AM for non-current dates
+          }
         });
       }
 
@@ -171,7 +192,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget _buildBody(
       TimeslotProvider timeslotProvider, ServicesProvider servicesProvider) {
     final timeSlots = timeslotProvider.timeSlot?.data?.timeSlot ?? [];
-    final selectedDateSlots = _selectedDate?.slot ?? [];
     final servicesList = servicesProvider.servicesList?.data?.service ?? [];
     final selectedService = servicesList
         .firstWhereOrNull((service) => service.serviceId == _selectedServiceId);
@@ -268,7 +288,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           ),
                           const Height(6),
                           CustomText(
-                              text: "Service duration: ${selectedService.duration}",
+                              text:
+                                  "Service duration: ${selectedService.duration}",
                               size: 12,
                               color: const Color(0xFF33C362)),
                           const Height(6),
@@ -277,14 +298,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CustomText(
-                                text: "Original Price: ₹${selectedService.original}",
+                                text:
+                                    "Original Price: ₹${selectedService.original}",
                                 size: 12,
                                 color: Colors.black87,
                                 decoration: TextDecoration.lineThrough,
                                 decorationColor: Colors.black87,
                               ),
                               CustomText(
-                                  text: "Discounted Price: ₹${selectedService.discounted}",
+                                  text:
+                                      "Discounted Price: ₹${selectedService.discounted}",
                                   size: 12,
                                   color: const Color(0xFF33C362)),
                             ],
@@ -298,7 +321,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
             const Height(15),
             _buildSectionContainer(
-              title: "Select package & Enter No Clothes",
+              title: "Select package & Enter no of Clothes",
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -438,208 +461,32 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
             ),
             const Height(15),
-            _buildSectionContainer(
-              title: "Select date of Pickup",
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: timeSlots.map((timeSlot) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedDate = timeSlot;
-                        _selectedTimeSlot = null;
-                      });
-                    },
-                    child: Container(
-                      height: 60,
-                      width: 60,
-                      decoration: BoxDecoration(
-                        color: _selectedDate == timeSlot
-                            ? const Color(0xFFE9FFEB)
-                            : Colors.white,
-                        border: Border.all(
-                          color: _selectedDate == timeSlot
-                              ? const Color(0xFF33C362)
-                              : Colors.grey[300]!,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CustomText(
-                            text: timeSlot.day ?? '',
-                            size: 12,
-                            color: const Color(0xFF6B8A77),
-                          ),
-                          CustomText(
-                            text: timeSlot.date?.split('/')[0] ?? '',
-                            size: 14,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            const Height(15),
-            _buildSectionContainer(
-              title: "Select time slot of Pickup",
-              widget: Container(
-                width: 110,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEEEEEE),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: const Color(0xFFEEEEEE), width: 2),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          _selectedPeriod = "AM";
-                          _selectedTimeSlot = null;
-                        });
-                      },
-                      child: Container(
-                        height: 40,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: _selectedPeriod == "AM"
-                              ? Colors.white
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: CustomText(
-                            text: 'AM',
-                            size: 12,
-                            color: _selectedPeriod == "AM"
-                                ? Colors.black
-                                : Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const Widths(5),
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          _selectedPeriod = "PM";
-                          _selectedTimeSlot = null;
-                        });
-                      },
-                      child: Container(
-                        height: 40,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: _selectedPeriod == "PM"
-                              ? Colors.white
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: CustomText(
-                            text: 'PM',
-                            size: 12,
-                            color: _selectedPeriod == "PM"
-                                ? Colors.black
-                                : Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              child: _selectedDate == null || selectedDateSlots.isEmpty
-                  ? Center(
-                      child: CustomText(
-                          text: "Select a date to view time slots",
-                          color: Colors.grey),
-                    )
-                  : GridView.count(
-                      crossAxisCount: 3,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      childAspectRatio: 2,
-                      mainAxisSpacing: 18,
-                      crossAxisSpacing: 8,
-                      children: _getFilteredSlotTimes(selectedDateSlots)
-                          .map((slotTime) {
-                        final isSelected = _selectedTimeSlot == slotTime.time;
-                        final isActive = slotTime.isActive == true;
-                        final int slotCharge = slotTime.charges!;
-                        return GestureDetector(
-                          onTap: isActive
-                              ? () {
-                                  setState(() {
-                                    slotCharges = slotCharge;
-                                    _selectedTimeSlot = slotTime.time;
-                                  });
-                                }
-                              : null,
-                          child: Stack(
-                            clipBehavior: Clip
-                                .none, // Allows the label to overflow the container
-                            alignment: Alignment.topCenter,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: isSelected && isActive
-                                      ? const Color(0xFFE9FFEB)
-                                      : Colors.white,
-                                  border: Border.all(
-                                    color: isSelected && isActive
-                                        ? const Color(0xFF33C362)
-                                        : Colors.grey[300]!,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Center(
-                                  child: CustomText(
-                                    text: slotTime.time ?? '',
-                                    fontweights: isSelected && isActive
-                                        ? FontWeight.w500
-                                        : (isActive
-                                            ? FontWeight.normal
-                                            : FontWeight.w100),
-                                    color: isActive
-                                        ? (isSelected
-                                            ? const Color.fromARGB(
-                                                255, 0, 182, 40)
-                                            : Colors.black87)
-                                        : Colors.grey,
-                                  ),
-                                ),
-                              ),
-                              if (slotCharge != 0)
-                                Positioned(
-                                  top: -8,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 2),
-                                    decoration: const BoxDecoration(
-                                        color: Color(0xFFFEEFD2),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(4))),
-                                    child: CustomText(
-                                      text: "EXTRA ₹$slotCharge",
-                                      size: 9,
-                                      color: const Color(0xFF956A1C),
-                                      fontweights: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
+            DateTimePicker(
+              timeSlots: timeSlots,
+              selectedDate: _selectedDate,
+              selectedTimeSlot: _selectedTimeSlot,
+              selectedPeriod: _selectedPeriod,
+              slotCharges: slotCharges,
+              onDateSelected: (TimeSlot? timeSlot) {
+                setState(() {
+                  _selectedDate = timeSlot;
+                });
+              },
+              onTimeSlotSelected: (String? timeSlot) {
+                setState(() {
+                  _selectedTimeSlot = timeSlot;
+                });
+              },
+              onPeriodSelected: (String period) {
+                setState(() {
+                  _selectedPeriod = period;
+                });
+              },
+              onSlotChargesChanged: (int charges) {
+                setState(() {
+                  slotCharges = charges;
+                });
+              },
             ),
             const Height(100),
           ],
@@ -760,35 +607,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'payment_mode': "Online",
         'payment_status': "Paid",
         'booking_date': _selectedDate!.date,
-        'booking_time':
-            '$_selectedTimeSlot', //'$_selectedTimeSlot $_selectedPeriod',
+        'booking_time': '$_selectedTimeSlot',
         'address_id': defaultAddress.addressId,
       };
 
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              //  PaymentScreenV2(bookingDetails: bookingDetails),
-              PaymentScreen(bookingDetails: bookingDetails),
+          builder: (context) => PaymentScreen(bookingDetails: bookingDetails),
         ),
       );
       showToast('Proceeding to payment');
     } else {
       showToast(
-          'Please select date, time slot, service, and a valid quantity (min ${selectedService! ?? 0})');
+          'Please select date, time slot, service, and a valid quantity (min ${selectedService?.minQty ?? 0})');
     }
-  }
-
-  List<SlotTime> _getFilteredSlotTimes(List<Slot> slots) {
-    List<SlotTime> allSlotTimes = [];
-    for (var slot in slots) {
-      if (slot.slotTime != null) allSlotTimes.addAll(slot.slotTime!);
-    }
-    return allSlotTimes.where((slotTime) {
-      final time = slotTime.time?.toUpperCase() ?? '';
-      return time.endsWith(_selectedPeriod);
-    }).toList();
   }
 
   Widget _buildSectionContainer({

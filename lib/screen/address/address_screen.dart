@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:spinovo_app/component/custom_appbar.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
+import 'package:spinovo_app/providers/location_provider.dart';
 import 'package:spinovo_app/screen/address/address_create_edite_screen.dart';
 import 'package:spinovo_app/utiles/color.dart';
 import 'package:spinovo_app/utiles/toast.dart';
@@ -24,6 +25,7 @@ class _AddressScreenState extends State<AddressScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<AddressProvider>(context, listen: false).fetchAddresses();
+      Provider.of<LocationProvider>(context, listen: false).getLocationList();
     });
   }
 

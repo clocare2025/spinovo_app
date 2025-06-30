@@ -60,7 +60,7 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
   @override
   void initState() {
     super.initState();
-        Provider.of<LocationProvider>(context, listen: false).getLocationList();
+        // Provider.of<LocationProvider>(context, listen: false).getLocationList();
     if (widget.addressId != null) {
       _loadExistingAddress();
     } else {
