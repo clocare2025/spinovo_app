@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
+import 'package:spinovo_app/providers/location_provider.dart';
 import 'package:spinovo_app/screen/auth/details_screen.dart';
 import 'package:spinovo_app/services/bottom_navigation.dart';
 import 'package:spinovo_app/utiles/toast.dart';
@@ -35,13 +36,13 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
   Placemark? _currentPlacemark;
   AddressData? _existingAddress;
 
-  final List<String> _serviceablePincodes = [
-    "380009",
-    "380013",
-    "380014",
-    "390035",
-    "380058",
-  ];
+  // final List<String> _serviceablePincodes = [
+  //   "380009",
+  //   "380013",
+  //   "380014",
+  //   "390035",
+  //   "380058",
+  // ];
 
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _houseNumberController = TextEditingController();
@@ -49,10 +50,17 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
   List<Map<String, dynamic>> _searchResults = [];
   String _saveAs = "Home";
   String _petsAtHome = "NO";
+  final List<String> addressTypeList = [
+    'Home',
+    'Work',
+    'Hostel/PG',
+    'Other',
+  ];
 
   @override
   void initState() {
     super.initState();
+        Provider.of<LocationProvider>(context, listen: false).getLocationList();
     if (widget.addressId != null) {
       _loadExistingAddress();
     } else {
@@ -61,10 +69,9 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
   }
 
   void _loadExistingAddress() {
-    final addressProvider =
-        Provider.of<AddressProvider>(context, listen: false);
-    final address = addressProvider.addresses
-        .firstWhere((addr) => addr.addressId == widget.addressId);
+    final addressProvider = Provider.of<AddressProvider>(context, listen: false);
+    final locationProvider = Provider.of<LocationProvider>(context, listen: false);
+    final address = addressProvider.addresses.firstWhere((addr) => addr.addressId == widget.addressId);
     setState(() {
       _existingAddress = address;
       _saveAs = address.addressType ?? _saveAs;
@@ -75,7 +82,14 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
       double latitude = double.parse(address.latitude ?? '23.0319');
       double longitude = double.parse(address.longitude ?? '72.5440');
       _initialPosition = LatLng(latitude, longitude);
-      _isServiceAvailable = address.pincode != null && _serviceablePincodes.contains(address.pincode);
+      // _isServiceAvailable = address.pincode != null &&
+      //     _serviceablePincodes.contains(address.pincode);
+          
+
+          _isServiceAvailable = address.pincode != null &&
+    (locationProvider.locationModel?.data?.pincode
+            ?.contains(address.pincode) ??
+        false);
     });
     if (_isMapReady) {
       _mapController?.animateCamera(
@@ -108,14 +122,17 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
       'flat_no': flatNo,
       'building': building,
       'street': _currentPlacemark?.street ?? _existingAddress?.street ?? '',
-      'landmark':_currentPlacemark?.subLocality ?? _existingAddress?.landmark ?? '',
+      'landmark':
+          _currentPlacemark?.subLocality ?? _existingAddress?.landmark ?? '',
       'city': _currentPlacemark?.locality ?? _existingAddress?.city ?? '',
-      'state': _currentPlacemark?.administrativeArea ??  _existingAddress?.state ??'',
-      'pincode': _currentPlacemark?.postalCode ?? _existingAddress?.pincode ?? '',
+      'state': _currentPlacemark?.administrativeArea ??
+          _existingAddress?.state ??
+          '',
+      'pincode':
+          _currentPlacemark?.postalCode ?? _existingAddress?.pincode ?? '',
       'petsAtHome': _petsAtHome,
       'latitude': _initialPosition.latitude.toString(),
       'longitude': _initialPosition.longitude.toString(),
-
     };
 
     try {
@@ -307,13 +324,18 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
         position.longitude,
       );
       Placemark place = placemarks[0];
+      final locationProvider = Provider.of<LocationProvider>(context, listen: false);
       setState(() {
         _currentPlacemark = place;
         _currentAddress =
             "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
-        _isServiceAvailable = place.postalCode != null &&
-            _serviceablePincodes.contains(place.postalCode);
+        // _isServiceAvailable = place.postalCode != null && _serviceablePincodes.contains(place.postalCode);
+
+        _isServiceAvailable = place.postalCode != null && (locationProvider.locationModel?.data?.pincode ?.contains(place.postalCode) ?? false);
       });
+      if (locationProvider.errorMessage != null) {
+  showToast(locationProvider.errorMessage!);
+}
     } catch (e) {
       setState(() {
         _currentAddress = "Unable to fetch address";
@@ -487,13 +509,6 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
       },
     );
   }
-
-  final List<String> addressTypeList = [
-    'Home',
-    'Work',
-    'Hostel/PG',
-    'Other',
-  ];
 
   void _showSaveAddressBottomSheet() {
     showModalBottomSheet(
