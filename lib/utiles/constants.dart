@@ -12,6 +12,7 @@ class AppConstants {
   static String TOKEN = 'token';
   static String RAZORPAY_KEY_ID = "rzp_live_c852nEyeoW0eJx";
 
+
 // API DETAILS
   static const String BASE_URL = 
   // "https://sub.theclo.care";

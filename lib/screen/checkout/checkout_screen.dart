@@ -44,12 +44,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final timeslotProvider =
-          Provider.of<TimeslotProvider>(context, listen: false);
-      final servicesProvider =
-          Provider.of<ServicesProvider>(context, listen: false);
-      final addressProvider =
-          Provider.of<AddressProvider>(context, listen: false);
+      final timeslotProvider = Provider.of<TimeslotProvider>(context, listen: false);
+      final servicesProvider = Provider.of<ServicesProvider>(context, listen: false);
+      final addressProvider = Provider.of<AddressProvider>(context, listen: false);
 
       // Fetch time slots
       await timeslotProvider.getTimeSlot();

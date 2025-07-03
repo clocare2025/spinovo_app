@@ -1,13 +1,22 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
+import 'package:spinovo_app/location/autocomplate_prediction.dart';
+import 'package:spinovo_app/location/constants.dart';
+import 'package:spinovo_app/location/location_list_tile.dart';
+import 'package:spinovo_app/location/place_auto_complate_response.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
 import 'package:spinovo_app/providers/location_provider.dart';
 import 'package:spinovo_app/screen/auth/details_screen.dart';
 import 'package:spinovo_app/services/bottom_navigation.dart';
+import 'package:spinovo_app/location/googel_map_api.dart';
+import 'package:spinovo_app/utiles/color.dart';
+import 'package:spinovo_app/utiles/constants.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/roundedChoiceChip.dart';
 import 'package:spinovo_app/widget/button.dart';
@@ -48,6 +57,7 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
   final TextEditingController _houseNumberController = TextEditingController();
   final TextEditingController _flatController = TextEditingController();
   List<Map<String, dynamic>> _searchResults = [];
+  List<AutocompletePrediction> placePredictions = [];
   String _saveAs = "Home";
   String _petsAtHome = "NO";
   final List<String> addressTypeList = [
@@ -60,7 +70,7 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
   @override
   void initState() {
     super.initState();
-        // Provider.of<LocationProvider>(context, listen: false).getLocationList();
+    // Provider.of<LocationProvider>(context, listen: false).getLocationList();
     if (widget.addressId != null) {
       _loadExistingAddress();
     } else {
@@ -69,9 +79,12 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
   }
 
   void _loadExistingAddress() {
-    final addressProvider = Provider.of<AddressProvider>(context, listen: false);
-    final locationProvider = Provider.of<LocationProvider>(context, listen: false);
-    final address = addressProvider.addresses.firstWhere((addr) => addr.addressId == widget.addressId);
+    final addressProvider =
+        Provider.of<AddressProvider>(context, listen: false);
+    final locationProvider =
+        Provider.of<LocationProvider>(context, listen: false);
+    final address = addressProvider.addresses
+        .firstWhere((addr) => addr.addressId == widget.addressId);
     setState(() {
       _existingAddress = address;
       _saveAs = address.addressType ?? _saveAs;
@@ -84,12 +97,11 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
       _initialPosition = LatLng(latitude, longitude);
       // _isServiceAvailable = address.pincode != null &&
       //     _serviceablePincodes.contains(address.pincode);
-          
 
-          _isServiceAvailable = address.pincode != null &&
-    (locationProvider.locationModel?.data?.pincode
-            ?.contains(address.pincode) ??
-        false);
+      _isServiceAvailable = address.pincode != null &&
+          (locationProvider.locationModel?.data?.pincode
+                  ?.contains(address.pincode) ??
+              false);
     });
     if (_isMapReady) {
       _mapController?.animateCamera(
@@ -324,18 +336,22 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
         position.longitude,
       );
       Placemark place = placemarks[0];
-      final locationProvider = Provider.of<LocationProvider>(context, listen: false);
+      final locationProvider =
+          Provider.of<LocationProvider>(context, listen: false);
       setState(() {
         _currentPlacemark = place;
         _currentAddress =
             "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
         // _isServiceAvailable = place.postalCode != null && _serviceablePincodes.contains(place.postalCode);
 
-        _isServiceAvailable = place.postalCode != null && (locationProvider.locationModel?.data?.pincode ?.contains(place.postalCode) ?? false);
+        _isServiceAvailable = place.postalCode != null &&
+            (locationProvider.locationModel?.data?.pincode
+                    ?.contains(place.postalCode) ??
+                false);
       });
       if (locationProvider.errorMessage != null) {
-  showToast(locationProvider.errorMessage!);
-}
+        showToast(locationProvider.errorMessage!);
+      }
     } catch (e) {
       setState(() {
         _currentAddress = "Unable to fetch address";
@@ -400,6 +416,7 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
     _searchController.clear();
     setState(() {
       _searchResults = [];
+      placePredictions = [];
     });
 
     showModalBottomSheet(
@@ -429,10 +446,14 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
                     TextField(
                       controller: _searchController,
                       decoration: InputDecoration(
-                        hintText: "Search for your location",
+                        hintText: "  Search for your location",
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          //  borderSide: BorderSide(color: AppColor.textColor),
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(color: Colors.blue),
+                          borderSide: BorderSide(color: AppColor.appbarColor),
                         ),
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.clear),
@@ -440,11 +461,17 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
                             _searchController.clear();
                             setModalState(() {
                               _searchResults = [];
+                              placePredictions = [];
                             });
                           },
                         ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(color: AppColor.appbarColor),
+                        ),
                       ),
                       onChanged: (value) {
+                        placeAutocomplate(value);
                         _searchLocations(value);
                         setModalState(() {});
                       },
@@ -454,16 +481,32 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         TextButton.icon(
-                          icon: const Icon(Icons.my_location),
-                          label: const Text("Current Location"),
+                          icon: Icon(
+                            Icons.my_location,
+                            color: AppColor.appbarColor,
+                          ),
+                          label: SmallText(
+                            text: "Current Location",
+                            size: 14,
+                            color: Colors.black,
+                            fontweights: FontWeight.w500,
+                          ),
                           onPressed: () {
                             Navigator.pop(context);
                             _getCurrentLocation();
                           },
                         ),
                         TextButton.icon(
-                          icon: const Icon(Icons.map),
-                          label: const Text("Locate on Map"),
+                          icon: Icon(
+                            Icons.map,
+                            color: AppColor.appbarColor,
+                          ),
+                          // label: const Text("Locate on Map"),
+                          label: SmallText(
+                              text: "Locate on Map",
+                              size: 14,
+                              color: Colors.black,
+                              fontweights: FontWeight.w500),
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -474,30 +517,75 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
                     SizedBox(
                       height: 200,
                       child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: _searchResults.length,
-                        itemBuilder: (context, index) {
-                          var result = _searchResults[index];
-                          return ListTile(
-                            leading: const Icon(Icons.location_pin,
-                                color: Colors.grey),
-                            title: Text(result['address']),
-                            onTap: () async {
-                              setState(() {
-                                _initialPosition = result['latLng'];
-                              });
-                              if (_mapController != null && _isMapReady) {
-                                await _mapController!.animateCamera(
-                                  CameraUpdate.newLatLngZoom(
-                                      _initialPosition, 15),
-                                );
-                              }
-                              await _updateAddress(_initialPosition);
-                              Navigator.pop(context);
-                            },
-                          );
-                        },
-                      ),
+                          shrinkWrap: true,
+                          itemCount: placePredictions.length,
+                          itemBuilder: (context, index) => LocationListTile(
+                              press: () async {
+                                final placeId = placePredictions[index].placeId;
+                                final latLng =
+                                    await getLatLngFromPlaceId(placeId!);
+
+                                if (latLng != null) {
+                                  setState(() {
+                                    _initialPosition = latLng;
+                                  });
+
+                                  if (_mapController != null && _isMapReady) {
+                                    await _mapController!.animateCamera(
+                                      CameraUpdate.newLatLngZoom(latLng, 15),
+                                    );
+                                  }
+
+                                  await _updateAddress(latLng);
+                                  Navigator.pop(context);
+                                }
+                              },
+                              // press: () async {
+                              //   print(placePredictions[index].description);
+                              //   print(placePredictions[index].structuredFormatting);
+                              //   print(placePredictions[index].structuredFormatting!.mainText);
+                              //   print(placePredictions[index].structuredFormatting!.secondaryText);
+                              //   print(placePredictions[index].placeId);
+                              //   print(placePredictions[index].reference);
+                              //   // setState(() {
+                              //   //   _initialPosition = result['latLng'];
+                              //   // });
+                              //   // if (_mapController != null && _isMapReady) {
+                              //   //   await _mapController!.animateCamera(
+                              //   //     CameraUpdate.newLatLngZoom(
+                              //   //         _initialPosition, 15),
+                              //   //   );
+                              //   // }
+                              //   // await _updateAddress(_initialPosition);
+                              //   // Navigator.pop(context);
+                              // },
+                              location: placePredictions[index].description!)),
+
+                      // ListView.builder(
+                      //   shrinkWrap: true,
+                      //   itemCount: _searchResults.length,
+                      //   itemBuilder: (context, index) {
+                      //     var result = _searchResults[index];
+                      //     return ListTile(
+                      //       leading: const Icon(Icons.location_pin,
+                      //           color: Colors.grey),
+                      //       title: Text(result['address']),
+                      //       onTap: () async {
+                      //         setState(() {
+                      //           _initialPosition = result['latLng'];
+                      //         });
+                      //         if (_mapController != null && _isMapReady) {
+                      //           await _mapController!.animateCamera(
+                      //             CameraUpdate.newLatLngZoom(
+                      //                 _initialPosition, 15),
+                      //           );
+                      //         }
+                      //         await _updateAddress(_initialPosition);
+                      //         Navigator.pop(context);
+                      //       },
+                      //     );
+                      //   },
+                      // ),
                     ),
                     const Height(20),
                   ],
@@ -710,6 +798,45 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
     } else {
       showToast('Service is not available at this location');
     }
+  }
+
+  void placeAutocomplate(String query) async {
+    Uri url =
+        Uri.https("maps.googleapis.com", "maps/api/place/autocomplete/json", {
+      "input": query,
+      "key": GOOGLE_MAP_PLACE_PAI_KEY,
+    });
+    String? response = await NetworkUtilitiy.fetchUrl(url);
+    if (response != null) {
+      // PlaceAutocompleteResponse result = PlaceAutocompleteResponse.parseAutocompleteResult(response);
+      PlaceAutocompleteResponse result =
+          PlaceAutocompleteResponse.parseAutocompleteResult(response);
+      if (result.predictions != null) {
+        setState(() {
+          placePredictions = result.predictions!;
+        });
+      }
+
+      debugPrint(response);
+    }
+  }
+
+  Future<LatLng?> getLatLngFromPlaceId(String placeId) async {
+    Uri url = Uri.https("maps.googleapis.com", "maps/api/place/details/json", {
+      "place_id": placeId,
+      "key": GOOGLE_MAP_PLACE_PAI_KEY,
+    });
+
+    String? response = await NetworkUtilitiy.fetchUrl(url);
+    if (response == null) return null;
+
+    final data = json.decode(response);
+    if (data["status"] == "OK") {
+      final location = data["result"]["geometry"]["location"];
+      return LatLng(location["lat"], location["lng"]);
+    }
+
+    return null;
   }
 
   @override
