@@ -8,6 +8,7 @@ import 'package:spinovo_app/component/msgSection.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
 import 'package:spinovo_app/providers/wallet_provider.dart';
 import 'package:spinovo_app/screen/checkout/checkout_screen.dart';
+import 'package:spinovo_app/screen/checkout/checkout_screen_v3.dart';
 import 'package:spinovo_app/screen/home/home_componebt.dart';
 import 'package:spinovo_app/screen/home/home_without_address.dart';
 import 'package:spinovo_app/utiles/assets.dart';
@@ -176,9 +177,13 @@ class ServiceSection extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => CheckoutScreen(
+          builder: (context) => CheckoutScreenV3(
                 serviceId: serviceId,
-              )),
+              )
+          // CheckoutScreen(
+          //       serviceId: serviceId,
+          //     )
+          ),
     );
   }
 
