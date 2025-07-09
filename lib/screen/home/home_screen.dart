@@ -142,17 +142,17 @@ class HomeScreen extends StatelessWidget {
                           },
                           child: Image.asset('asset/images/banner_v2.png'),
                         ),
-                        const Height(10),
-                        const SpinovoNowSection(),
+                        // const Height(10),
+                        // const SpinovoNowSection(),
                         const Height(20),
                         const ServiceSection(),
                         const Height(20),
                         // const BookingTrackingSection(),
-                        const Height(30),
-                        const Align(
-                          alignment: Alignment.topLeft,
-                          child: HomeMsgSextion(),
-                        ),
+                        // const Height(30),
+                        // const Align(
+                        //   alignment: Alignment.topLeft,
+                        //   child: HomeMsgSextion(),
+                        // ),
                       ],
                     ),
                   ),
@@ -202,7 +202,7 @@ class ServiceSection extends StatelessWidget {
                   // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     HeadingText(
-                      text: 'Regular Services',
+                      text: 'Our Services',
                       size: 20,
                     ),
                     Lottie.asset(
