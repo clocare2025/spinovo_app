@@ -10,6 +10,7 @@ import 'package:spinovo_app/widget/button.dart';
 import 'package:spinovo_app/widget/custom_textfield.dart';
 import 'package:spinovo_app/widget/size_box.dart';
 import 'package:spinovo_app/widget/text_widget.dart';
+import 'package:intl/intl.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({Key? key}) : super(key: key);
@@ -33,7 +34,8 @@ class _WalletScreenState extends State<WalletScreen> {
     // Fetch initial wallet data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<WalletProvider>(context, listen: false).fetchBalance();
-      Provider.of<WalletProvider>(context, listen: false).fetchTransactionHistory();
+      Provider.of<WalletProvider>(context, listen: false)
+          .fetchTransactionHistory();
     });
   }
 
@@ -104,7 +106,8 @@ class _WalletScreenState extends State<WalletScreen> {
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('External wallet selected: ${response.walletName}')),
+      SnackBar(
+          content: Text('External wallet selected: ${response.walletName}')),
     );
   }
 
@@ -113,7 +116,8 @@ class _WalletScreenState extends State<WalletScreen> {
     return Consumer<WalletProvider>(
       builder: (context, walletProvider, child) {
         final walletBalance = walletProvider.walletBalance?.data?.wallet;
-        final transactionHistory = walletProvider.transactionHistory?.data?.history ?? [];
+        final transactionHistory =
+            walletProvider.transactionHistory?.data?.history ?? [];
 
         return Scaffold(
           backgroundColor: AppColor.bgColor,
@@ -132,7 +136,8 @@ class _WalletScreenState extends State<WalletScreen> {
                       child: Column(
                         children: [
                           Container(
-                            decoration: const BoxDecoration(color: Colors.white),
+                            decoration:
+                                const BoxDecoration(color: Colors.white),
                             child: Padding(
                               padding: const EdgeInsets.all(12),
                               child: Column(
@@ -159,21 +164,22 @@ class _WalletScreenState extends State<WalletScreen> {
                           ),
                           const Height(15),
                           Container(
-                            decoration: const BoxDecoration(color: Colors.white),
+                            decoration:
+                                const BoxDecoration(color: Colors.white),
                             child: Padding(
                               padding: const EdgeInsets.all(20),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                   CustomText(
+                                  CustomText(
                                     text: "Recent Transactions",
                                     size: 15,
                                     fontweights: FontWeight.w500,
                                   ),
                                   const Height(8),
                                   transactionHistory.isEmpty
-                                      ?  CustomText(
+                                      ? CustomText(
                                           text: "No transactions available",
                                           size: 14,
                                         )
@@ -182,25 +188,34 @@ class _WalletScreenState extends State<WalletScreen> {
                                               .map((history) => ListTile(
                                                     dense: true,
                                                     contentPadding:
-                                                        const EdgeInsets.symmetric(
+                                                        const EdgeInsets
+                                                            .symmetric(
                                                             horizontal: 0.0,
                                                             vertical: 0.0),
-                                                    visualDensity: const VisualDensity(
-                                                        horizontal: 0, vertical: 0),
+                                                    visualDensity:
+                                                        const VisualDensity(
+                                                            horizontal: 0,
+                                                            vertical: 0),
                                                     title: CustomText(
-                                                      text: history.message?.isNotEmpty == true
+                                                      text: history.message
+                                                                  ?.isNotEmpty ==
+                                                              true
                                                           ? history.message!
-                                                          : history.transactionType == 'credit'
+                                                          : history.transactionType ==
+                                                                  'credit'
                                                               ? 'Wallet Recharge'
                                                               : 'Wallet Debit',
                                                       size: 14,
                                                     ),
                                                     subtitle: CustomText(
-                                                      text: history.createdAt != null
-                                                          ? DateTime.parse(history.createdAt!)
-                                                              .toLocal()
-                                                              .toString()
-                                                              .substring(0, 16)
+                                                      text: history.createdAt !=
+                                                              null
+                                                          ? DateFormat(
+                                                                  'dd/MM/yyyy • hh:mm a')
+                                                              .format(DateTime
+                                                                      .parse(history
+                                                                          .createdAt!)
+                                                                  .toLocal())
                                                           : 'Unknown date',
                                                       size: 12,
                                                     ),
@@ -209,28 +224,41 @@ class _WalletScreenState extends State<WalletScreen> {
                                                       width: 40,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                            BorderRadius.circular(50),
-                                                        color: history.transactionType == 'credit'
-                                                            ? Colors.green.withOpacity(0.2)
-                                                            : Colors.red.withOpacity(0.2),
+                                                            BorderRadius
+                                                                .circular(50),
+                                                        color: history
+                                                                    .transactionType ==
+                                                                'credit'
+                                                            ? Colors.green
+                                                                .withOpacity(
+                                                                    0.2)
+                                                            : Colors.red
+                                                                .withOpacity(
+                                                                    0.2),
                                                       ),
                                                       child: Center(
                                                         child: Icon(
-                                                          history.transactionType == 'credit'
+                                                          history.transactionType ==
+                                                                  'credit'
                                                               ? Icons.add
                                                               : Icons.remove,
-                                                          color: history.transactionType == 'credit'
-                                                              ? Colors.green
-                                                              : Colors.red,
+                                                          color:
+                                                              history.transactionType ==
+                                                                      'credit'
+                                                                  ? Colors.green
+                                                                  : Colors.red,
                                                         ),
                                                       ),
                                                     ),
                                                     trailing: CustomText(
-                                                      text: '₹${history.amount}',
+                                                      text:
+                                                          '₹${history.amount}',
                                                       size: 15,
-                                                      color: history.transactionType == 'credit'
-                                                          ? Colors.green
-                                                          : Colors.red,
+                                                      color:
+                                                          history.transactionType ==
+                                                                  'credit'
+                                                              ? Colors.green
+                                                              : Colors.red,
                                                     ),
                                                   ))
                                               .toList(),
@@ -269,7 +297,7 @@ class TotalWalletSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             CustomText(
+            CustomText(
               text: "Total Wallet Balance",
               size: 15,
             ),
@@ -346,7 +374,7 @@ class DepositSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             CustomText(
+            CustomText(
               text: "Add Money to Wallet",
               size: 15,
               fontweights: FontWeight.w500,
