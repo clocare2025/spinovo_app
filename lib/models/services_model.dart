@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class ServicesModel {
   bool? status;
   String? msg;
@@ -8,13 +10,13 @@ class ServicesModel {
   ServicesModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     msg = json['msg'];
-    data = json['data'] != null ?  Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = this.status;
-    data['msg'] = this.msg;
+    data['status'] = status;
+    data['msg'] = msg;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
@@ -31,15 +33,15 @@ class Data {
     if (json['service'] != null) {
       service = <Service>[];
       json['service'].forEach((v) {
-        service!.add( Service.fromJson(v));
+        service!.add(Service.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    if (this.service != null) {
-      data['service'] = this.service!.map((v) => v.toJson()).toList();
+    if (service != null) {
+      data['service'] = service!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -55,17 +57,20 @@ class Service {
   String? duration;
   String? description;
   List<PricesByQty>? pricesByQty;
+  List<Category>? categoryList;
 
-  Service(
-      {this.serviceId,
-      this.service,
-      this.label,
-      this.minQty,
-      this.original,
-      this.discounted,
-      this.duration,
-      this.description,
-      this.pricesByQty});
+  Service({
+    this.serviceId,
+    this.service,
+    this.label,
+    this.minQty,
+    this.original,
+    this.discounted,
+    this.duration,
+    this.description,
+    this.pricesByQty,
+    this.categoryList,
+  });
 
   Service.fromJson(Map<String, dynamic> json) {
     serviceId = json['service_id'];
@@ -82,20 +87,29 @@ class Service {
         pricesByQty!.add(PricesByQty.fromJson(v));
       });
     }
+    if (json['category_list'] != null) {
+      categoryList = <Category>[];
+      json['category_list'].forEach((v) {
+        categoryList!.add(Category.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['service_id'] = serviceId;
     data['service'] = service;
-    data['original'] = this.original;
-    data['discounted'] = this.discounted;
     data['label'] = label;
-    data['min_qtq'] = this.minQty;
-    data['duration'] = this.duration;
-    data['description'] = this.description;
-    if (this.pricesByQty != null) {
-      data['prices_by_qty'] = this.pricesByQty!.map((v) => v.toJson()).toList();
+    data['min_qtq'] = minQty;
+    data['original'] = original;
+    data['discounted'] = discounted;
+    data['duration'] = duration;
+    data['description'] = description;
+    if (pricesByQty != null) {
+      data['prices_by_qty'] = pricesByQty!.map((v) => v.toJson()).toList();
+    }
+    if (categoryList != null) {
+      data['category_list'] = categoryList!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -113,6 +127,40 @@ class PricesByQty {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['qty'] = this.qty;
+    return data;
+  }
+}
+
+class Category {
+  int? categoryId;
+  String? category;
+  String? description;
+  String? price;
+  List<String>? typesOfClothes;
+
+  Category({
+    this.categoryId,
+    this.category,
+    this.description,
+    this.price,
+    this.typesOfClothes,
+  });
+
+  Category.fromJson(Map<String, dynamic> json) {
+    categoryId = json['category_id'];
+    category = json['category'];
+    description = json['description'];
+    price = json['price'];
+    typesOfClothes = json['types_of_Clothes']?.cast<String>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['category_id'] = categoryId;
+    data['category'] = category;
+    data['description'] = description;
+    data['price'] = price;
+    data['types_of_Clothes'] = typesOfClothes;
     return data;
   }
 }

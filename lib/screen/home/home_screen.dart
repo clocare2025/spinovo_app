@@ -9,6 +9,7 @@ import 'package:spinovo_app/providers/address_provider.dart';
 import 'package:spinovo_app/providers/wallet_provider.dart';
 import 'package:spinovo_app/screen/checkout/checkout_screen.dart';
 import 'package:spinovo_app/screen/checkout/checkout_screen_v3.dart';
+import 'package:spinovo_app/screen/checkout/service_category_screen.dart';
 import 'package:spinovo_app/screen/home/home_componebt.dart';
 import 'package:spinovo_app/screen/home/home_without_address.dart';
 import 'package:spinovo_app/utiles/assets.dart';
@@ -132,14 +133,14 @@ class HomeScreen extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const CheckoutScreen(
-                                  serviceId: 1,
-                                ),
-                              ),
-                            );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => const CheckoutScreen(
+                            //       serviceId: 1,
+                            //     ),
+                            //   ),
+                            // );
                           },
                           child: Image.asset('asset/images/banner_v2.png'),
                         ),
@@ -177,9 +178,12 @@ class ServiceSection extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => CheckoutScreenV3(
+          builder: (context) => ServiceCategoryScreen(
                 serviceId: serviceId,
               )
+          // builder: (context) => CheckoutScreenV3(
+          //       serviceId: serviceId,
+          //     )
           // CheckoutScreen(
           //       serviceId: serviceId,
           //     )

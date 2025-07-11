@@ -16,7 +16,7 @@ class ServicesApi {
     }
 
     final response = await http.get(
-      Uri.parse('$baseUrl/api/v1/consumer/service/list'),
+      Uri.parse('$baseUrl/api/v1/consumer/service/category'),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
