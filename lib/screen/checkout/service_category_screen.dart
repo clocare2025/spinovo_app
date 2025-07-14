@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spinovo_app/models/address_model.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
+import 'package:spinovo_app/providers/order_place_provider.dart';
 import 'package:spinovo_app/providers/services_provider.dart';
 import 'package:spinovo_app/screen/address/address_screen.dart';
 import 'package:spinovo_app/screen/checkout/checkout_screen_v3.dart';
@@ -119,6 +120,16 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
               child: Row(
                 children: servicesList.asMap().entries.map((entry) {
                   final service = entry.value;
+                  final serviceEntry =
+                      servicesProvider.selectedServiceCategories.firstWhere(
+                    (entry) => entry['service_id'] == service.serviceId,
+                    orElse: () => {'categorys': []},
+                  );
+                  final int itemCount = (serviceEntry['categorys'] as List)
+                      .fold<int>(
+                          0,
+                          (sum, cat) =>
+                              sum + (int.parse(cat['items'].toString()) ?? 0));
                   return CategoryServiceBox(
                     title: service.service!,
                     onTap: () {
@@ -132,6 +143,7 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
                     borderColor: _selectedServiceId == service.serviceId
                         ? const Color(0xFF33C362)
                         : Colors.grey[300]!,
+                    onOfClothe: itemCount,
                   );
                 }).toList(),
               ),
@@ -148,10 +160,28 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
               duration: "Service duration: ${selectedService.duration}",
             ),
             const Height(15),
-            CustomText(
-              text: "Categories",
-              size: 14,
-              fontweights: FontWeight.w500,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CustomText(
+                  text: "Categories",
+                  size: 14,
+                  fontweights: FontWeight.w500,
+                ),
+                if (servicesProvider.selectedServiceCategories.isNotEmpty)
+                  InkWell(
+                    onTap: () {
+                      servicesProvider.clearServiceCategory();
+                    },
+                    child: SmallText(
+                      text: "Remove all ",
+                      size: 12,
+                      color: const Color.fromARGB(255, 210, 58, 47),
+                      fontweights: FontWeight.w500,
+                    ),
+                  ),
+              ],
             ),
             const Height(10),
             ListView.builder(
@@ -160,7 +190,8 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
               itemCount: selectedService.categoryList?.length ?? 0,
               itemBuilder: (context, index) {
                 final category = selectedService.categoryList![index];
-                final qty = servicesProvider.getItemsForCategory(selectedService.serviceId!, category.categoryId!);
+                final qty = servicesProvider.getItemsForCategory(
+                    selectedService.serviceId!, category.categoryId!);
                 return GarmentBoxWidget(
                   name: category.category!,
                   price: '₹${category.price}',
@@ -168,21 +199,33 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
                   quantity: qty.toString(),
                   add: () {
                     servicesProvider.addServiceCategory(
-                      selectedService.serviceId!,
-                      category.categoryId!,
-                      category.price!,
-                      qty + 1,
+                      serviceId: selectedService.serviceId!,
+                      service: selectedService.service!,
+                      duration: selectedService.duration!,
+                      description: selectedService.description!,
+                      categoryId: category.categoryId!,
+                      category: category.category!,
+                      types_of_Clothes: category.typesOfClothes!,
+                      price: category.price!,
+                      items: qty + 1,
                     );
+
                     setState(() {}); // Refresh UI to update bottom sheet
                   },
                   remove: () {
                     if (qty > 0) {
                       servicesProvider.addServiceCategory(
-                        selectedService.serviceId!,
-                        category.categoryId!,
-                        category.price!,
-                        qty - 1,
+                        serviceId: selectedService.serviceId!,
+                        service: selectedService.service!,
+                        duration: selectedService.duration!,
+                        description: selectedService.description!,
+                        categoryId: category.categoryId!,
+                        category: category.category!,
+                        types_of_Clothes: category.typesOfClothes!,
+                        price: category.price!,
+                        items: qty - 1,
                       );
+
                       if (qty - 1 == 0) {
                         servicesProvider.removeServiceCategory(
                           selectedService.serviceId!,
@@ -194,10 +237,15 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
                   },
                   addFirstTime: () {
                     servicesProvider.addServiceCategory(
-                      selectedService.serviceId!,
-                      category.categoryId!,
-                      category.price!,
-                      1,
+                      serviceId: selectedService.serviceId!,
+                      service: selectedService.service!,
+                      duration: selectedService.duration!,
+                      description: selectedService.description!,
+                      categoryId: category.categoryId!,
+                      category: category.category!,
+                      types_of_Clothes: category.typesOfClothes!,
+                      price: category.price!,
+                      items: 1,
                     );
                     setState(() {}); // Refresh UI to update bottom sheet
                   },
@@ -274,14 +322,6 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // if (originalPrice > totalPrice)
-                  //   CustomText(
-                  //     text: "₹$originalPrice",
-                  //     decoration: TextDecoration.lineThrough,
-                  //     size: 15,
-                  //     color: Colors.grey,
-                  //   ),
-                  if (originalPrice > totalPrice) const Widths(5),
                   CustomText(
                     text: "₹$totalPrice",
                     fontweights: FontWeight.w500,
@@ -302,16 +342,21 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
             text: 'Confirm Booking',
             isValid: selectedCategories.isNotEmpty,
             isLoading: false,
-            onTap: () => _confirmBooking(servicesProvider),
+            onTap: () =>
+                _confirmBooking(servicesProvider, totalPrice, totalItems),
           ),
         ],
       ),
     );
   }
 
-  void _confirmBooking(ServicesProvider servicesProvider) {
+  void _confirmBooking(
+      ServicesProvider servicesProvider, int totalPrice, int totalItems) {
     final addressProvider =
         Provider.of<AddressProvider>(context, listen: false);
+    final orderPlaceDetailsProvider =
+        Provider.of<OrderPlaceDetailsProvider>(context, listen: false);
+    orderPlaceDetailsProvider.resetBooking();
     final defaultAddress = addressProvider.addresses.firstWhere(
       (address) => address.isPrimary == true,
       orElse: () => addressProvider.addresses.isNotEmpty
@@ -328,15 +373,24 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
       return;
     }
 
-    final bookingDetails = {
-      'order_type': 'regular',
-      'service_category': servicesProvider.selectedServiceCategories,
-    };
+    final String serviceListString = servicesProvider.selectedServiceCategories
+        .map((e) => e['service'])
+        .join(', ');
+    final String orderDetails =
+        servicesProvider.selectedServiceCategories.toString();
+
+    orderPlaceDetailsProvider.updateService(
+        orderType: 'regular',
+        serviceName: serviceListString,
+        orderQty: totalItems,
+        orderAmount: totalPrice,
+        orderDetails: orderDetails,
+        addressId: defaultAddress.addressId.toString());
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CheckoutScreenV3(serviceId: widget.serviceId),
+        builder: (context) => const CheckoutScreenV3(),
       ),
     );
     showToast('Proceeding to payment');

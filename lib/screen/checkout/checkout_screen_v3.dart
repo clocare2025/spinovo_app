@@ -1,29 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:spinovo_app/models/address_model.dart';
-import 'package:spinovo_app/models/services_model.dart';
 import 'package:spinovo_app/models/timeslot_model.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
-import 'package:spinovo_app/providers/services_provider.dart';
+import 'package:spinovo_app/providers/order_place_provider.dart';
 import 'package:spinovo_app/providers/timeslot_provider.dart';
 import 'package:spinovo_app/screen/address/address_screen.dart';
 import 'package:spinovo_app/screen/checkout/widgets/checkout_appbar.dart';
 import 'package:spinovo_app/screen/checkout/payment_screen.dart';
-import 'package:spinovo_app/screen/checkout/widgets/garment_box_widget.dart';
 import 'package:spinovo_app/screen/checkout/widgets/slot_picker.dart';
 import 'package:spinovo_app/utiles/constants.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/button.dart';
-import 'package:spinovo_app/widget/custom_textfield.dart';
 import 'package:spinovo_app/widget/size_box.dart';
 import 'package:spinovo_app/widget/text_widget.dart';
 
 class CheckoutScreenV3 extends StatefulWidget {
-  final int serviceId;
-  const CheckoutScreenV3({super.key, required this.serviceId});
+  const CheckoutScreenV3({
+    super.key,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -34,10 +31,6 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
   TimeSlot? _selectedDate;
   String? _selectedTimeSlot;
   String _selectedPeriod = "AM";
-  int? _selectedServiceId;
-  int? _selectedServiceQtyIndex;
-  final TextEditingController noOfClothe = TextEditingController();
-  String? _qtyError;
   int slotCharges = 0;
 
   @override
@@ -47,8 +40,6 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final timeslotProvider =
           Provider.of<TimeslotProvider>(context, listen: false);
-      final servicesProvider =
-          Provider.of<ServicesProvider>(context, listen: false);
       final addressProvider =
           Provider.of<AddressProvider>(context, listen: false);
 
@@ -86,35 +77,6 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
         });
       }
 
-      // Fetch services
-      await servicesProvider.getServices();
-      if (mounted) {
-        setState(() {
-          final services = servicesProvider.servicesList?.data?.service;
-          if (services != null && services.isNotEmpty) {
-            _selectedServiceId = services
-                    .firstWhereOrNull(
-                      (s) => s.serviceId == widget.serviceId,
-                    )
-                    ?.serviceId ??
-                services.first.serviceId;
-
-            final selectedService = services.firstWhereOrNull(
-              (s) => s.serviceId == _selectedServiceId,
-            );
-
-            if (selectedService?.pricesByQty != null &&
-                selectedService!.pricesByQty!.isNotEmpty) {
-              _selectedServiceQtyIndex = 0;
-              noOfClothe.text =
-                  selectedService.pricesByQty!.first.qty.toString();
-            } else {
-              noOfClothe.text = selectedService?.minQty?.toString() ?? '';
-            }
-          }
-        });
-      }
-
       // Fetch addresses
       addressProvider.fetchAddresses();
     });
@@ -122,7 +84,6 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
 
   @override
   void dispose() {
-    noOfClothe.dispose();
     super.dispose();
   }
 
@@ -133,13 +94,10 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
         ChangeNotifierProvider.value(
             value: Provider.of<TimeslotProvider>(context)),
         ChangeNotifierProvider.value(
-            value: Provider.of<ServicesProvider>(context)),
-        ChangeNotifierProvider.value(
             value: Provider.of<AddressProvider>(context)),
       ],
-      child: Consumer3<TimeslotProvider, ServicesProvider, AddressProvider>(
-        builder: (context, timeslotProvider, servicesProvider, addressProvider,
-            child) {
+      child: Consumer2<TimeslotProvider, AddressProvider>(
+        builder: (context, timeslotProvider, addressProvider, child) {
           final defaultAddress = addressProvider.addresses.firstWhere(
             (address) => address.isPrimary == true,
             orElse: () => addressProvider.addresses.isNotEmpty
@@ -153,12 +111,9 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
               preferredSize: const Size.fromHeight(50),
               child: AppBarCheckout(addressId: defaultAddress.addressId),
             ),
-            body: timeslotProvider.isLoading ||
-                    servicesProvider.isLoading ||
-                    addressProvider.isLoading
+            body: timeslotProvider.isLoading || addressProvider.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : timeslotProvider.errorMessage != null ||
-                        servicesProvider.errorMessage != null ||
                         addressProvider.errorMessage != null
                     ? Center(
                         child: Column(
@@ -166,7 +121,6 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
                           children: [
                             CustomText(
                               text: timeslotProvider.errorMessage ??
-                                  servicesProvider.errorMessage ??
                                   addressProvider.errorMessage!,
                               color: Colors.red,
                             ),
@@ -174,7 +128,7 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
                             ElevatedButton(
                               onPressed: () {
                                 timeslotProvider.getTimeSlot();
-                                servicesProvider.getServices();
+
                                 addressProvider.fetchAddresses();
                               },
                               child: const Text("Retry"),
@@ -182,21 +136,16 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
                           ],
                         ),
                       )
-                    : _buildBody(timeslotProvider, servicesProvider),
-            bottomSheet: _buildBottomSheet(servicesProvider),
+                    : _buildBody(timeslotProvider),
+            bottomSheet: _buildBottomSheet(),
           );
         },
       ),
     );
   }
 
-  Widget _buildBody(
-      TimeslotProvider timeslotProvider, ServicesProvider servicesProvider) {
+  Widget _buildBody(TimeslotProvider timeslotProvider) {
     final timeSlots = timeslotProvider.timeSlot?.data?.timeSlot ?? [];
-    final servicesList = servicesProvider.servicesList?.data?.service ?? [];
-    final selectedService = servicesList
-        .firstWhereOrNull((service) => service.serviceId == _selectedServiceId);
-    final pricesByQty = selectedService?.pricesByQty ?? [];
 
     return SingleChildScrollView(
       child: Padding(
@@ -204,258 +153,6 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomText(
-              text: "Choose service details",
-              size: 16,
-              fontweights: FontWeight.w500,
-            ),
-            const Height(15),
-            Container(
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  servicesList.isEmpty
-                      ? Center(
-                          child: CustomText(
-                              text: "No services available",
-                              color: Colors.grey),
-                        )
-                      : SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: servicesList.asMap().entries.map((entry) {
-                              int index = entry.key;
-                              var service = entry.value;
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedServiceId = service.serviceId;
-                                    _selectedServiceQtyIndex =
-                                        service.pricesByQty != null &&
-                                                service.pricesByQty!.isNotEmpty
-                                            ? 0
-                                            : null;
-                                    noOfClothe.text = service.pricesByQty !=
-                                                null &&
-                                            service.pricesByQty!.isNotEmpty
-                                        ? service.pricesByQty!.first.qty
-                                            .toString()
-                                        : (service.minQty?.toString() ?? '');
-                                    _qtyError = null;
-                                  });
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(right: 12),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 18),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        _selectedServiceId == service.serviceId
-                                            ? const Color(0xFFE9FFEB)
-                                            : Colors.white,
-                                    border: Border.all(
-                                      color: _selectedServiceId ==
-                                              service.serviceId
-                                          ? const Color(0xFF33C362)
-                                          : Colors.grey[300]!,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: CustomText(
-                                    text: service.service!,
-                                    fontweights: FontWeight.w500,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                  const Height(15),
-                  if (selectedService != null) ...[
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomText(
-                            text: selectedService.description ?? '',
-                            size: 12,
-                            color: Colors.black87,
-                          ),
-                          const Height(6),
-                          CustomText(
-                              text:
-                                  "Service duration: ${selectedService.duration}",
-                              size: 12,
-                              color: const Color(0xFF33C362)),
-                          const Height(6),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomText(
-                                text:
-                                    "Original Price: ₹${selectedService.original}",
-                                size: 12,
-                                color: Colors.black87,
-                                decoration: TextDecoration.lineThrough,
-                                decorationColor: Colors.black87,
-                              ),
-                              CustomText(
-                                  text:
-                                      "Discounted Price: ₹${selectedService.discounted}",
-                                  size: 12,
-                                  color: const Color(0xFF33C362)),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ],
-              ),
-            ),
-            const Height(15),
-            // _buildSectionContainer(
-            //   title: "Select package & Enter no of Clothes",
-            //   child: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: [
-            //       if (_qtyError != null) ...[
-            //         const Height(5),
-            //         CustomText(text: _qtyError!, color: Colors.red, size: 12),
-            //       ],
-            //       const Height(10),
-            //       if (noOfClothe.text.isNotEmpty && _qtyError == null) ...[
-            //         Row(
-            //           mainAxisAlignment: MainAxisAlignment.start,
-            //           crossAxisAlignment: CrossAxisAlignment.start,
-            //           children: [
-            //             CustomText(
-            //                 text: "Total: ",
-            //                 size: 12,
-            //                 fontweights: FontWeight.w500),
-            //             CustomText(
-            //               text:
-            //                   "₹${(int.tryParse(noOfClothe.text) ?? 0) * (selectedService?.original ?? 0)}",
-            //               decoration: TextDecoration.lineThrough,
-            //               decorationColor: const Color(0xFFBFC3CF),
-            //               size: 12,
-            //               color: const Color(0xFFBFC3CF),
-            //               fontweights: FontWeight.w500,
-            //             ),
-            //             const Widths(5),
-            //             CustomText(
-            //               text:
-            //                   "₹${(int.tryParse(noOfClothe.text) ?? 0) * (selectedService?.discounted ?? 0)}",
-            //               size: 12,
-            //               fontweights: FontWeight.w500,
-            //             ),
-            //           ],
-            //         ),
-            //         const Height(10),
-            //       ],
-            //       pricesByQty.isEmpty
-            //           ? Center(
-            //               child: CustomText(
-            //                   text: "No service quantities available",
-            //                   color: Colors.grey),
-            //             )
-            //           : SingleChildScrollView(
-            //               scrollDirection: Axis.horizontal,
-            //               child: Row(
-            //                 children: pricesByQty.asMap().entries.map((entry) {
-            //                   int index = entry.key;
-            //                   PricesByQty qty = entry.value;
-            //                   final qtyOriginalPrice = (qty.qty ?? 0) *
-            //                       (selectedService?.original ?? 0);
-            //                   final qtyDiscountedPrice = (qty.qty ?? 0) *
-            //                       (selectedService?.discounted ?? 0);
-            //                   return GestureDetector(
-            //                     onTap: () {
-            //                       setState(() {
-            //                         _selectedServiceQtyIndex = index;
-            //                         noOfClothe.text = (qty.qty ?? 0).toString();
-            //                         _qtyError = null;
-            //                       });
-            //                     },
-            //                     child: Container(
-            //                       margin: const EdgeInsets.only(right: 12),
-            //                       padding: const EdgeInsets.symmetric(
-            //                           vertical: 5, horizontal: 20),
-            //                       decoration: BoxDecoration(
-            //                         color: _selectedServiceQtyIndex == index
-            //                             ? const Color(0xFFE9FFEB)
-            //                             : Colors.white,
-            //                         border: Border.all(
-            //                           color: _selectedServiceQtyIndex == index
-            //                               ? const Color(0xFF33C362)
-            //                               : Colors.grey[300]!,
-            //                         ),
-            //                         borderRadius: BorderRadius.circular(8),
-            //                       ),
-            //                       child: Column(
-            //                         children: [
-            //                           CustomText(
-            //                             text:
-            //                                 "${qty.qty ?? 0} ${selectedService!.label}",
-            //                             fontweights: FontWeight.w500,
-            //                           ),
-            //                           const Height(2),
-            //                           Row(
-            //                             children: [
-            //                               CustomText(
-            //                                 text: "₹$qtyOriginalPrice",
-            //                                 color: const Color(0xFFBFC3CF),
-            //                                 decoration:
-            //                                     TextDecoration.lineThrough,
-            //                                 decorationColor:
-            //                                     const Color(0xFFBFC3CF),
-            //                                 size: 12,
-            //                               ),
-            //                               const Widths(8),
-            //                               CustomText(
-            //                                 text: "₹$qtyDiscountedPrice",
-            //                                 fontweights: FontWeight.w500,
-            //                               ),
-            //                             ],
-            //                           ),
-            //                         ],
-            //                       ),
-            //                     ),
-            //                   );
-            //                 }).toList(),
-            //               ),
-            //             ),
-            //       const Height(10),
-            //     ],
-            //   ),
-            // ),
-            // const Height(15),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.zero,
-              itemCount: 6,
-              itemBuilder: (context, index) {
-                return GarmentBoxWidget(
-                  name: 'Wardrobe Regulars',
-                  price: '₹12',
-                  qty: 0,
-                  add: () {},
-                  remove: () {},
-                  quantity: '4',
-                  addFirstTime: () {},
-                );
-              },
-            ),
-
-            const Height(15),
             DateTimePicker(
               timeSlots: timeSlots,
               selectedDate: _selectedDate,
@@ -490,22 +187,14 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
     );
   }
 
-  Widget _buildBottomSheet(ServicesProvider servicesProvider) {
-    final selectedService = servicesProvider.servicesList?.data?.service
-        ?.firstWhereOrNull(
-            (service) => service.serviceId == _selectedServiceId);
-    final enteredQty = int.tryParse(noOfClothe.text);
-    final isValidQty =
-        enteredQty != null && enteredQty >= (selectedService?.minQty ?? 0);
-    final serviceOriginalCharge = isValidQty
-        ? enteredQty! * (selectedService?.original ?? 0)
-        : (selectedService?.minQty ?? 0) * (selectedService?.original ?? 0);
-    final serviceDiscountCharge = isValidQty
-        ? enteredQty! * (selectedService?.discounted ?? 0)
-        : (selectedService?.minQty ?? 0) * (selectedService?.discounted ?? 0);
-    final slotCharge = 0;
-    final originalPrice = serviceOriginalCharge + slotCharge;
-    final discountedPrice = serviceDiscountCharge + slotCharge;
+  Widget _buildBottomSheet() {
+    final orderPlaceDetailsProvider =
+        Provider.of<OrderPlaceDetailsProvider>(context);
+    // Access the booking data
+    final booking = orderPlaceDetailsProvider.booking;
+    // Extract orderQty and orderAmount
+    final totalItems = booking.orderQty;
+    final totalPrice = booking.orderAmount;
 
     return Container(
       width: double.infinity,
@@ -524,47 +213,46 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              CustomText(
-                text: "₹${originalPrice + slotCharges}",
-                decoration: TextDecoration.lineThrough,
-                size: 15,
-                color: Colors.grey,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CustomText(
+                    text: "₹$totalPrice",
+                    fontweights: FontWeight.w500,
+                    size: 18,
+                  ),
+                ],
               ),
-              const Widths(5),
+              const Height(4),
               CustomText(
-                text: "₹${discountedPrice + slotCharges}",
-                fontweights: FontWeight.w500,
-                size: 18,
+                text: "Total Items: $totalItems",
+                size: 14,
+                color: Colors.black87,
               ),
             ],
           ),
           ContinueButton(
             width: 160,
             text: 'Confirm Booking',
-            isValid: isValidQty &&
-                _selectedDate != null &&
-                _selectedTimeSlot != null,
+            isValid: _selectedDate != null && _selectedTimeSlot != null,
             isLoading: false,
-            onTap: () => _confirmBooking(servicesProvider),
+            onTap: () => _confirmBooking(),
           ),
         ],
       ),
     );
   }
 
-  void _confirmBooking(ServicesProvider servicesProvider) {
-    final selectedService = servicesProvider.servicesList?.data?.service
-        ?.firstWhereOrNull(
-            (service) => service.serviceId == _selectedServiceId);
-    final enteredQty = int.tryParse(noOfClothe.text);
-    final isValidQty =
-        enteredQty != null && enteredQty >= (selectedService?.minQty ?? 0);
+  void _confirmBooking() {
     final addressProvider =
         Provider.of<AddressProvider>(context, listen: false);
+    final orderPlaceDetailsProvider =
+        Provider.of<OrderPlaceDetailsProvider>(context, listen: false);
     final defaultAddress = addressProvider.addresses.firstWhere(
       (address) => address.isPrimary == true,
       orElse: () => addressProvider.addresses.isNotEmpty
@@ -572,10 +260,7 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
           : AddressData(addressId: null),
     );
 
-    if (_selectedDate != null &&
-        _selectedTimeSlot != null &&
-        selectedService != null &&
-        isValidQty) {
+    if (_selectedDate != null && _selectedTimeSlot != null) {
       if (defaultAddress.addressId == null) {
         showToast('Please select an address');
         Navigator.push(
@@ -584,38 +269,35 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
         );
         return;
       }
-      final bookingDetails = {
-        'order_type': 'regular',
-        'service_id': _selectedServiceId,
-        'service_name': selectedService.service,
-        'garment_qty': enteredQty,
-        'garment_original_amount': enteredQty * (selectedService.original ?? 0),
-        'garment_discount_amount':
-            enteredQty * (selectedService.discounted ?? 0),
-        'service_charges': enteredQty * (selectedService.discounted ?? 0),
-        'slot_charges': slotCharges,
-        'handling_charges': AppConstants.handlingCharges,
-        'tip_amount': 0,
-        'order_amount': enteredQty * (selectedService.discounted ?? 0),
-        'total_billing': enteredQty * (selectedService.discounted ?? 0) +
-            AppConstants.handlingCharges,
-        'payment_mode': "Online",
-        'payment_status': "Paid",
-        'booking_date': _selectedDate!.date,
-        'booking_time': '$_selectedTimeSlot',
-        'address_id': defaultAddress.addressId,
-      };
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PaymentScreen(bookingDetails: bookingDetails),
-        ),
-      );
+      orderPlaceDetailsProvider.updateSlot(
+          slotCharges: slotCharges,
+          bookingDate: _selectedDate!.date.toString(),
+          bookingTime: _selectedTimeSlot.toString());
+
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) =>
+      //     //  const PaymentScreen(),
+      //   ),
+      // );
+
+      // Access the booking data
+      final booking = orderPlaceDetailsProvider.booking;
+      print('booking ${booking.orderType}');
+      print('booking ${booking.serviceName}');
+      print('booking ${booking.orderQty}');
+      print('booking ${booking.orderAmount}');
+      print('booking ${booking.orderDetails}');
+      print('booking ${booking.addressId}');
+      print('booking ${booking.slotCharges}');
+      print('booking ${booking.bookingDate}');
+      print('booking ${booking.bookingTime}');
       showToast('Proceeding to payment');
     } else {
       showToast(
-          'Please select date, time slot, service, and a valid quantity (min ${selectedService?.minQty ?? 0})');
+          'Please select date, time slot, service, and a valid quantity )');
     }
   }
 

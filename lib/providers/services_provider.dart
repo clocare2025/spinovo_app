@@ -36,11 +36,26 @@ class ServicesProvider with ChangeNotifier {
   }
 
   void addServiceCategory(
-      int serviceId, int categoryId, String price, int items) {
+      {required int serviceId,
+      required String service,
+      required String duration,
+      required String description,
+      required int categoryId,
+      required String category,
+      // ignore: non_constant_identifier_names
+      required List<String> types_of_Clothes,
+      required String price,
+      required int items}) {
     // Find if service_id already exists
     var serviceEntry = _selectedServiceCategories.firstWhere(
       (entry) => entry['service_id'] == serviceId,
-      orElse: () => {'service_id': serviceId, 'categorys': []},
+      orElse: () => {
+        'service_id': serviceId,
+        'service': service,
+        'duration': duration,
+        'description': description,
+        'categorys': []
+      },
     );
 
     // If service entry doesn't exist, add it to the list
@@ -52,8 +67,13 @@ class ServicesProvider with ChangeNotifier {
     List categorys = serviceEntry['categorys'];
     var categoryEntry = categorys.firstWhere(
       (cat) => cat['category_id'] == categoryId,
-      orElse: () =>
-          {'category_id': categoryId, 'category_prices': price, 'items': 0},
+      orElse: () => {
+        'category_id': categoryId,
+        'category': category,
+        'types_of_Clothes': types_of_Clothes,
+        'category_prices': price,
+        'items': 0
+      },
     );
 
     // Update items
@@ -98,6 +118,12 @@ class ServicesProvider with ChangeNotifier {
       return categoryEntry.isNotEmpty ? categoryEntry['items'] : 0;
     }
     return 0;
+  }
+
+  void clearServiceCategory() {
+    _selectedServiceCategories = [];
+
+    notifyListeners();
   }
 
   void clearError() {
