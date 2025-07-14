@@ -9,6 +9,7 @@ import 'package:spinovo_app/screen/checkout/widgets/checkout_appbar.dart';
 import 'package:spinovo_app/screen/checkout/widgets/garment_box_widget.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/button.dart';
+import 'package:spinovo_app/widget/service_category_widget.dart';
 import 'package:spinovo_app/widget/size_box.dart';
 import 'package:spinovo_app/widget/text_widget.dart';
 
@@ -17,6 +18,7 @@ class ServiceCategoryScreen extends StatefulWidget {
   const ServiceCategoryScreen({super.key, required this.serviceId});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ServiceCategoryScreenState createState() => _ServiceCategoryScreenState();
 }
 
@@ -48,7 +50,6 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
           }
         });
       }
-
       // Fetch addresses
       addressProvider.fetchAddresses();
     });
@@ -75,27 +76,7 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
               ? const Center(child: CircularProgressIndicator())
               : servicesProvider.errorMessage != null ||
                       addressProvider.errorMessage != null
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CustomText(
-                            text: servicesProvider.errorMessage ??
-                                addressProvider.errorMessage ??
-                                'An error occurred',
-                            color: Colors.red,
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              servicesProvider.getServices();
-                              addressProvider.fetchAddresses();
-                            },
-                            child: const Text("Retry"),
-                          ),
-                        ],
-                      ),
-                    )
+                  ? _retryWidget(servicesProvider, addressProvider)
                   : _buildBody(servicesProvider),
           bottomSheet: _buildBottomSheet(servicesProvider),
         );
@@ -138,32 +119,19 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
               child: Row(
                 children: servicesList.asMap().entries.map((entry) {
                   final service = entry.value;
-                  return GestureDetector(
+                  return CategoryServiceBox(
+                    title: service.service!,
                     onTap: () {
                       setState(() {
                         _selectedServiceId = service.serviceId;
                       });
                     },
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 12),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 18),
-                      decoration: BoxDecoration(
-                        color: _selectedServiceId == service.serviceId
-                            ? const Color(0xFFE9FFEB)
-                            : Colors.white,
-                        border: Border.all(
-                          color: _selectedServiceId == service.serviceId
-                              ? const Color(0xFF33C362)
-                              : Colors.grey[300]!,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: CustomText(
-                        text: service.service!,
-                        fontweights: FontWeight.w500,
-                      ),
-                    ),
+                    bgColor: _selectedServiceId == service.serviceId
+                        ? const Color(0xFFE9FFEB)
+                        : Colors.white,
+                    borderColor: _selectedServiceId == service.serviceId
+                        ? const Color(0xFF33C362)
+                        : Colors.grey[300]!,
                   );
                 }).toList(),
               ),
@@ -175,29 +143,9 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
               fontweights: FontWeight.w500,
             ),
             const Height(10),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomText(
-                    text: selectedService.description ?? '',
-                    size: 12,
-                    color: Colors.black87,
-                  ),
-                  const Height(6),
-                  CustomText(
-                    text: "Service duration: ${selectedService.duration}",
-                    size: 12,
-                    color: const Color(0xFF33C362),
-                  ),
-                ],
-              ),
+            ServicDetailseBox(
+              title: selectedService.description ?? '',
+              duration: "Service duration: ${selectedService.duration}",
             ),
             const Height(15),
             CustomText(
@@ -212,8 +160,7 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
               itemCount: selectedService.categoryList?.length ?? 0,
               itemBuilder: (context, index) {
                 final category = selectedService.categoryList![index];
-                final qty = servicesProvider.getItemsForCategory(
-                    selectedService.serviceId!, category.categoryId!);
+                final qty = servicesProvider.getItemsForCategory(selectedService.serviceId!, category.categoryId!);
                 return GarmentBoxWidget(
                   name: category.category!,
                   price: '₹${category.price}',
@@ -393,5 +340,30 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
       ),
     );
     showToast('Proceeding to payment');
+  }
+
+  Widget _retryWidget(
+      ServicesProvider servicesProvider, AddressProvider addressProvider) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CustomText(
+            text: servicesProvider.errorMessage ??
+                addressProvider.errorMessage ??
+                'An error occurred',
+            color: Colors.red,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              servicesProvider.getServices();
+              addressProvider.fetchAddresses();
+            },
+            child: const Text("Retry"),
+          ),
+        ],
+      ),
+    );
   }
 }
