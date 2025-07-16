@@ -29,7 +29,6 @@ class PaymentUtils {
     required Map<String, dynamic> bookingDetails,
     required int totalPayable,
     required int walletBalance,
-    required int tipsAmount,
     required String addressId,
     required VoidCallback onSuccess,
     required Null Function(dynamic error) onError,
@@ -71,8 +70,7 @@ class PaymentUtils {
       }
 
       // Update booking details with transaction ID
-      bookingDetails['transaction_id'] =
-          'TXN_${DateTime.now().millisecondsSinceEpoch}';
+      bookingDetails['transaction_id'] = 'TXN_${DateTime.now().millisecondsSinceEpoch}';
 
       if (remainingAmount > 0) {
         // Initiate Razorpay payment for remaining amount

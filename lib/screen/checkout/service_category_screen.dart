@@ -10,6 +10,7 @@ import 'package:spinovo_app/screen/checkout/widgets/checkout_appbar.dart';
 import 'package:spinovo_app/screen/checkout/widgets/garment_box_widget.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/button.dart';
+import 'package:spinovo_app/widget/retry_widget.dart';
 import 'package:spinovo_app/widget/service_category_widget.dart';
 import 'package:spinovo_app/widget/size_box.dart';
 import 'package:spinovo_app/widget/text_widget.dart';
@@ -77,9 +78,22 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
               ? const Center(child: CircularProgressIndicator())
               : servicesProvider.errorMessage != null ||
                       addressProvider.errorMessage != null
-                  ? _retryWidget(servicesProvider, addressProvider)
-                  : _buildBody(servicesProvider),
-          bottomSheet: _buildBottomSheet(servicesProvider),
+                  ? RetryWidget(
+                      msg: servicesProvider.errorMessage ??
+                          addressProvider.errorMessage ??
+                          'An error occurred',
+                      onTap: () {
+                        servicesProvider.getServices();
+                        addressProvider.fetchAddresses();
+                      },
+                    )
+                  : Column(
+                      children: [
+                        Expanded(child: _buildBody(servicesProvider)),
+                        // bottomSheet:
+                        _buildBottomSheet(servicesProvider),
+                      ],
+                    ),
         );
       },
     );
@@ -261,6 +275,8 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
 
   Widget _buildBottomSheet(ServicesProvider servicesProvider) {
     final selectedCategories = servicesProvider.selectedServiceCategories;
+    final servicesList = servicesProvider.servicesList;
+
     int totalPrice = 0;
     int totalItems = 0;
 
@@ -274,76 +290,92 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
       }
     }
 
-    // Calculate original price based on selected services
-    final servicesList = servicesProvider.servicesList?.data?.service ?? [];
-    int originalPrice = 0;
-    for (var serviceEntry in selectedCategories) {
-      final serviceId = serviceEntry['service_id'] as int?;
-      if (serviceId != null) {
-        final service = servicesList.firstWhere(
-          (service) => service.serviceId == serviceId,
-          // orElse: () => null,
-        );
-        if (service != null && service.original != null) {
-          final categories = serviceEntry['categorys'] as List<dynamic>? ?? [];
-          int serviceItems = 0;
-          for (var category in categories) {
-            serviceItems += category['items'] as int? ?? 0;
-          }
-          originalPrice += service.original! * serviceItems;
-        }
-      }
+    final deliverDetails = servicesList!.data!;
+
+    bool deliverAlet = totalPrice < deliverDetails.mov!;
+    int deliverCharge = 0;
+    if (deliverAlet) {
+      deliverCharge = deliverDetails.deliveryCharge!;
     }
-    // Use totalPrice if originalPrice is not higher
-    originalPrice = originalPrice > totalPrice ? originalPrice : totalPrice;
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: const Color.fromARGB(255, 81, 81, 81).withOpacity(0.1),
-            blurRadius: 4,
-            spreadRadius: 2,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CustomText(
-                    text: "₹$totalPrice",
-                    fontweights: FontWeight.w500,
-                    size: 18,
+          Visibility(
+            visible: deliverAlet,
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.red[400],
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15)),
+              ),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: SmallText(
+                    text:
+                        'Orders below ₹${deliverDetails.mov} will have a ₹${deliverDetails.deliveryCharge} delivery charge',
+                    color: Colors.white,
+                    size: 12,
                   ),
-                ],
+                ),
               ),
-              const Height(4),
-              CustomText(
-                text: "Total Items: $totalItems",
-                size: 14,
-                color: Colors.black87,
-              ),
-            ],
+            ),
           ),
-          ContinueButton(
-            width: 160,
-            text: 'Confirm Booking',
-            isValid: selectedCategories.isNotEmpty,
-            isLoading: false,
-            onTap: () =>
-                _confirmBooking(servicesProvider, totalPrice, totalItems),
+          Container(
+            width: double.infinity,
+            padding:
+                const EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color.fromARGB(255, 81, 81, 81).withOpacity(0.1),
+                  blurRadius: 4,
+                  spreadRadius: 2,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CustomText(
+                          text: "₹$totalPrice",
+                          fontweights: FontWeight.w500,
+                          size: 18,
+                        ),
+                      ],
+                    ),
+                    const Height(4),
+                    CustomText(
+                      text: "Total Items: $totalItems",
+                      size: 14,
+                      color: Colors.black87,
+                    ),
+                  ],
+                ),
+                ContinueButton(
+                  width: 160,
+                  text: 'Confirm Booking',
+                  isValid: selectedCategories.isNotEmpty,
+                  isLoading: false,
+                  onTap: () =>
+                      _confirmBooking(servicesProvider, totalPrice, totalItems, deliverCharge),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -351,7 +383,7 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
   }
 
   void _confirmBooking(
-      ServicesProvider servicesProvider, int totalPrice, int totalItems) {
+      ServicesProvider servicesProvider, int totalPrice, int totalItems, int deliverCharge) {
     final addressProvider =
         Provider.of<AddressProvider>(context, listen: false);
     final orderPlaceDetailsProvider =
@@ -383,6 +415,7 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
         orderType: 'regular',
         serviceName: serviceListString,
         orderQty: totalItems,
+        deliveryCharge: deliverCharge,
         orderAmount: totalPrice,
         orderDetails: orderDetails,
         addressId: defaultAddress.addressId.toString());
@@ -394,30 +427,5 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
       ),
     );
     showToast('Proceeding to payment');
-  }
-
-  Widget _retryWidget(
-      ServicesProvider servicesProvider, AddressProvider addressProvider) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CustomText(
-            text: servicesProvider.errorMessage ??
-                addressProvider.errorMessage ??
-                'An error occurred',
-            color: Colors.red,
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              servicesProvider.getServices();
-              addressProvider.fetchAddresses();
-            },
-            child: const Text("Retry"),
-          ),
-        ],
-      ),
-    );
   }
 }

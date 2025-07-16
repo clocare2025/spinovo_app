@@ -844,16 +844,44 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
             ),
           ),
           Positioned(
-            bottom: 180,
-            right: 16,
-            child: FloatingActionButton(
-              onPressed: _isLoadingLocation ? null : _getCurrentLocation,
-              backgroundColor: Colors.white,
-              child: _isLoadingLocation
-                  ? const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-                    )
-                  : const Icon(Icons.my_location, color: Colors.black),
+            bottom: 190,
+            right: 0,
+            left: 0,
+            child: Center(
+              child: InkWell(
+                onTap: _isLoadingLocation ? null : _getCurrentLocation,
+                child: _isLoadingLocation
+                    ? const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                      )
+                    : Container(
+                        width: 130,
+                        height: 38,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.my_location,
+                                color: Colors.black,
+                                size: 21,
+                              ),
+                              const Widths(10),
+                              SmallText(
+                                text: "Locate me",
+                                fontweights: FontWeight.w500,
+                                color: Colors.black,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+              ),
             ),
           ),
           Positioned(
@@ -871,15 +899,14 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Text(
-                          _currentAddress.split(',')[0],
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
+                          child: SmallText(
+                        text: _isServiceAvailable || widget.addressId != null
+                            ? _currentAddress.split(',')[0]
+                            : "Service Not Available",
+                        size: 18,
+                        fontweights: FontWeight.w500,
+                        color: Colors.black,
+                      )),
                       TextButton(
                           onPressed: _showSearchBottomSheet,
                           child: SmallText(
@@ -891,9 +918,13 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    _currentAddress,
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  SmallText(
+                    text: _isServiceAvailable || widget.addressId != null
+                        ? _currentAddress
+                        : "Sorry! We're not in your area yet, but we're working hard to get there soon.",
+                    size: 14,
+                    overFlow: TextOverflow.visible,
+                    color: Colors.grey,
                   ),
                   const SizedBox(height: 16),
                   SizedBox(

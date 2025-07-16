@@ -3,7 +3,9 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:spinovo_app/component/custom_appbar.dart';
 import 'package:spinovo_app/models/address_model.dart';
+import 'package:spinovo_app/models/order_place_model.dart';
 import 'package:spinovo_app/providers/address_provider.dart';
+import 'package:spinovo_app/providers/order_place_provider.dart';
 import 'package:spinovo_app/providers/wallet_provider.dart';
 import 'package:spinovo_app/razorpay/payment_utils.dart';
 import 'package:spinovo_app/screen/address/address_screen.dart';
@@ -14,12 +16,14 @@ import 'package:spinovo_app/utiles/color.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/button.dart';
 import 'package:spinovo_app/widget/dot_point_widget.dart';
+import 'package:spinovo_app/widget/retry_widget.dart';
 import 'package:spinovo_app/widget/size_box.dart';
 import 'package:spinovo_app/widget/text_widget.dart';
 
 class PaymentScreen extends StatefulWidget {
-  final Map<String, dynamic> bookingDetails;
-  const PaymentScreen({super.key, required this.bookingDetails});
+  const PaymentScreen({
+    super.key,
+  });
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -68,9 +72,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
             value: Provider.of<WalletProvider>(context)),
         ChangeNotifierProvider.value(
             value: Provider.of<AddressProvider>(context)),
+        ChangeNotifierProvider.value(
+            value: Provider.of<OrderPlaceDetailsProvider>(context)),
       ],
-      child: Consumer2<WalletProvider, AddressProvider>(
-        builder: (context, walletProvider, addressProvider, child) {
+      child:
+          Consumer3<WalletProvider, AddressProvider, OrderPlaceDetailsProvider>(
+        builder: (context, walletProvider, addressProvider,
+            orderPlaceDetailsProvider, child) {
           final walletBalance = walletProvider
                   .walletBalance?.data?.wallet?.totalBalance
                   ?.toInt() ??
@@ -82,12 +90,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 : AddressData(
                     addressId: null, formatAddress: 'No address available'),
           );
+          OrderPlaceDetailsModel orderDetails =
+              orderPlaceDetailsProvider.booking;
           final charges = {
-            'service_charge':
-                widget.bookingDetails['service_charges'] as int? ?? 0,
-            'slot_charge': widget.bookingDetails['slot_charges'] as int? ?? 0,
+            'order_amount': orderDetails.orderAmount ?? 0,
+            'service_charge': orderDetails.serviceCharges ?? 0,
+            'slot_charge': orderDetails.slotCharges ?? 0,
             'tips': _selectedTip,
             'handling_charge': handlingCharge,
+            'delivery_charge': orderDetails.deliveryCharge ?? 0,
           };
           final totalPayable = charges.values.reduce((a, b) => a + b);
           final payableAfterWallet = _useWallet
@@ -95,8 +106,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   ? totalPayable - walletBalance
                   : 0)
               : totalPayable;
-          widget.bookingDetails['tip_amount'] = _selectedTip;
-          widget.bookingDetails['total_billing'] = totalPayable;
+
+          // widget.bookingDetails['tip_amount'] = _selectedTip;
+          // widget.bookingDetails['total_billing'] = totalPayable;
 
           return Scaffold(
             backgroundColor: AppColor.bgColor,
@@ -108,30 +120,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ? const Center(child: CircularProgressIndicator())
                 : walletProvider.errorMessage != null ||
                         addressProvider.errorMessage != null
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CustomText(
-                              text: walletProvider.errorMessage ??
-                                  addressProvider.errorMessage!,
-                              color: Colors.red,
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () {
-                                walletProvider.fetchBalance();
-                                addressProvider.fetchAddresses();
-                              },
-                              child: const Text("Retry"),
-                            ),
-                          ],
-                        ),
+                    ? RetryWidget(
+                        msg: walletProvider.errorMessage ??
+                            addressProvider.errorMessage!,
+                        onTap: () {
+                          walletProvider.fetchBalance();
+                          addressProvider.fetchAddresses();
+                        },
                       )
                     : SingleChildScrollView(
                         child: Column(
                           children: [
-                            _buildBookingDetails(defaultAddress),
+                            _buildBookingDetails(defaultAddress, orderDetails),
                             const Height(8),
                             _buildCouponsSection(),
                             const Height(8),
@@ -181,11 +181,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     ).then((_) => _isNavigating = false);
                     return;
                   }
-                  print(widget.bookingDetails['tip_amount']);
-                  print(widget.bookingDetails['total_billing']);
-                  print(widget.bookingDetails);
-                  _processPayment(
-                      walletBalance, totalPayable, defaultAddress.addressId!);
+                  // print(widget.bookingDetails['tip_amount']);
+                  // print(widget.bookingDetails['total_billing']);
+                  // print(widget.bookingDetails);
+                  _processPayment(charges, walletBalance, totalPayable,
+                      defaultAddress.addressId!, orderDetails);
                 },
               ),
             ),
@@ -195,7 +195,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  Widget _buildBookingDetails(AddressData defaultAddress) {
+  Widget _buildBookingDetails(
+      AddressData defaultAddress, OrderPlaceDetailsModel orderDetails) {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(color: Colors.white),
@@ -206,7 +207,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CustomText(
-              text:  "${widget.bookingDetails['service_name']} (${widget.bookingDetails['order_type'] ?? 'Service'})",
+              text: "${orderDetails.serviceName}",
               size: 18,
               fontweights: FontWeight.w400,
             ),
@@ -216,7 +217,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 CustomText(text: "Starts at: ", color: Colors.grey),
                 CustomText(
                   text:
-                      "${widget.bookingDetails['booking_time']}, ${widget.bookingDetails['booking_date']}",
+                      "${orderDetails.bookingDate} ${orderDetails.bookingDate}",
                   fontweights: FontWeight.w400,
                 ),
               ],
@@ -226,7 +227,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               children: [
                 CustomText(text: "No. of Clothes: ", color: Colors.grey),
                 CustomText(
-                  text: "${widget.bookingDetails['garment_qty']}",
+                  text: "${orderDetails.orderQty}",
                   fontweights: FontWeight.w400,
                 ),
               ],
@@ -405,12 +406,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Widget _buildPaymentDetails(Map<String, int> charges, int totalPayable) {
-    final originalAmount =
-        widget.bookingDetails['garment_original_amount'] as int? ?? 0;
-    final discountedAmount =
-        widget.bookingDetails['garment_discount_amount'] as int? ?? 0;
-    final discount = originalAmount - discountedAmount;
-
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(color: Colors.white),
@@ -426,13 +421,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
               fontweights: FontWeight.w500,
             ),
             const Height(10),
-            _buildChargeRow("Original Amount", originalAmount),
-            if (discount > 0) ...[
-              const Height(10),
-              _buildChargeRow("Discount", -discount, color: Colors.green),
-            ],
+            _buildChargeRow("Order Amount", charges['order_amount']!),
             const Height(10),
             _buildChargeRow("Handling charge", charges['handling_charge']!),
+            const Height(10),
+            _buildChargeRow("Delivery charge", charges['delivery_charge']!),
             const Height(10),
             _buildChargeRow("Slot Charge", charges['slot_charge']!),
             if (charges['tips']! > 0) ...[
@@ -470,7 +463,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   void _processPayment(
-      int walletBalance, int totalPayable, String addressId) async {
+      Map<String, int> charges,
+      int walletBalance,
+      int totalPayable,
+      String addressId,
+      OrderPlaceDetailsModel orderDetails) async {
     if (_isProcessing) return;
     setState(() {
       _isProcessing = true;
@@ -491,17 +488,26 @@ class _PaymentScreenState extends State<PaymentScreen> {
       });
       return;
     }
-    if (widget.bookingDetails['service_id'] == null ||
-        widget.bookingDetails['garment_qty'] == null) {
-      _showToast('Invalid booking details');
-      setState(() {
-        _isProcessing = false;
-      });
-      return;
-    }
 
-    final bookingDetails = Map<String, dynamic>.from(widget.bookingDetails);
-    bookingDetails['address_id'] = addressId;
+    final Map<String, dynamic> bookingDetails = {
+      'order_type': orderDetails.orderType,
+      'service_name': orderDetails.serviceName,
+      'order_qty': orderDetails.orderQty,
+      'delivery_charge': charges['delivery_charge']!,
+      'order_amount': charges['order_amount']!,
+      'order_details': orderDetails.orderDetails,
+      'address_id': addressId,
+      'slot_charges': charges['slot_charge']!,
+      'booking_date': orderDetails.bookingDate,
+      'booking_time': orderDetails.bookingTime,
+      'handling_charges': charges['handling_charge']!,
+      'service_charges': charges['service_charge']!,
+      'tip_amount': charges['tips']!,
+      'total_billing': totalPayable,
+      'payment_mode': 'Online',
+      'payment_status': "Paid",
+      'transaction_id': '',
+    };
 
     try {
       await _paymentUtils.processPayment(
@@ -509,7 +515,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
         bookingDetails: bookingDetails,
         totalPayable: totalPayable,
         walletBalance: _useWallet ? walletBalance : 0,
-        tipsAmount: _selectedTip,
         addressId: addressId,
         onSuccess: () {
           _showToast('Payment successful');

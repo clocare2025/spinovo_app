@@ -9,13 +9,14 @@ import 'package:spinovo_app/providers/order_place_provider.dart';
 import 'package:spinovo_app/providers/timeslot_provider.dart';
 import 'package:spinovo_app/screen/address/address_screen.dart';
 import 'package:spinovo_app/screen/checkout/widgets/checkout_appbar.dart';
-import 'package:spinovo_app/screen/checkout/payment_screen.dart';
 import 'package:spinovo_app/screen/checkout/widgets/slot_picker.dart';
-import 'package:spinovo_app/utiles/constants.dart';
 import 'package:spinovo_app/utiles/toast.dart';
 import 'package:spinovo_app/widget/button.dart';
+import 'package:spinovo_app/widget/retry_widget.dart';
 import 'package:spinovo_app/widget/size_box.dart';
 import 'package:spinovo_app/widget/text_widget.dart';
+
+import 'payment_screen.dart';
 
 class CheckoutScreenV3 extends StatefulWidget {
   const CheckoutScreenV3({
@@ -115,26 +116,14 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
                 ? const Center(child: CircularProgressIndicator())
                 : timeslotProvider.errorMessage != null ||
                         addressProvider.errorMessage != null
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CustomText(
-                              text: timeslotProvider.errorMessage ??
-                                  addressProvider.errorMessage!,
-                              color: Colors.red,
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () {
-                                timeslotProvider.getTimeSlot();
+                    ? RetryWidget(
+                        msg: timeslotProvider.errorMessage ??
+                            addressProvider.errorMessage!,
+                        onTap: () {
+                          timeslotProvider.getTimeSlot();
 
-                                addressProvider.fetchAddresses();
-                              },
-                              child: const Text("Retry"),
-                            ),
-                          ],
-                        ),
+                          addressProvider.fetchAddresses();
+                        },
                       )
                     : _buildBody(timeslotProvider),
             bottomSheet: _buildBottomSheet(),
@@ -193,8 +182,8 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
     // Access the booking data
     final booking = orderPlaceDetailsProvider.booking;
     // Extract orderQty and orderAmount
-    final totalItems = booking.orderQty;
-    final totalPrice = booking.orderAmount;
+    final int totalItems = booking.orderQty!;
+    final int totalPrice = booking.orderAmount!;
 
     return Container(
       width: double.infinity,
@@ -222,7 +211,7 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   CustomText(
-                    text: "₹$totalPrice",
+                    text: "₹${totalPrice + slotCharges}",
                     fontweights: FontWeight.w500,
                     size: 18,
                   ),
@@ -275,13 +264,12 @@ class _CheckoutScreenV3State extends State<CheckoutScreenV3> {
           bookingDate: _selectedDate!.date.toString(),
           bookingTime: _selectedTimeSlot.toString());
 
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) =>
-      //     //  const PaymentScreen(),
-      //   ),
-      // );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const PaymentScreen(),
+        ),
+      );
 
       // Access the booking data
       final booking = orderPlaceDetailsProvider.booking;

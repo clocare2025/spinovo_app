@@ -18,8 +18,8 @@
 // import 'package:spinovo_app/widget/text_widget.dart';
 
 // class PaymentScreen extends StatefulWidget {
-//   final Map<String, dynamic> bookingDetails;
-//   const PaymentScreen({super.key, required this.bookingDetails});
+//   // final Map<String, dynamic> bookingDetails;
+//   const PaymentScreen({super.key,});
 
 //   @override
 //   State<PaymentScreen> createState() => _PaymentScreenState();

@@ -25,11 +25,15 @@ class ServicesModel {
 }
 
 class Data {
+  int? deliveryCharge;
+  int? mov;
   List<Service>? service;
 
-  Data({this.service});
+  Data({this.service, this.deliveryCharge, this.mov});
 
   Data.fromJson(Map<String, dynamic> json) {
+    deliveryCharge = json['delivery_charge'];
+    mov = json['mov'];
     if (json['service'] != null) {
       service = <Service>[];
       json['service'].forEach((v) {
@@ -40,6 +44,9 @@ class Data {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['delivery_charge'] = deliveryCharge;
+    data['mov'] = mov;
+
     if (service != null) {
       data['service'] = service!.map((v) => v.toJson()).toList();
     }

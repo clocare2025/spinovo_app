@@ -3,6 +3,7 @@ class OrderPlaceDetailsModel {
   String? orderType;
   String? serviceName;
   int? orderQty;
+  int? deliveryCharge;
   int? orderAmount;
   String? orderDetails;
   String? addressId;
@@ -22,6 +23,7 @@ class OrderPlaceDetailsModel {
     this.orderType,
     this.serviceName,
     this.orderQty,
+    this.deliveryCharge,
     this.orderAmount,
     this.orderDetails,
     this.addressId,
@@ -40,7 +42,8 @@ class OrderPlaceDetailsModel {
     return {
       'order_type': orderType,
       'service_name': serviceName,
-      'order_ qty': orderQty,
+      'order_qty': orderQty,
+      'delivery_charge': deliveryCharge,
       'order_amount': orderAmount,
       'order_details': orderDetails,
       'address_id': addressId,

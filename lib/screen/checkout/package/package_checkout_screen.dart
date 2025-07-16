@@ -287,14 +287,14 @@ class _PackageCheckoutScreenState extends State<PackageCheckoutScreen> {
         'booking_time': '$_selectedTimeSlot',
         'address_id': defaultAddress.addressId,
       };
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PaymentScreen(
-            bookingDetails: bookingDetails,
-          ),
-        ),
-      );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => PaymentScreen(
+      //       bookingDetails: bookingDetails,
+      //     ),
+      //   ),
+      // );
       showToast('Proceeding to payment');
     } else {
       showToast(

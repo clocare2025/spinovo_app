@@ -11,6 +11,7 @@ class OrderPlaceDetailsProvider extends ChangeNotifier {
     required String orderType,
     required String serviceName,
     required int orderQty,
+    required int deliveryCharge,
     required int orderAmount,
     required String orderDetails,
     required String addressId,
@@ -18,6 +19,7 @@ class OrderPlaceDetailsProvider extends ChangeNotifier {
     _booking.orderType = orderType;
     _booking.serviceName = serviceName;
     _booking.orderQty = orderQty;
+    _booking.deliveryCharge = deliveryCharge;
     _booking.orderAmount = orderAmount;
     _booking.orderDetails = orderDetails;
     _booking.addressId = addressId;
