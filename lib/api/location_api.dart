@@ -10,7 +10,7 @@ class LocationApi {
   Future<LocationModel> getLocation() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString(AppConstants.TOKEN);
-    print("Token: $token"); // Debug token
+    print("Token LocationApi: $token"); // Debug token
     final response = await http.get(
       Uri.parse("$baseUrl/api/v1/consumer/service/location/list"),
       headers: {

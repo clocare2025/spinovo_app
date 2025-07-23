@@ -112,17 +112,17 @@ class _AccountScreenState extends State<AccountScreen> {
                   //whatsapp(context);
                 },
               ),
-              _buildListTile(
-                  icon: Icons.delete_outline_outlined,
-                  title: 'Delete Account',
-                  subtitle: 'Deletes all your data.',
-                  onTap: () async {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    var _token = prefs.getString(AppConstants.TOKEN);
-                    print(_token);
-                  },
-                  isDivider: false),
+              // _buildListTile(
+              //     icon: Icons.delete_outline_outlined,
+              //     title: 'Delete Account',
+              //     subtitle: 'Deletes all your data.',
+              //     onTap: () async {
+              //       SharedPreferences prefs =
+              //           await SharedPreferences.getInstance();
+              //       var _token = prefs.getString(AppConstants.TOKEN);
+              //       print(_token);
+              //     },
+              //     isDivider: false),
               const Height(40),
               SizedBox(
                 width: 150,

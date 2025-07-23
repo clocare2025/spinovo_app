@@ -23,7 +23,6 @@ class _SplashScreenState extends State<SplashScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString(AppConstants.TOKEN);
 
-    print("authProvider.token ${token}");
     if (token != null && token.isNotEmpty) {
       // ignore: use_build_context_synchronously
       context.go('/home');

@@ -70,7 +70,9 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
   @override
   void initState() {
     super.initState();
-    // Provider.of<LocationProvider>(context, listen: false).getLocationList();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<LocationProvider>(context, listen: false).getLocationList();
+    });
     if (widget.addressId != null) {
       _loadExistingAddress();
     } else {
@@ -844,7 +846,7 @@ class _AddressCreateEditScreenState extends State<AddressCreateEditScreen> {
             ),
           ),
           Positioned(
-            bottom: 190,
+            bottom: 210,
             right: 0,
             left: 0,
             child: Center(

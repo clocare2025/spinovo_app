@@ -21,7 +21,8 @@ class AuthApi {
     }
   }
 
-  Future<UserModel> userSignup(String name, String mobileNo, String livingType) async {
+  Future<UserModel> userSignup(
+      String name, String mobileNo, String livingType) async {
     final response = await http.post(
       Uri.parse("$baseUrl/api/v1/consumer/auth/signup"),
       headers: {'Content-Type': 'application/json; charset=UTF-8'},
@@ -31,7 +32,7 @@ class AuthApi {
         'livingType': livingType,
       }),
     );
-
+    print(response.body);
     if (response.statusCode == 200) {
       return UserModel.fromJson(jsonDecode(response.body));
     } else {

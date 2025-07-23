@@ -101,8 +101,6 @@ class _OtpScreenState extends State<OtpScreen> {
     if (enteredOtp == widget.otpResponse.otpCode) {
       if (widget.otpResponse.otpRequest == 'login') {
         final response = await authProvider.login(widget.otpResponse.mobileNo!);
-        print('login response ${response}');
-        print('login response ${response!.status}');
         if (response!.status == true) {
           context.go('/home');
           showToast('Login successful');
