@@ -1,2 +1,0 @@
-E:/Spinovo/spinovo_app/android/app/.cxx/RelWithDebInfo/4q4y662x/armeabi-v7a/CMakeFiles/edit_cache.dir
-E:/Spinovo/spinovo_app/android/app/.cxx/RelWithDebInfo/4q4y662x/armeabi-v7a/CMakeFiles/rebuild_cache.dir

@@ -217,7 +217,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 CustomText(text: "Starts at: ", color: Colors.grey),
                 CustomText(
                   text:
-                      "${orderDetails.bookingDate} ${orderDetails.bookingDate}",
+                      "${orderDetails.bookingDate} (${orderDetails.bookingTime})",
                   fontweights: FontWeight.w400,
                 ),
               ],

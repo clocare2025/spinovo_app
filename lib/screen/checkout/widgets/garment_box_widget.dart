@@ -59,7 +59,7 @@ class GarmentBoxWidget extends StatelessWidget {
                                 fontweights: FontWeight.bold,
                               ),
                               SmallText(
-                                text: 'Prices: $price',
+                                text: 'Price: $price/-pc',
                                 size: 14,
                                 overFlow: TextOverflow.ellipsis,
                                 color: Colors.black,

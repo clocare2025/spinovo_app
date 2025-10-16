@@ -204,8 +204,7 @@ class _ServiceCategoryScreenState extends State<ServiceCategoryScreen> {
               itemCount: selectedService.categoryList?.length ?? 0,
               itemBuilder: (context, index) {
                 final category = selectedService.categoryList![index];
-                final qty = servicesProvider.getItemsForCategory(
-                    selectedService.serviceId!, category.categoryId!);
+                final qty = servicesProvider.getItemsForCategory(selectedService.serviceId!, category.categoryId!);
                 return GarmentBoxWidget(
                   name: category.category!,
                   price: '₹${category.price}',

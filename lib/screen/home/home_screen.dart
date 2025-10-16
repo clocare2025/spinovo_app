@@ -12,6 +12,7 @@ import 'package:spinovo_app/screen/checkout/checkout_screen_v3.dart';
 import 'package:spinovo_app/screen/checkout/service_category_screen.dart';
 import 'package:spinovo_app/screen/home/home_componebt.dart';
 import 'package:spinovo_app/screen/home/home_without_address.dart';
+import 'package:spinovo_app/screen/home/spinovo_quick.dart';
 import 'package:spinovo_app/utiles/assets.dart';
 import 'package:spinovo_app/utiles/color.dart';
 import 'package:spinovo_app/utiles/designe.dart';
@@ -133,28 +134,29 @@ class HomeScreen extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => const CheckoutScreen(
-                            //       serviceId: 1,
-                            //     ),
-                            //   ),
-                            // );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const ServiceCategoryScreen(
+                                  serviceId: 0,
+                                ),
+                              ),
+                            );
                           },
                           child: Image.asset('asset/images/banner_v2.png'),
                         ),
-                        // const Height(10),
-                        // const SpinovoNowSection(),
+                        const Height(10),
+                        const SpinovoQuick(),
                         const Height(20),
                         const ServiceSection(),
                         const Height(20),
                         // const BookingTrackingSection(),
                         // const Height(30),
-                        // const Align(
-                        //   alignment: Alignment.topLeft,
-                        //   child: HomeMsgSextion(),
-                        // ),
+                        const Align(
+                          alignment: Alignment.topLeft,
+                          child: HomeMsgSextion(),
+                        ),
                       ],
                     ),
                   ),
