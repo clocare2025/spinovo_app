@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:spinovo_app/component/custom_appbar.dart';
 import 'package:spinovo_app/providers/order_provider.dart';
 import 'package:spinovo_app/screen/booking/booking_details_screen.dart';
-import 'package:spinovo_app/screen/home/home_screen.dart';
 import 'package:spinovo_app/services/bottom_navigation.dart';
 import 'package:spinovo_app/utiles/color.dart';
 import 'package:spinovo_app/widget/size_box.dart';
@@ -36,7 +35,7 @@ class _BookingScreenState extends State<BookingScreen> {
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
-        print("Back button pressed in BookingScreen");
+        // print("Back button pressed in BookingScreen");
         Navigator.pushReplacement(
           // ignore: use_build_context_synchronously
           context,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:spinovo_app/screen/account/account_screen.dart';
 import 'package:spinovo_app/screen/booking/booking_screen.dart';
 import 'package:spinovo_app/screen/home/home_screen.dart';
+import 'package:spinovo_app/screen/subscription/package_screen.dart';
 import 'package:spinovo_app/utiles/color.dart';
 
 class BottomNavigation extends StatefulWidget {
@@ -19,6 +20,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
     const HomeScreen(),
     // WithoutAddressSection(),
     const BookingScreen(),
+    const PackageScreen(),
     const AccountScreen(),
   ];
 
@@ -52,6 +54,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
           BottomNavigationBarItem(
             icon: Icon(Icons.list_alt_rounded),
             label: 'Booking',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.subscriptions),
+            label: 'Package',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle_outlined),

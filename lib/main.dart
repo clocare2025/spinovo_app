@@ -1,4 +1,5 @@
 import 'package:spinovo_app/providers/order_place_provider.dart';
+import 'package:spinovo_app/providers/package_subscription.dart';
 import 'package:spinovo_app/providers/paymentMode_provider.dart';
 import 'package:spinovo_app/providers/location_provider.dart';
 import 'package:spinovo_app/providers/timeslot_provider.dart';
@@ -25,12 +26,11 @@ void main() {
         ChangeNotifierProvider(create: (context) => OrderProvider()),
         ChangeNotifierProvider(create: (context) => WalletProvider()),
         ChangeNotifierProvider(create: (context) => PackageProvider()),
-        ChangeNotifierProvider( create: (context) => ProfileProvider(),
-        ), // Add this provider
+        ChangeNotifierProvider(create: (context) => PackageSubscripionProvider()),
+        ChangeNotifierProvider(create: (context) => ProfileProvider()),  // Add this provider
         ChangeNotifierProvider(create: (context) => PaymentModeProvider()),
         ChangeNotifierProvider(create: (context) => LocationProvider()),
-        ChangeNotifierProvider(
-          create: (context) => OrderPlaceDetailsProvider(),
+        ChangeNotifierProvider(create: (context) => OrderPlaceDetailsProvider(),
         ),
       ],
       child: const MyApp(),
