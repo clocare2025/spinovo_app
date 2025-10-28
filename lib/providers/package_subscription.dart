@@ -1,48 +1,43 @@
-// Add this new file: lib/providers/package_provider.dart (it was already registered in main.dart, now implement it)
+// lib/providers/package_subscription.dart  (already registered in main.dart)
 
 import 'package:flutter/material.dart';
-import 'package:spinovo_app/api/package_api.dart';
 import 'package:spinovo_app/api/package_subscription.dart';
 import 'package:spinovo_app/models/subscription_model.dart';
 
 class PackageSubscripionProvider with ChangeNotifier {
-  final PackageSubscripionApi _packageApi = PackageSubscripionApi();
-  bool _isLoading = false;
-  String? _errorMessage;
-  SubscriptionModel? _subscriptionModel;
+  final PackageSubscriptionApi _api = PackageSubscriptionApi();
 
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
-  SubscriptionModel? get subscriptionModel => _subscriptionModel;
+  bool _loading = false;
+  String? _error;
+  SubscriptionModel? _model;
 
+  bool get isLoading => _loading;
+  String? get errorMessage => _error;
+  SubscriptionModel? get subscriptionModel => _model;
+
+  // ----- GET -----
   Future<void> fetchSubscriptions() async {
     try {
-      _isLoading = true;
-      _errorMessage = null;
-      notifyListeners();
-
-      _subscriptionModel = await _packageApi.getSubscriptionList();
+      _loading = true; _error = null; notifyListeners();
+      _model = await _api.getSubscriptionList();
     } catch (e) {
-      _errorMessage = 'Error fetching subscriptions: $e';
+      _error = e.toString();
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _loading = false; notifyListeners();
     }
   }
 
-  Future<void> buyPackage(Map<String, dynamic> packageDetails) async {
+  // ----- BUY -----
+  Future<Map<String, dynamic>> buyPackage(Map<String, dynamic> payload) async {
     try {
-      _isLoading = true;
-      _errorMessage = null;
-      notifyListeners();
-
-      await _packageApi.buyPackage(packageDetails);
-      // Optionally refresh subscriptions or handle success
+      _loading = true; _error = null; notifyListeners();
+      final result = await _api.buyPackage(payload);
+      return result;
     } catch (e) {
-      _errorMessage = 'Error buying package: $e';
+      _error = e.toString();
+      rethrow;
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _loading = false; notifyListeners();
     }
   }
 }

@@ -237,17 +237,20 @@ class _PackageScreenState extends State<PackageScreen>
               isValid: true,
               isLoading: false,
               onTap: () {
-                final packageDetails = {
-                  'subscription_id': sub.id,
-                  'validity': plan.validity,
-                  'clothes': subPlan.clothes,
-                  // Add more as needed
+                Map<String, Object> buyPackage = {
+                  'id': sub.id,
+                  "name": sub.name,
+                  "validity": plan.validity,
+                  "clothes": subPlan.clothes,
+                  "discount_rate": subPlan.discountRate,
+                  "prices": subPlan.prices,
+                  "no_of_pickups": subPlan.noOfPickups,
                 };
 
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SubscriptionPaymentScreen(),
+                    builder: (context) => SubscriptionCheckoutScreen(buyPackage: buyPackage),
                   ),
                 );
 

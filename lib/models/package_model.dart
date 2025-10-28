@@ -27,11 +27,7 @@ class PackageData {
 
   factory PackageData.fromJson(Map<String, dynamic> json) {
     var packageList = json['package'] as List<dynamic>? ?? [];
-    return PackageData(
-      packages: packageList
-          .map((package) => Package.fromJson(package))
-          .toList(),
-    );
+    return PackageData(packages: packageList.map((package) => Package.fromJson(package)).toList(),);
   }
 }
 
@@ -60,9 +56,7 @@ class Package {
       discountPrices: json['discount_prices'] ?? 0,
       discount: json['discount'] ?? 0,
       noOfClothes: json['no_of_clothes'] ?? 0,
-      services: serviceList
-          .map((service) => Service.fromJson(service))
-          .toList(),
+      services: serviceList.map((service) => Service.fromJson(service)).toList(),
     );
   }
 }
